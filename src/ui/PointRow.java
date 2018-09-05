@@ -13,7 +13,7 @@ import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PointRow {
+public class PointRow { //Make this a node?
     private int index;
     private TextField xText, yText;
     private CheckBox checkBox;
@@ -51,14 +51,14 @@ public class PointRow {
         xText = new TextField(x);
         xText.setMaxWidth(100);
         GridPane.setColumnIndex(xText, 0);
-        GridPane.setRowIndex(xText, index + 2);
+        GridPane.setRowIndex(xText, index);
     }
 
     public void makeYText(String y) {
         yText = new TextField(y);
         yText.setMaxWidth(100);
         GridPane.setColumnIndex(yText, 1);
-        GridPane.setRowIndex(yText, index + 2);
+        GridPane.setRowIndex(yText, index);
     }
 
     public void makeCheckBox(boolean intercept) {
@@ -66,7 +66,7 @@ public class PointRow {
         checkBox.setSelected(intercept);
         checkBox.setMaxWidth(100);
         GridPane.setColumnIndex(checkBox, 2);
-        GridPane.setRowIndex(checkBox, index + 2);
+        GridPane.setRowIndex(checkBox, index);
         checkBox.setAlignment(Pos.CENTER);
     }
 
@@ -78,15 +78,15 @@ public class PointRow {
         ));
         comboBox.setMaxWidth(100);
         GridPane.setColumnIndex(comboBox, 3);
-        GridPane.setRowIndex(comboBox, index + 2);
+        GridPane.setRowIndex(comboBox, index);
     }
 
     public void setIndex(int index) {
         this.index = index;
-        GridPane.setRowIndex(xText, index + 2);
-        GridPane.setRowIndex(yText, index + 2);
-        GridPane.setRowIndex(checkBox, index + 2);
-        GridPane.setRowIndex(comboBox, index + 2);
+        GridPane.setRowIndex(xText, index);
+        GridPane.setRowIndex(yText, index);
+        GridPane.setRowIndex(checkBox, index);
+        GridPane.setRowIndex(comboBox, index);
     }
 
     public void moveIndex(int delta) {
@@ -100,6 +100,18 @@ public class PointRow {
         nodes.add(checkBox);
         nodes.add(comboBox);
         return nodes;
+    }
+
+    public TextField getxText() {
+        return xText;
+    }
+
+    public TextField getyText() {
+        return yText;
+    }
+
+    public CheckBox getCheckBox() {
+        return checkBox;
     }
 
     public ComboBox<String> getComboBox() {
@@ -116,5 +128,16 @@ public class PointRow {
 
     public boolean getCheckValue() {
         return checkBox.isSelected();
+    }
+
+    public void updatePoint() {
+        point.setX(getXValue());
+        point.setY(getYValue());
+        point.setIntercept(getCheckValue());
+    }
+
+    public PointRow(PointRow original) {
+        makeAllNodes(original.getPoint());
+        setIndex(original.getIndex());
     }
 }

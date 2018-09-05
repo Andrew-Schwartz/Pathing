@@ -2,8 +2,8 @@ package ui;
 
 import bezier.Bezier;
 import bezier.Point;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -40,9 +40,13 @@ public class UIController {
 
     private static Image fieldImage = new Image("images/FRC2018.png");
     private ArrayList<Point> controlPoints, path;
+    private ArrayList<ArrayList<PointRow>> previousStates; //for undo/redo
     private ArrayList<PointRow> rows;
     private int nextIndex,
-            gridDnDIndex;
+            gridDnDIndex = -1, //-1 means nothing is being dragged
+            dragStartIndex,
+            currentState;
+    private PointRow draggedRow;
 
     @FXML
     private void initialize() {
@@ -52,7 +56,16 @@ public class UIController {
         controlPoints = new ArrayList<>();
         path = new ArrayList<>();
         rows = new ArrayList<>();
+        previousStates = new ArrayList<>();
         setNextIndex(-1);
+        grdPoints.setOnDragOver(event -> {
+            if (gridDnDIndex == -1) return;
+            double y = event.getY(),
+                rowHeight = grdPoints.getVgap() + rows.get(0).getxText().getHeight();
+            gridDnDIndex = (int) Math.floor(y / rowHeight);
+            dndHandling(draggedRow, false);
+            updatePolyline();
+        });
     }
 
     @FXML
@@ -63,48 +76,36 @@ public class UIController {
     private void addNewPointRow(String x, String y, boolean intercept) {
         PointRow row = new PointRow(rows.size());
         row.makeAllNodes(new Point(x, y, intercept));
-        row.getAllNodes().forEach(node -> {
-            if (node instanceof TextField)
-                node.setOnKeyReleased(event -> updatePolyline());
-            if (node instanceof CheckBox)
-                ((CheckBox) node).setOnAction(event -> {
-                    row.getPoint().setIntercept(((CheckBox) node).isSelected());
-                    updatePolyline();
-                });
-            if (node instanceof ComboBox)
-                ((ComboBox) node).setOnAction(event -> {
-                    handleComboResults(row.getComboBox().getValue().trim(), row.getIndex());
-                    imgField.requestFocus();
-                });
-
-            //Drag and Drop listeners
-            node.setOnDragDetected(event -> {
-                gridDnDIndex = row.getIndex();
-                Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-                content.putString("this has to exist or nothing works! ):");
-                db.setContent(content);
-            });
-            node.setOnDragEntered(event -> gridDnDIndex = row.getIndex());
-            node.setOnDragDone(event -> {
-                for (PointRow r : rows) {
-                    if (gridDnDIndex < row.getIndex()) {
-                        if (r.getIndex() >= gridDnDIndex && r.getIndex() < row.getIndex()) {
-                            r.moveIndex(-1);
-                        }
-                    } else if (gridDnDIndex > row.getIndex()) {
-                        if (r.getIndex() <= gridDnDIndex && r.getIndex() > row.getIndex()) {
-                            r.moveIndex(1);
-                        }
-                    }
-                }
-                row.setIndex(gridDnDIndex);
-                updatePolyline();
-            });
-
-        });
+        row.getAllNodes().forEach(node -> pointRowListeners(node, row));
         rows.add(row);
+        addSavedState(rows);
         grdPoints.getChildren().addAll(row.getAllNodes());
+    }
+
+    private void dndHandling(PointRow draggedRow, boolean save) {
+        for (PointRow r : rows) {
+            if (gridDnDIndex < draggedRow.getIndex()) {
+                if (r.getIndex() >= gridDnDIndex && r.getIndex() < draggedRow.getIndex()) {
+                    r.moveIndex(-1);
+                }
+            } else if (gridDnDIndex > draggedRow.getIndex()) {
+                if (r.getIndex() <= gridDnDIndex && r.getIndex() > draggedRow.getIndex()) {
+                    r.moveIndex(1);
+                }
+            }
+        }
+        draggedRow.setIndex(gridDnDIndex);
+        if (save) addSavedState(rows);
+    }
+
+    private void addSavedState(ArrayList<PointRow> rows) {
+        if (currentState != previousStates.size() - 1) {
+            previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
+        }
+        previousStates.add(new ArrayList<>());
+        rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row)));
+        previousStates.get(previousStates.size() - 1).forEach(row -> row.getAllNodes().forEach(node -> pointRowListeners(node, row)));
+        currentState = previousStates.size() - 1;
     }
 
     private void handleComboResults(String result, int index) {
@@ -115,16 +116,51 @@ public class UIController {
         } else if (result.equals(PointMenuResult.POINT_EDIT_MODE.toString())) {
             setNextIndex(index);
             pointHighlight.setCenterX(rows.get(index).getXValue());
-            pointHighlight.setCenterY(rows.get(index).getYValue());
+            pointHighlight.setCenterY(imageHeight() - rows.get(index).getYValue());
         } else if (result.equals(PointMenuResult.REORDER_POINT.toString())) {
             System.out.println("NO");
         }
     }
 
+    private void pointRowListeners(Node node, PointRow row) {
+        if (node instanceof TextField)
+            node.setOnKeyReleased(event -> {
+                row.getPoint().setX(row.getXValue());
+                row.getPoint().setY(row.getYValue());
+                addSavedState(rows);
+                updatePolyline();
+            });
+        if (node instanceof CheckBox)
+            ((CheckBox) node).setOnAction(event -> {
+                row.getPoint().setIntercept(((CheckBox) node).isSelected());
+                addSavedState(rows);
+                updatePolyline();
+            });
+        if (node instanceof ComboBox)
+            ((ComboBox) node).setOnAction(event -> {
+                handleComboResults(row.getComboBox().getValue().trim(), row.getIndex());
+                imgField.requestFocus();
+            });
+
+        //Drag and Drop listeners
+        node.setOnDragDetected(event -> {
+            gridDnDIndex = row.getIndex();
+            draggedRow = row;
+            dragStartIndex = row.getIndex();
+            Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("this has to exist or nothing works! ):");
+            db.setContent(content);
+        });
+        node.setOnDragDone(event -> {
+            dndHandling(row, draggedRow.getIndex() != dragStartIndex);
+            updatePolyline();
+        });
+    }
+
     private void updatePolyline() {
         controlPoints.clear();
-        rows.forEach(row -> controlPoints.add(row.getPoint())); //TODo make this work with point reordering
-//        ArrayList<Point> orderedControl = new ArrayList<>();
+        rows.forEach(row -> controlPoints.add(row.getPoint()));
         rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
 
         path = Bezier.generate(controlPoints);
@@ -155,6 +191,7 @@ public class UIController {
                 filter(row -> row.getIndex() > endIndex).
                 forEach(row -> row.moveIndex(endIndex - startIndex + 1));
         updatePolyline();
+        addSavedState(rows);
     }
 
     @FXML
@@ -169,6 +206,7 @@ public class UIController {
             addNewPointRow(String.valueOf(x), String.valueOf(y), intercept);
         } else {
             rows.get(nextIndex).setPoint(new Point(x, y, rows.get(nextIndex).getCheckValue()));
+            addSavedState(rows);
             setNextIndex(-1);
         }
         updatePolyline();
@@ -205,10 +243,10 @@ public class UIController {
         KeyCode key = keyEvent.getCode();
         switch (key) {
             case UP:
-                y -= change;
+                y += change;
                 break;
             case DOWN:
-                y += change;
+                y -= change;
                 break;
             case LEFT:
                 x -= change;
@@ -218,12 +256,16 @@ public class UIController {
                 break;
             case ENTER:
                 setNextIndex(-1);
+                addSavedState(rows);
+                break;
+            case ESCAPE:
+                setNextIndex(-1);
                 break;
         }
         row.setPoint(new Point(x, y, row.getCheckValue()));
         updatePolyline();
         pointHighlight.setCenterX(x);
-        pointHighlight.setCenterY(y);
+        pointHighlight.setCenterY(imageHeight() - y);
     }
 
     private void setNextIndex(int nextIndex) {
@@ -276,10 +318,35 @@ public class UIController {
     }
 
     @FXML
-    private void undo(ActionEvent event) { //TODO undo and redo
+    private void undo() {
+        if (currentState == 0)
+            return;
+        grdPoints.getChildren().clear();
+        rows.clear();
+        currentState -= 1;
+        for (PointRow row : previousStates.get(currentState)) {
+            row.updatePoint();
+            rows.add(row);
+            grdPoints.getChildren().addAll(row.getAllNodes());
+            row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
+        }
+        updatePolyline();
     }
 
     @FXML
-    private void redo(ActionEvent event) {
+    private void redo() {
+        if (currentState == previousStates.size() - 1)
+            return;
+        grdPoints.getChildren().clear();
+        rows.clear();
+        currentState += 1;
+        for (PointRow row : previousStates.get(currentState)) {
+            row.updatePoint();
+            rows.add(row);
+            grdPoints.getChildren().addAll(row.getAllNodes());
+            row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
+        }
+        updatePolyline();
     }
 }
+

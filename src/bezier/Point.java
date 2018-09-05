@@ -84,6 +84,6 @@ public class Point {
 
     @Override
     public String toString() {
-        return "X = " + x + ",Y = " + y;
+        return "X=" + x + " ,Y=" + y + ", intercept=" + intercept;
     }
 }

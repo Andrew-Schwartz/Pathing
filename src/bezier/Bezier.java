@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class Bezier {
 
-    public static ArrayList<Point> generate(ArrayList<Point> controlPoints) { //TODO segments
+    public static ArrayList<Point> generate(ArrayList<Point> controlPoints) {
         ArrayList<Point> pathPoints = new ArrayList<>();
 
 //        ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()

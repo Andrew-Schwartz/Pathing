@@ -14,8 +14,11 @@ public class Main extends Application {
         Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("ui/UI.fxml")));
 
+        Scene scene = new Scene(root, screensize.getWidth(), screensize.getHeight());
+        scene.getStylesheets().add("ui/UI.css");
+
         primaryStage.setTitle("Paths");
-        primaryStage.setScene(new Scene(root, screensize.getWidth(), screensize.getHeight()));
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
