@@ -2,10 +2,14 @@ package ui;
 
 import bezier.Bezier;
 import bezier.Point;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,12 +19,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 import javafx.stage.FileChooser;
+import utils.CSVWriter;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class UIController {
+    @FXML
+    private Tab tabVel;
 
     @FXML
     private Pane root;
@@ -30,13 +39,23 @@ public class UIController {
             pointHighlight;
 
     @FXML
-    private Polyline polyline;
+    private Polyline polyPos; //TODO add extrapolated wheel lines
+
+    @FXML
+    private LineChart<Double, Double> chtVel; //TODO add accel chart
 
     @FXML
     private ImageView imgField;
 
     @FXML
     private GridPane grdPoints;
+
+    @FXML
+    private TextField cfgRadius,
+            cfgWidth,
+            cfgLength,
+            cfgMaxVel,
+            cfgMaxAccel;
 
     private static Image fieldImage = new Image("images/FRC2018.png");
     private ArrayList<Point> controlPoints, path;
@@ -51,8 +70,8 @@ public class UIController {
     @FXML
     private void initialize() {
         imgField.setImage(fieldImage);
-        imgField.setFitWidth(imageWidth());
-        imgField.setFitHeight(imageHeight());
+//        imgField.setFitWidth(imageWidth());
+//        imgField.setFitHeight(imageHeight());
         controlPoints = new ArrayList<>();
         path = new ArrayList<>();
         rows = new ArrayList<>();
@@ -61,11 +80,12 @@ public class UIController {
         grdPoints.setOnDragOver(event -> {
             if (gridDnDIndex == -1) return;
             double y = event.getY(),
-                rowHeight = grdPoints.getVgap() + rows.get(0).getxText().getHeight();
+                    rowHeight = grdPoints.getVgap() + rows.get(0).getComboBox().getHeight();
             gridDnDIndex = (int) Math.floor(y / rowHeight);
             dndHandling(draggedRow, false);
             updatePolyline();
         });
+        tabVel.setOnSelectionChanged(event -> graphVels());
     }
 
     @FXML
@@ -80,6 +100,79 @@ public class UIController {
         rows.add(row);
         addSavedState(rows);
         grdPoints.getChildren().addAll(row.getAllNodes());
+    }
+
+    private void addSavedState(ArrayList<PointRow> rows) {
+        if (currentState != previousStates.size() - 1) {
+            previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
+        }
+        previousStates.add(new ArrayList<>());
+        rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row)));
+        previousStates.get(previousStates.size() - 1).forEach(row -> row.getAllNodes().forEach(node -> pointRowListeners(node, row)));
+        currentState = previousStates.size() - 1;
+    }
+
+    private void pointRowListeners(Node node, PointRow row) {
+        if (node instanceof TextField)
+            node.setOnKeyReleased(event -> {
+                row.getPoint().setX(row.getXValue());
+                row.getPoint().setY(row.getYValue());
+                row.getPoint().setTargetVelocity(row.getVelValue());
+                addSavedState(rows);
+                updatePolyline();
+            });
+        if (node instanceof CheckBox)
+            ((CheckBox) node).setOnAction(event -> {
+                row.getPoint().setIntercept(row.getInterceptValue());
+//                row.getPoint().overrideMaxVel(row.getVelCheckValue());
+                addSavedState(rows);
+                updatePolyline();
+            });
+        if (node instanceof ComboBox)
+            ((ComboBox) node).setOnAction(event -> {
+                handleComboResults(row.getComboBox().getValue(), row.getIndex());
+                ((ComboBox) node).getSelectionModel().clearSelection();
+                imgField.requestFocus();
+            });
+
+        //Drag and Drop listeners
+        node.setOnDragDetected(event -> {
+            gridDnDIndex = row.getIndex();
+            draggedRow = row;
+            dragStartIndex = row.getIndex();
+            Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("this has to exist or nothing works! :( ");
+            db.setContent(content);
+        });
+        node.setOnDragDone(event -> {
+            dndHandling(row, draggedRow.getIndex() != dragStartIndex);
+            updatePolyline();
+        });
+    }
+
+    private void handleComboResults(String res, int index) {
+        if (nextIndex != -1)
+            return;
+        PointMenuResult result = null;
+        for (PointMenuResult r: PointMenuResult.values()) {
+            if (r.toString().equals(res)) result = r;
+        }
+        assert result != null;
+        switch (result) {
+            case DELETE_POINT:
+                deletePoints(index, index);
+                break;
+            case POINT_EDIT_MODE:
+                setNextIndex(index);
+                pointHighlight.setCenterX(rows.get(index).getXValue());
+                pointHighlight.setCenterY(imageHeight() - rows.get(index).getYValue());
+                break;
+            case TOGGLE_OVERRIDE_VEL:
+                rows.get(index).getPoint().toggleOverride(); //TODO fix having to click non-intercept
+                updatePolyline();
+                break;
+        }
     }
 
     private void dndHandling(PointRow draggedRow, boolean save) {
@@ -98,78 +191,44 @@ public class UIController {
         if (save) addSavedState(rows);
     }
 
-    private void addSavedState(ArrayList<PointRow> rows) {
-        if (currentState != previousStates.size() - 1) {
-            previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
-        }
-        previousStates.add(new ArrayList<>());
-        rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row)));
-        previousStates.get(previousStates.size() - 1).forEach(row -> row.getAllNodes().forEach(node -> pointRowListeners(node, row)));
-        currentState = previousStates.size() - 1;
-    }
-
-    private void handleComboResults(String result, int index) {
-        if (nextIndex != -1)
-            return;
-        if (result.equals(PointMenuResult.DELETE_POINT.toString())) {
-            deletePoints(index, index);
-        } else if (result.equals(PointMenuResult.POINT_EDIT_MODE.toString())) {
-            setNextIndex(index);
-            pointHighlight.setCenterX(rows.get(index).getXValue());
-            pointHighlight.setCenterY(imageHeight() - rows.get(index).getYValue());
-        } else if (result.equals(PointMenuResult.REORDER_POINT.toString())) {
-            System.out.println("NO");
-        }
-    }
-
-    private void pointRowListeners(Node node, PointRow row) {
-        if (node instanceof TextField)
-            node.setOnKeyReleased(event -> {
-                row.getPoint().setX(row.getXValue());
-                row.getPoint().setY(row.getYValue());
-                addSavedState(rows);
-                updatePolyline();
-            });
-        if (node instanceof CheckBox)
-            ((CheckBox) node).setOnAction(event -> {
-                row.getPoint().setIntercept(((CheckBox) node).isSelected());
-                addSavedState(rows);
-                updatePolyline();
-            });
-        if (node instanceof ComboBox)
-            ((ComboBox) node).setOnAction(event -> {
-                handleComboResults(row.getComboBox().getValue().trim(), row.getIndex());
-                imgField.requestFocus();
-            });
-
-        //Drag and Drop listeners
-        node.setOnDragDetected(event -> {
-            gridDnDIndex = row.getIndex();
-            draggedRow = row;
-            dragStartIndex = row.getIndex();
-            Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent content = new ClipboardContent();
-            content.putString("this has to exist or nothing works! ):");
-            db.setContent(content);
-        });
-        node.setOnDragDone(event -> {
-            dndHandling(row, draggedRow.getIndex() != dragStartIndex);
-            updatePolyline();
-        });
-    }
-
     private void updatePolyline() {
         controlPoints.clear();
         rows.forEach(row -> controlPoints.add(row.getPoint()));
         rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
 
-        path = Bezier.generate(controlPoints);
+        path = Bezier.generate(controlPoints, cfgMaxVel.getText().isEmpty() ? 0 : Double.parseDouble(cfgMaxVel.getText()),
+                cfgMaxAccel.getText().isEmpty() ? 0 : Double.parseDouble(cfgMaxAccel.getText()), 15);
 
-        polyline.getPoints().clear();
-        path.forEach(point -> polyline.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
+        polyPos.getPoints().clear();
+        path.forEach(point -> polyPos.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
 
-        if (polyline.getPoints().isEmpty())         //polyline with no points doesn't redraw
-            polyline.getPoints().addAll(0.0, 0.0);  //so this does
+        graphVels();
+
+        if (polyPos.getPoints().isEmpty())         //polyline with no points doesn't redraw
+            polyPos.getPoints().addAll(0.0, 0.0);  //so this does
+
+//        polyVel.getPoints().clear();
+//        if (polyVel.getPoints().isEmpty())
+//            polyVel.getPoints().addAll(0.0, 0.0);
+    }
+
+    private void graphVels() {
+        if (!tabVel.isSelected()) return;
+        chtVel.getData().clear();
+        XYChart.Series<Double, Double> points = new XYChart.Series<>();
+        for (int i = 0; i < path.size(); i++) {
+            points.getData().add(new XYChart.Data<> (15.0 *i / path.size(), path.get(i).getTargetVelocity()));
+        }
+        chtVel.getData().add(points);
+
+//        double gap = 10;
+//        double xWidth = imageWidth() - gap,
+//                yWidth = xWidth / Double.parseDouble(cfgMaxVel.getText().trim());
+//
+//        for (int i = 0; i < path.size(); i++) {
+//            polyVel.getPoints().add(xWidth * i / path.size() + gap / 2); //x coord, adjusted to fit window
+//            polyVel.getPoints().add(imageHeight() - yWidth * path.get(i).getTargetVelocity() - gap / 2); //y coord, adjusted to fit window
+//        }
     }
 
     @FXML
@@ -205,7 +264,7 @@ public class UIController {
         if (nextIndex == -1) {
             addNewPointRow(String.valueOf(x), String.valueOf(y), intercept);
         } else {
-            rows.get(nextIndex).setPoint(new Point(x, y, rows.get(nextIndex).getCheckValue()));
+            rows.get(nextIndex).setPoint(new Point(x, y, rows.get(nextIndex).getInterceptValue()));
             addSavedState(rows);
             setNextIndex(-1);
         }
@@ -231,41 +290,68 @@ public class UIController {
 
     @FXML
     private void keyReleasedEvent(KeyEvent keyEvent) {
-        if (nextIndex == -1) return;
-        PointRow row = rows.get(nextIndex);
-        imgField.requestFocus();
-        boolean ctrl = keyEvent.isControlDown(),
-                shift = keyEvent.isShiftDown();
-        int change;
-        change = shift ? ctrl ? 20 : 1 : ctrl ? 10 : 5;    //shift = 1      ctrl = 10       both = 20
-        double x = row.getXValue();
-        double y = row.getYValue();
-        KeyCode key = keyEvent.getCode();
-        switch (key) {
-            case UP:
-                y += change;
-                break;
-            case DOWN:
-                y -= change;
-                break;
-            case LEFT:
-                x -= change;
-                break;
-            case RIGHT:
-                x += change;
-                break;
-            case ENTER:
-                setNextIndex(-1);
-                addSavedState(rows);
-                break;
-            case ESCAPE:
-                setNextIndex(-1);
-                break;
+        if (nextIndex != -1) {
+            PointRow row = rows.get(nextIndex);
+            imgField.requestFocus();
+            boolean ctrl = keyEvent.isControlDown(),
+                    shift = keyEvent.isShiftDown();
+            int change;
+            change = shift ? ctrl ? 20 : 1 : ctrl ? 10 : 5;    //shift = 1      ctrl = 10       both = 20
+            double x = row.getXValue();
+            double y = row.getYValue();
+            switch (keyEvent.getCode()) {
+                case UP:
+                    y += change;
+                    break;
+                case DOWN:
+                    y -= change;
+                    break;
+                case LEFT:
+                    x -= change;
+                    break;
+                case RIGHT:
+                    x += change;
+                    break;
+                case ENTER:
+                    setNextIndex(-1);
+                    addSavedState(rows);
+                    break;
+                case ESCAPE:
+                    setNextIndex(-1);
+                    break;
+            }
+            row.setPoint(new Point(x, y, row.getInterceptValue()));
+            updatePolyline();
+            pointHighlight.setCenterX(x);
+            pointHighlight.setCenterY(imageHeight() - y);
+        } else {
+            boolean pointsFocused = false;
+            int focusedIndex = 0, focusedColumn = 0;
+            for (PointRow row : rows) {
+                for (int i = 0; i < row.getAllNodes().size(); i++) {
+                    if (row.getAllNodes().get(i).isFocused()) {
+                        pointsFocused = true;
+                        focusedIndex = row.getIndex();
+                        focusedColumn = i;
+                    }
+                }
+            }
+            if (!pointsFocused) return;
+            switch (keyEvent.getCode()) {
+                case UP:
+                    rows.get(Math.max(0, focusedIndex - 1)).getAllNodes().get(focusedColumn).requestFocus();
+                    break;
+                case DOWN:
+                    rows.get(Math.min(rows.size() - 1, focusedIndex + 1)).getAllNodes().get(focusedColumn).requestFocus();
+                    break;
+//                case LEFT:
+//                    rows.get(focusedIndex).getAllNodes().get(Math.max(0, focusedColumn - 1)).requestFocus();
+//                    break;
+//                case RIGHT:
+//                    rows.get(focusedIndex).getAllNodes().get(Math.min(rows.get(0).getAllNodes().size() - 1, focusedColumn + 1)).requestFocus();
+//                    break;
+            }
         }
-        row.setPoint(new Point(x, y, row.getCheckValue()));
-        updatePolyline();
-        pointHighlight.setCenterX(x);
-        pointHighlight.setCenterY(imageHeight() - y);
     }
 
     private void setNextIndex(int nextIndex) {
@@ -292,7 +378,34 @@ public class UIController {
 
     @FXML
     private void mnuExport() { //TalonSRX uses double heading(deg), double position, double velocity to csv
-        //TODO export
+        File file = new File("src/csv/path.csv");
+        Bezier.motion(path, Double.parseDouble(cfgWidth.getText()));
+        try (CSVWriter writer = new CSVWriter(file)) {
+            writer.write("X,Y,Angle,Last", path,
+                    point -> String.valueOf(point.getX()),
+                    point -> String.valueOf(point.getY()),
+                    point -> String.valueOf(point.getAngle()),
+                    point -> String.valueOf(point.isLast()));
+//            writer.write("sum,diff,s,d,f", Bezier.motion(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void mnuExportCode() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("private RobotGrid SPLINENAME() {\n"); //TODO maybe set "SPLINENAME" from this method
+        sb.append("\tRobotGrid grid = new RobotGrid(");
+
+        ArrayList<Point> intercepts = (ArrayList<Point>) controlPoints.stream().filter(Point::isIntercept).collect(Collectors.toList());
+        for (Point p : intercepts) {
+
+        }
+
+        for (int i = 0; i < controlPoints.size(); i++) {
+//            if ()
+        }
     }
 
     //TODO auto generate 90 degree curves etc.
@@ -318,12 +431,12 @@ public class UIController {
     }
 
     @FXML
-    private void undo() {
+    private void undo() { //TODO fix undoing with velocities / in general apparently???
         if (currentState == 0)
             return;
         grdPoints.getChildren().clear();
         rows.clear();
-        currentState -= 1;
+        currentState--;
         for (PointRow row : previousStates.get(currentState)) {
             row.updatePoint();
             rows.add(row);
@@ -339,7 +452,7 @@ public class UIController {
             return;
         grdPoints.getChildren().clear();
         rows.clear();
-        currentState += 1;
+        currentState++;
         for (PointRow row : previousStates.get(currentState)) {
             row.updatePoint();
             rows.add(row);
@@ -347,6 +460,9 @@ public class UIController {
             row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
         }
         updatePolyline();
+    }
+
+    public void mnuImportCode(ActionEvent event) {
     }
 }
 

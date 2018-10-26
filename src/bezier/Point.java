@@ -5,6 +5,11 @@ import ui.UIController;
 public class Point {
     private double x, y;
     private boolean intercept;
+    private double targetVelocity;
+
+    private double leftPos, leftVel, rightPos, rightVel, angle;
+    private boolean last = false;
+    private boolean overrideMaxVel;
 
     private boolean empty = false; //allow blank point
 
@@ -70,6 +75,22 @@ public class Point {
         return theta;
     }
 
+    public void setAngle(double angleToNext) {
+        angle = angleToNext;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setLast(boolean isLast) {
+        last = isLast;
+    }
+
+    public boolean isLast() {
+        return last;
+    }
+
     public void setIntercept(boolean intercept) {
         this.intercept = intercept;
     }
@@ -80,6 +101,52 @@ public class Point {
 
     public void setY(double y) {
         this.y = y;
+    }
+
+    public void setTargetVelocity(double targetVelocity) {
+        this.targetVelocity = targetVelocity;
+    }
+
+    public double getTargetVelocity() {
+        return targetVelocity;
+    }
+
+    public void setVels(double leftVel, double rightVel) {
+        this.leftVel = leftVel;
+        this.rightVel = rightVel;
+    }
+
+    public double getLeftVel() {
+        return leftVel;
+    }
+
+    public double getRightVel() {
+        return rightVel;
+    }
+
+    public void setPos(double leftPos, double rightPos) {
+        this.leftPos = leftPos;
+        this.rightPos = rightPos;
+    }
+
+    public double getLeftPos() {
+        return leftPos;
+    }
+
+    public double getRightPos() {
+        return rightPos;
+    }
+
+    public void overrideMaxVel(boolean overrideMaxVel) {
+        this.overrideMaxVel = overrideMaxVel;
+    }
+
+    public void toggleOverride() {
+        overrideMaxVel(!isOverrideMaxVel());
+    }
+
+    public boolean isOverrideMaxVel() {
+        return overrideMaxVel;
     }
 
     @Override

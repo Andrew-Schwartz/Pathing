@@ -2,7 +2,7 @@ package ui;
 
 import bezier.Point;
 import javafx.collections.FXCollections;
-import javafx.geometry.HPos;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -11,12 +11,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PointRow { //Make this a node?
     private int index;
-    private TextField xText, yText;
-    private CheckBox checkBox;
+    private TextField xText, yText, velText;
+    private CheckBox interceptBox, velBox;
     private ComboBox<String> comboBox;
     private Point point;
 
@@ -32,7 +33,8 @@ public class PointRow { //Make this a node?
         point = p;
         xText.setText(String.valueOf(p.getX()));
         yText.setText(String.valueOf(p.getY()));
-        checkBox.setSelected(p.isIntercept());
+        interceptBox.setSelected(p.isIntercept());
+        velText.setText(String.valueOf(p.getTargetVelocity()));
     }
 
     public int getIndex() {
@@ -44,49 +46,62 @@ public class PointRow { //Make this a node?
         makeXText(p.getXString());
         makeYText(p.getYString());
         makeCheckBox(p.isIntercept());
+        makeVelText();
         makeComboBox();
+        makeVelBox(p.isOverrideMaxVel());
     }
 
-    public void makeXText(String x) {
+    private void makeXText(String x) {
         xText = new TextField(x);
         xText.setMaxWidth(100);
         GridPane.setColumnIndex(xText, 0);
         GridPane.setRowIndex(xText, index);
     }
 
-    public void makeYText(String y) {
+    private void makeYText(String y) {
         yText = new TextField(y);
         yText.setMaxWidth(100);
         GridPane.setColumnIndex(yText, 1);
         GridPane.setRowIndex(yText, index);
     }
 
-    public void makeCheckBox(boolean intercept) {
-        checkBox = new CheckBox();
-        checkBox.setSelected(intercept);
-        checkBox.setMaxWidth(100);
-        GridPane.setColumnIndex(checkBox, 2);
-        GridPane.setRowIndex(checkBox, index);
-        checkBox.setAlignment(Pos.CENTER);
+    private void makeCheckBox(boolean intercept) {
+        interceptBox = new CheckBox();
+        interceptBox.setSelected(intercept);
+        interceptBox.setMaxWidth(100);
+        GridPane.setColumnIndex(interceptBox, 2);
+        GridPane.setRowIndex(interceptBox, index);
+        interceptBox.setAlignment(Pos.CENTER);
     }
 
-    public void makeComboBox() {
-        comboBox = new ComboBox<>(FXCollections.observableArrayList(
-                PointMenuResult.DELETE_POINT.toString(),
-                PointMenuResult.POINT_EDIT_MODE.toString(),
-                PointMenuResult.REORDER_POINT.toString()
-        ));
+    private void makeVelText() {
+        velText = new TextField();
+        velText.setMaxWidth(100);
+        GridPane.setColumnIndex(velText, 3);
+        GridPane.setRowIndex(velText, index);
+    }
+
+    private void makeComboBox() {
+        ObservableList results = FXCollections.observableArrayList();
+        results.addAll((PointMenuResult[]) PointMenuResult.values());
+        comboBox = new ComboBox<>(FXCollections.observableArrayList(results));
         comboBox.setMaxWidth(100);
-        GridPane.setColumnIndex(comboBox, 3);
+        GridPane.setColumnIndex(comboBox, 4);
         GridPane.setRowIndex(comboBox, index);
+    }
+
+    private void makeVelBox(boolean overrides) {
+        velBox = new CheckBox();
+        velBox.setSelected(overrides);
+        velBox.setMaxWidth(100);
+        GridPane.setColumnIndex(velBox, 5);
+        GridPane.setRowIndex(velBox, index);
+        velBox.setAlignment(Pos.CENTER);
     }
 
     public void setIndex(int index) {
         this.index = index;
-        GridPane.setRowIndex(xText, index);
-        GridPane.setRowIndex(yText, index);
-        GridPane.setRowIndex(checkBox, index);
-        GridPane.setRowIndex(comboBox, index);
+        getAllNodes().forEach(node -> GridPane.setRowIndex(node, index));
     }
 
     public void moveIndex(int delta) {
@@ -97,21 +112,11 @@ public class PointRow { //Make this a node?
         List<Node> nodes = new ArrayList<>();
         nodes.add(xText);
         nodes.add(yText);
-        nodes.add(checkBox);
+        nodes.add(interceptBox);
+        nodes.add(velText);
         nodes.add(comboBox);
+        nodes.add(velBox);
         return nodes;
-    }
-
-    public TextField getxText() {
-        return xText;
-    }
-
-    public TextField getyText() {
-        return yText;
-    }
-
-    public CheckBox getCheckBox() {
-        return checkBox;
     }
 
     public ComboBox<String> getComboBox() {
@@ -119,21 +124,31 @@ public class PointRow { //Make this a node?
     }
 
     public double getXValue() {
-        return Double.valueOf(xText.getText());
+        return Double.parseDouble(xText.getText().trim());
     }
 
     public double getYValue() {
-        return Double.valueOf(yText.getText());
+        return Double.parseDouble(yText.getText().trim());
     }
 
-    public boolean getCheckValue() {
-        return checkBox.isSelected();
+    public boolean getInterceptValue() {
+        return interceptBox.isSelected();
+    }
+
+    public boolean getVelCheckValue() {
+        return velBox.isSelected();
+    }
+
+    public double getVelValue() {
+        return Double.parseDouble(velText.getText().trim());
     }
 
     public void updatePoint() {
         point.setX(getXValue());
         point.setY(getYValue());
-        point.setIntercept(getCheckValue());
+        point.setIntercept(getInterceptValue());
+        point.setTargetVelocity(getVelValue());
+        point.overrideMaxVel(getVelCheckValue());
     }
 
     public PointRow(PointRow original) {

@@ -1,10 +1,9 @@
 package ui;
 
 public enum PointMenuResult {
-    NONE_SELECTED(""),
     DELETE_POINT("Delete This Point"),
     POINT_EDIT_MODE("Point Moving Mode"),
-    REORDER_POINT("(Planned) Change Point Order");
+    TOGGLE_OVERRIDE_VEL("(WIP) Toggle Overriding Max Vel"); //TODO maybe NOT a checkbox in pointRow
 
     String result;
 
@@ -17,4 +16,3 @@ public enum PointMenuResult {
         return result;
     }
 }
-
