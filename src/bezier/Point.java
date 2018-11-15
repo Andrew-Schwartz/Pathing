@@ -1,13 +1,14 @@
 package bezier;
 
 import ui.UIController;
+import utils.Utils;
 
 public class Point {
     private double x, y;
     private boolean intercept;
     private double targetVelocity;
 
-    private double leftPos, leftVel, rightPos, rightVel, angle;
+    private double leftPos, leftVel, rightPos, rightVel, heading;
     private boolean last = false;
     private boolean overrideMaxVel;
 
@@ -31,12 +32,11 @@ public class Point {
     }
 
     public Point(String x, String y, boolean intercept) {
-        if (!x.isEmpty() && !y.isEmpty()) {
-            this.x = Double.parseDouble(x);
-            this.y = Double.parseDouble(y);
-        } else {
+        if (x.isEmpty() || y.isEmpty()) {
             empty = true;
         }
+        this.x = Utils.parseDouble(x);
+        this.y = Utils.parseDouble(y);
 
         this.intercept = intercept;
     }
@@ -67,6 +67,12 @@ public class Point {
         return Math.sqrt(a * a + b * b);
     }
 
+    /**
+     * Calculates angle from this point to a second point
+     *
+     * @param p point to find angle to
+     * @return angle in degrees
+     */
     public double angleTo(Point p) {
         double x = p.getX() - getX(),
                 y = p.getY() - getY();
@@ -75,12 +81,17 @@ public class Point {
         return theta;
     }
 
-    public void setAngle(double angleToNext) {
-        angle = angleToNext;
+    public void setHeading(double angleToNext) {
+        heading = angleToNext;
     }
 
-    public double getAngle() {
-        return angle;
+    /**
+     * Direction of this point
+     *
+     * @return angle, in degrees
+     */
+    public double getHeading() {
+        return heading;
     }
 
     public void setLast(boolean isLast) {
@@ -141,7 +152,8 @@ public class Point {
         this.overrideMaxVel = overrideMaxVel;
     }
 
-    public void toggleOverride() {
+    public void
+    toggleOverride() {
         overrideMaxVel(!isOverrideMaxVel());
     }
 

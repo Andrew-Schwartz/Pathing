@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2169464d-dead-4441-9174-5b56e1111ff9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/images/White.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/CSVWriter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/UnitConverter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Bezier.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Bezier.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Point.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Point.class" afterDir="false" />
@@ -14,10 +14,12 @@
       <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/ui/UIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/ui/UIController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bezier/Bezier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Bezier.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bezier/Point.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Point.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/csv/path.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/PointMenuResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/PointMenuResult.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/PointRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/PointRow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/UI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UI.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/UIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/CSVWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/CSVWriter.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,8 +32,10 @@
     <session id="-203712396">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="7" />
+          <entry key="project.closed" value="8" />
           <entry key="project.open.time.1" value="2" />
+          <entry key="project.open.time.101" value="1" />
+          <entry key="project.open.time.115" value="1" />
           <entry key="project.open.time.2" value="2" />
           <entry key="project.open.time.28" value="1" />
           <entry key="project.open.time.30" value="1" />
@@ -39,50 +43,55 @@
           <entry key="project.open.time.35" value="1" />
           <entry key="project.open.time.43" value="1" />
           <entry key="project.open.time.49" value="1" />
+          <entry key="project.open.time.53" value="1" />
+          <entry key="project.open.time.54" value="1" />
+          <entry key="project.open.time.58" value="1" />
           <entry key="project.open.time.6" value="1" />
+          <entry key="project.open.time.65" value="1" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="12" />
+          <entry key="project.opened" value="18" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="class" value="12" />
           <entry key="css" value="4" />
-          <entry key="csv" value="37" />
-          <entry key="fxml" value="56" />
+          <entry key="csv" value="40" />
+          <entry key="fxml" value="70" />
           <entry key="gitattributes" value="2" />
           <entry key="gitignore" value="3" />
-          <entry key="java" value="632" />
-          <entry key="png" value="1" />
+          <entry key="java" value="857" />
+          <entry key="png" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="CLASS" value="12" />
           <entry key="CSS" value="4" />
-          <entry key="CSV" value="36" />
-          <entry key="Image" value="1" />
-          <entry key="JAVA" value="632" />
+          <entry key="CSV" value="39" />
+          <entry key="Image" value="7" />
+          <entry key="JAVA" value="857" />
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="XML" value="56" />
+          <entry key="XML" value="70" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="css" value="105" />
           <entry key="csv" value="4" />
-          <entry key="fxml" value="2106" />
+          <entry key="fxml" value="2381" />
           <entry key="gitignore" value="13" />
-          <entry key="java" value="19704" />
+          <entry key="java" value="25329" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="105" />
           <entry key="CSV" value="4" />
-          <entry key="JAVA" value="19704" />
+          <entry key="JAVA" value="25325" />
           <entry key="PLAIN_TEXT" value="13" />
-          <entry key="XML" value="2106" />
+          <entry key="RegExp" value="4" />
+          <entry key="XML" value="2381" />
         </counts>
       </usages-collector>
     </session>
@@ -90,10 +99,13 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/csv/path.csv">
+        <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="4" column="35" lean-forward="true" selection-start-line="4" selection-start-column="35" selection-end-line="4" selection-end-column="35" />
+            <state relative-caret-position="212">
+              <caret line="76" column="45" lean-forward="true" selection-start-line="76" selection-start-column="45" selection-end-line="76" selection-end-column="45" />
+              <folding>
+                <marker date="1542245728246" expanded="true" signature="15843:15885" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -103,6 +115,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -121,6 +134,20 @@
       <find>res</find>
       <find>handle</find>
       <find>write</find>
+      <find>CSV</find>
+      <find>poly</find>
+      <find>TODO</find>
+      <find>leftPos</find>
+      <find>leftV</find>
+      <find>polyL</find>
+      <find>expor</find>
+      <find>toR</find>
+      <find>tor</find>
+      <find>update</find>
+      <find>click</find>
+      <find>setNextIndex</find>
+      <find>?</find>
+      <find>parseDo</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -136,21 +163,28 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/path/path.csv" />
         <option value="$PROJECT_DIR$/src/csv/path.csv" />
-        <option value="$PROJECT_DIR$/src/ui/PointMenuResult.java" />
+        <option value="$PROJECT_DIR$/src/utils/CSVWriter.java" />
+        <option value="$PROJECT_DIR$/src/utils/CSVReader.java" />
+        <option value="$PROJECT_DIR$/src/ui/Utils.java" />
+        <option value="$PROJECT_DIR$/src/ui/UnitConverter.java" />
+        <option value="$PROJECT_DIR$/src/utils/Units.java" />
+        <option value="$PROJECT_DIR$/src/utils/Unit.java" />
+        <option value="$PROJECT_DIR$/src/bezier/RunnableBezier.java" />
+        <option value="$PROJECT_DIR$/src/bezier/RunnableBezierGenerate.java" />
         <option value="$PROJECT_DIR$/src/bezier/Bezier.java" />
-        <option value="$PROJECT_DIR$/src/bezier/Point.java" />
+        <option value="$PROJECT_DIR$/src/utils/UnitConverter.java" />
+        <option value="$PROJECT_DIR$/src/ui/PointMenuResult.java" />
         <option value="$PROJECT_DIR$/src/ui/UI.fxml" />
+        <option value="$PROJECT_DIR$/src/utils/Utils.java" />
         <option value="$PROJECT_DIR$/src/ui/PointRow.java" />
         <option value="$PROJECT_DIR$/src/ui/UIController.java" />
-        <option value="$PROJECT_DIR$/src/utils/CSVWriter.java" />
+        <option value="$PROJECT_DIR$/src/bezier/Point.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-10" />
-    <option name="y" value="-10" />
-    <option name="width" value="1615" />
-    <option name="height" value="880" />
+    <option name="width" value="1920" />
+    <option name="height" value="1030" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -158,7 +192,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -175,36 +208,28 @@
               <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
               <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="bezier" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="csv" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;pointRo&#9;PSI&#9;JAVA://ui.PointRow" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1537735047791" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542246018805" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="editing.templates" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="utils" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Andrew Schwartz\IdeaProjects\RobotPathing\src\images" />
       <recent name="C:\Users\Andrew Schwartz\IdeaProjects\RobotPathing\src" />
@@ -259,7 +284,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" sideWeight="0.502439" side_tool="true" weight="0.24966443" />
@@ -270,16 +295,16 @@
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="6" sideWeight="0.49756098" weight="0.25302014" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4986577" visible="true" weight="0.039589442" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3680352" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32963988" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4986577" weight="0.03462604" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.41135734" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.26686218" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.26592797" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.11143695" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5013423" side_tool="true" weight="0.271261" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5013423" side_tool="true" weight="0.2700831" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32991204" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.32991204" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.32963988" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -311,6 +336,11 @@
         <breakpoints-dialog />
       </breakpoints-dialog>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="rows.get(index).getPoint().isOverrideMaxVel()" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="breakpointCondition">
@@ -323,16 +353,6 @@
     </expressions>
     <expressions id="watch">
       <expression>
-        <expression-string>keyEvent.getCode()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>grdPoints.isFocused()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
         <expression-string>rows.get(index).getPoint().isOverrideMaxVel()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
@@ -343,33 +363,44 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>rows.get(index).getPoint()</expression-string>
+        <expression-string>row.getComboBox().getValue()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>PointMenuResult.valueOf(res)</expression-string>
+        <expression-string>row.getYValue()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>PointMenuResult.valueOf(result)</expression-string>
+        <expression-string>row.getXValue()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>path.get(i).getTargetVelocity()</expression-string>
+        <expression-string>UnitConverter.rotateAngle(-Math.toRadians(point.heading), -90)</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>(double) (i/path.size())</expression-string>
+        <expression-string>point.heading</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>(double) i/path.size()</expression-string>
+        <expression-string>Math.toRadians(point.heading)</expression-string>
         <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Math.cos(UnitConverter.rotateAngle(-point.heading, -90))</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>UnitConverter.rotateAngle(-point.heading, -90)</expression-string>
+        <language-id>JAVA</language-id>
+        <custom-info>org.omg.CORBA.UNKNOWN,oracle.jrockit.jfr.DCmd</custom-info>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
@@ -384,40 +415,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Dog.java" />
-    <entry file="file://$PROJECT_DIR$/src/ui/PointMenuResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="62" selection-start-line="5" selection-start-column="62" selection-end-line="5" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bezier/Point.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="15" column="11" selection-start-line="15" selection-start-column="11" selection-end-line="15" selection-end-column="11" />
-          <folding>
-            <element signature="e#3126#3127#0" expanded="true" />
-            <element signature="e#3178#3179#0" expanded="true" />
-            <element signature="e#3214#3215#0" expanded="true" />
-            <element signature="e#3265#3266#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/PointRow.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="93" column="32" lean-forward="true" selection-start-line="93" selection-start-column="32" selection-end-line="93" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_162/src.zip!/java/util/function/Function.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="48" column="6" selection-start-line="48" selection-start-column="6" selection-end-line="48" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -427,40 +424,97 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/CSVWriter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+        <state relative-caret-position="204">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
+    <entry file="file://$PROJECT_DIR$/src/csv/path.csv" />
+    <entry file="file://$PROJECT_DIR$/src/csv/leftpath.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="-4891" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/CSVReader.java" />
+    <entry file="file://$PROJECT_DIR$/src/bezier/RunnableBezierGenerate.java" />
+    <entry file="file://$PROJECT_DIR$/src/bezier/Bezier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="477">
+          <caret line="47" column="20" lean-forward="true" selection-start-line="47" selection-start-column="20" selection-end-line="47" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/UnitConverter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+          <folding>
+            <element signature="e#237#238#0" expanded="true" />
+            <element signature="e#313#314#0" expanded="true" />
+            <element signature="e#367#368#0" expanded="true" />
+            <element signature="e#413#414#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/PointMenuResult.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
-          <caret line="291" column="22" selection-start-line="291" selection-start-column="22" selection-end-line="291" selection-end-column="22" />
+          <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="15" selection-start-line="12" selection-start-column="15" selection-end-line="12" selection-end-column="15" />
           <folding>
-            <marker date="1540331937372" expanded="true" signature="14688:14730" ph="..." />
+            <element signature="e#292#293#0" expanded="true" />
+            <element signature="e#325#326#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ui/UI.fxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
-          <caret line="24" column="35" selection-start-line="24" selection-start-column="35" selection-end-line="24" selection-end-column="35" />
-        </state>
-      </provider>
       <provider editor-type-id="JavaFX-Scene-Builder" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bezier/Bezier.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="54" column="41" selection-start-line="54" selection-start-column="35" selection-end-line="54" selection-end-column="41" />
+        <state relative-caret-position="408">
+          <caret line="73" column="23" lean-forward="true" selection-start-line="73" selection-start-column="23" selection-end-line="73" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/csv/path.csv">
+    <entry file="file://$PROJECT_DIR$/src/ui/PointRow.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="35" lean-forward="true" selection-start-line="4" selection-start-column="35" selection-end-line="4" selection-end-column="35" />
+        <state relative-caret-position="316">
+          <caret line="78" column="29" selection-start-line="78" selection-start-column="29" selection-end-line="78" selection-end-column="29" />
+          <folding>
+            <element signature="e#3245#3246#0" expanded="true" />
+            <element signature="e#3309#3310#0" expanded="true" />
+            <element signature="e#3403#3404#0" expanded="true" />
+            <element signature="e#3467#3468#0" expanded="true" />
+            <element signature="e#3661#3662#0" expanded="true" />
+            <element signature="e#3727#3728#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bezier/Point.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="76" column="45" lean-forward="true" selection-start-line="76" selection-start-column="45" selection-end-line="76" selection-end-column="45" />
+          <folding>
+            <marker date="1542245728246" expanded="true" signature="15843:15885" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>

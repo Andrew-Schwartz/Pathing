@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -20,6 +17,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 import javafx.stage.FileChooser;
 import utils.CSVWriter;
+import utils.UnitConverter;
+import utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class UIController {
             pointHighlight;
 
     @FXML
-    private Polyline polyPos; //TODO add extrapolated wheel lines
+    private Polyline polyPos, polyLeft, polyRight; //TODO add extrapolated wheel lines
 
     @FXML
     private LineChart<Double, Double> chtVel; //TODO add accel chart
@@ -55,7 +54,12 @@ public class UIController {
             cfgWidth,
             cfgLength,
             cfgMaxVel,
-            cfgMaxAccel;
+            cfgMaxAccel,
+            cfgTime;
+
+    @FXML
+    private CheckBox cfgDrawWheels;
+    //TODO make a config file
 
     private static Image fieldImage = new Image("images/FRC2018.png");
     private ArrayList<Point> controlPoints, path;
@@ -115,21 +119,19 @@ public class UIController {
     private void pointRowListeners(Node node, PointRow row) {
         if (node instanceof TextField)
             node.setOnKeyReleased(event -> {
-                row.getPoint().setX(row.getXValue());
-                row.getPoint().setY(row.getYValue());
-                row.getPoint().setTargetVelocity(row.getVelValue());
+                row.updatePoint();
                 addSavedState(rows);
                 updatePolyline();
             });
         if (node instanceof CheckBox)
             ((CheckBox) node).setOnAction(event -> {
-                row.getPoint().setIntercept(row.getInterceptValue());
-//                row.getPoint().overrideMaxVel(row.getVelCheckValue());
+                row.updatePoint();
                 addSavedState(rows);
                 updatePolyline();
             });
         if (node instanceof ComboBox)
             ((ComboBox) node).setOnAction(event -> {
+//                row.updatePoint();
                 handleComboResults(row.getComboBox().getValue(), row.getIndex());
                 ((ComboBox) node).getSelectionModel().clearSelection();
                 imgField.requestFocus();
@@ -142,7 +144,7 @@ public class UIController {
             dragStartIndex = row.getIndex();
             Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
-            content.putString("this has to exist or nothing works! :( ");
+            content.putString("this has to exist or nothing works! :( "); //<---- self documenting code
             db.setContent(content);
         });
         node.setOnDragDone(event -> {
@@ -155,7 +157,7 @@ public class UIController {
         if (nextIndex != -1)
             return;
         PointMenuResult result = null;
-        for (PointMenuResult r: PointMenuResult.values()) {
+        for (PointMenuResult r : PointMenuResult.values()) {
             if (r.toString().equals(res)) result = r;
         }
         assert result != null;
@@ -169,7 +171,8 @@ public class UIController {
                 pointHighlight.setCenterY(imageHeight() - rows.get(index).getYValue());
                 break;
             case TOGGLE_OVERRIDE_VEL:
-                rows.get(index).getPoint().toggleOverride(); //TODO fix having to click non-intercept
+                rows.get(index).getPoint().toggleOverride();
+                addSavedState(rows);
                 updatePolyline();
                 break;
         }
@@ -196,20 +199,43 @@ public class UIController {
         rows.forEach(row -> controlPoints.add(row.getPoint()));
         rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
 
-        path = Bezier.generate(controlPoints, cfgMaxVel.getText().isEmpty() ? 0 : Double.parseDouble(cfgMaxVel.getText()),
-                cfgMaxAccel.getText().isEmpty() ? 0 : Double.parseDouble(cfgMaxAccel.getText()), 15);
+        path = Bezier.generate(controlPoints, Utils.parseDouble(cfgMaxVel.getText().trim()),
+                Utils.parseDouble(cfgMaxAccel.getText().trim()), 15);
+        Bezier.motion(path, Utils.parseDouble(cfgLength.getText().trim()));
 
         polyPos.getPoints().clear();
         path.forEach(point -> polyPos.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
 
         graphVels();
 
+        polyLeft.getPoints().clear();
+        polyRight.getPoints().clear();
+
+        if (cfgDrawWheels.isSelected()) {
+            final double dist = UnitConverter.inchesToPixels(Utils.parseDouble(cfgWidth.getText()) / 2);
+            for (Point point : path) {
+                double angle = UnitConverter.rotateAngle(Math.toRadians(-point.getHeading()), 90);
+                polyLeft.getPoints().addAll(point.getX() - dist * Math.cos(angle),
+                        imageHeight() - (point.getY() + dist * Math.sin(angle)));
+                polyRight.getPoints().addAll(point.getX() + dist * Math.cos(angle),
+                        imageHeight() - (point.getY() - dist * Math.sin(angle)));
+            }
+        }
+
         if (polyPos.getPoints().isEmpty())         //polyline with no points doesn't redraw
             polyPos.getPoints().addAll(0.0, 0.0);  //so this does
+        if (polyLeft.getPoints().isEmpty())
+            polyLeft.getPoints().addAll(0.0, 0.0);
+        if (polyRight.getPoints().isEmpty())
+            polyRight.getPoints().addAll(0.0, 0.0);
 
-//        polyVel.getPoints().clear();
-//        if (polyVel.getPoints().isEmpty())
-//            polyVel.getPoints().addAll(0.0, 0.0);
+//        double leftX = path.get(0).getX() + -1/Math.cos(toCoordAngle.apply(path.get(0).getHeading())) * dist,
+//                leftY = path.get(0).getY() + -1/Math.sin(toCoordAngle.apply(path.get(0).getHeading())) * dist;
+        //        for (Point p : path) {
+//            polyLeft.getPoints().addAll(leftX, imageHeight() - leftY);
+//            leftX += p.getTargetVelocity() * Math.cos(toCoordAngle.apply(p.getHeading()));
+//            leftY += p.getTargetVelocity() * Math.sin(toCoordAngle.apply(p.getHeading()));
+//        }
     }
 
     private void graphVels() {
@@ -217,18 +243,9 @@ public class UIController {
         chtVel.getData().clear();
         XYChart.Series<Double, Double> points = new XYChart.Series<>();
         for (int i = 0; i < path.size(); i++) {
-            points.getData().add(new XYChart.Data<> (15.0 *i / path.size(), path.get(i).getTargetVelocity()));
+            points.getData().add(new XYChart.Data<>(15.0 * i / path.size(), path.get(i).getTargetVelocity()));
         }
         chtVel.getData().add(points);
-
-//        double gap = 10;
-//        double xWidth = imageWidth() - gap,
-//                yWidth = xWidth / Double.parseDouble(cfgMaxVel.getText().trim());
-//
-//        for (int i = 0; i < path.size(); i++) {
-//            polyVel.getPoints().add(xWidth * i / path.size() + gap / 2); //x coord, adjusted to fit window
-//            polyVel.getPoints().add(imageHeight() - yWidth * path.get(i).getTargetVelocity() - gap / 2); //y coord, adjusted to fit window
-//        }
     }
 
     @FXML
@@ -257,7 +274,7 @@ public class UIController {
     private void clickEvent(MouseEvent mouseEvent) {
         double x = mouseEvent.getX(),
                 y = mouseEvent.getY();
-        boolean intercept = mouseEvent.getButton() == MouseButton.PRIMARY;
+        boolean intercept = mouseEvent.getButton() == MouseButton.PRIMARY && !mouseEvent.isControlDown();
         if (x < 0 || y < 0 || x > imageWidth() || y > imageHeight())
             return;
         y = imageHeight() - y;
@@ -377,16 +394,21 @@ public class UIController {
     }
 
     @FXML
-    private void mnuExport() { //TalonSRX uses double heading(deg), double position, double velocity to csv
-        File file = new File("src/csv/path.csv");
-        Bezier.motion(path, Double.parseDouble(cfgWidth.getText()));
-        try (CSVWriter writer = new CSVWriter(file)) {
-            writer.write("X,Y,Angle,Last", path,
-                    point -> String.valueOf(point.getX()),
-                    point -> String.valueOf(point.getY()),
-                    point -> String.valueOf(point.getAngle()),
+    private void mnuExport() { //TalonSRX uses position, velocity to csv
+//        File file = new File("src/csv/path.csv");
+        Bezier.motion(path, Utils.parseDouble(cfgWidth.getText()));
+        try (CSVWriter leftWriter = new CSVWriter("src/csv/leftpath.csv");
+             CSVWriter rightWriter = new CSVWriter("src/csv/rightpath.csv")) {
+            leftWriter.writePoints("Dist,Vel,Heading,Last", path,
+                    point -> String.valueOf(point.getLeftPos()), //TODO implement position
+                    point -> String.valueOf(point.getLeftVel()),
+                    point -> String.valueOf(point.getHeading()),
                     point -> String.valueOf(point.isLast()));
-//            writer.write("sum,diff,s,d,f", Bezier.motion(path));
+            rightWriter.writePoints("Dist,Vel,Heading,Last", path,
+                    point -> String.valueOf(point.getRightPos()), //TODO implement position
+                    point -> String.valueOf(point.getRightVel()),
+                    point -> String.valueOf(point.getHeading()),
+                    point -> String.valueOf(point.isLast()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -395,7 +417,7 @@ public class UIController {
     @FXML
     private void mnuExportCode() {
         StringBuilder sb = new StringBuilder();
-        sb.append("private RobotGrid SPLINENAME() {\n"); //TODO maybe set "SPLINENAME" from this method
+        sb.append("private RobotGrid SPLINENAME() {\n");
         sb.append("\tRobotGrid grid = new RobotGrid(");
 
         ArrayList<Point> intercepts = (ArrayList<Point>) controlPoints.stream().filter(Point::isIntercept).collect(Collectors.toList());
@@ -408,7 +430,7 @@ public class UIController {
         }
     }
 
-    //TODO auto generate 90 degree curves etc.
+    //TODO auto generate 90 degree curves etc. maybe
 
     public static double imageHeight() {
         return fieldImage.getHeight();
@@ -418,20 +440,8 @@ public class UIController {
         return fieldImage.getWidth();
     }
 
-    private double[] toRealCoords(double x, double y) {
-        int FIELD_WIDTH_INCHES = 324;
-        int FIELD_LENGTH_INCHES = 384;
-
-        y = imageHeight() - y;
-        x /= imageWidth();
-        x *= FIELD_WIDTH_INCHES;
-        y /= imageHeight();
-        y *= FIELD_LENGTH_INCHES;
-        return new double[]{x, y};
-    }
-
     @FXML
-    private void undo() { //TODO fix undoing with velocities / in general apparently???
+    private void undo() {
         if (currentState == 0)
             return;
         grdPoints.getChildren().clear();

@@ -20,7 +20,8 @@ public class CSVWriter extends OutputStreamWriter {
 
     }
 
-    public void write(String header, ArrayList<Point> path, Function<Point, String>... values) throws IOException {
+    @SafeVarargs
+    public final void writePoints(String header, ArrayList<Point> path, Function<Point, String>... values) throws IOException {
         write(header);
         append(NEWLINE);
         for (Point p : path) {

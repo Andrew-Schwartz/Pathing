@@ -44,21 +44,21 @@ public class Bezier {
         for (int i = 0; i < pathPoints.size(); i++) {
             Point p = pathPoints.get(i);
             if (p.isLast()) {
-                p.setAngle(pathPoints.get(i - 1).getAngle());
+                p.setHeading(pathPoints.get(i - 1).getHeading());
             } else {
-                p.setAngle(p.angleTo(pathPoints.get(i + 1)));
+                p.setHeading(p.angleTo(pathPoints.get(i + 1)));
             }
         }
         return pathPoints;
     }
 
-    public static ArrayList<Point> motion(ArrayList<Point> path, double axleLength) { //TODO double tuning factor (to go from actual velocity to the num the Talon wants)
+    public static ArrayList<Point> motion(ArrayList<Point> path, double axleLength) { //TODO tuning factor (to go from actual velocity to the num the Talon wants)
         ArrayList<Point[]> circles = assignCircles(path);
         ArrayList<Double> radii = assignRadii(circles);
         ArrayList<Point> motivePath = new ArrayList<>();
         for (Point[] circle : circles) {
             Point p = new Point(circle[0].getX(), circle[0].getY());
-            p.setAngle(circle[0].getAngle());
+            p.setHeading(circle[0].getHeading());
             double radius = radii.get(circles.indexOf(circle));
             double rightVel = (p.getTargetVelocity() * (radius + axleLength / 2)) / radius,
                     leftVel = (p.getTargetVelocity() * (radius - axleLength / 2)) / radius;

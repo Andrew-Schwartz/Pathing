@@ -11,6 +11,15 @@ public enum PointMenuResult {
         this.result = result;
     }
 
+    public static String[] valueStrings() {
+        PointMenuResult[] vals = PointMenuResult.values();
+        String[] stringVals = new String[vals.length];
+        for (int i = 0; i < vals.length; i++) {
+            stringVals[i] = vals[i].toString();
+        }
+        return stringVals;
+    }
+
     @Override
     public String toString() {
         return result;

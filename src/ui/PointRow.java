@@ -9,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +18,7 @@ import java.util.List;
 public class PointRow { //Make this a node?
     private int index;
     private TextField xText, yText, velText;
-    private CheckBox interceptBox, velBox;
+    private CheckBox interceptBox;
     private ComboBox<String> comboBox;
     private Point point;
 
@@ -48,7 +49,6 @@ public class PointRow { //Make this a node?
         makeCheckBox(p.isIntercept());
         makeVelText();
         makeComboBox();
-        makeVelBox(p.isOverrideMaxVel());
     }
 
     private void makeXText(String x) {
@@ -82,21 +82,12 @@ public class PointRow { //Make this a node?
     }
 
     private void makeComboBox() {
-        ObservableList results = FXCollections.observableArrayList();
-        results.addAll((PointMenuResult[]) PointMenuResult.values());
+        ObservableList<String> results = FXCollections.observableArrayList();
+        results.addAll(PointMenuResult.valueStrings());
         comboBox = new ComboBox<>(FXCollections.observableArrayList(results));
         comboBox.setMaxWidth(100);
         GridPane.setColumnIndex(comboBox, 4);
         GridPane.setRowIndex(comboBox, index);
-    }
-
-    private void makeVelBox(boolean overrides) {
-        velBox = new CheckBox();
-        velBox.setSelected(overrides);
-        velBox.setMaxWidth(100);
-        GridPane.setColumnIndex(velBox, 5);
-        GridPane.setRowIndex(velBox, index);
-        velBox.setAlignment(Pos.CENTER);
     }
 
     public void setIndex(int index) {
@@ -115,7 +106,6 @@ public class PointRow { //Make this a node?
         nodes.add(interceptBox);
         nodes.add(velText);
         nodes.add(comboBox);
-        nodes.add(velBox);
         return nodes;
     }
 
@@ -124,23 +114,19 @@ public class PointRow { //Make this a node?
     }
 
     public double getXValue() {
-        return Double.parseDouble(xText.getText().trim());
+        return Utils.parseDouble(xText.getText().trim());
     }
 
     public double getYValue() {
-        return Double.parseDouble(yText.getText().trim());
+        return Utils.parseDouble(yText.getText().trim());
     }
 
     public boolean getInterceptValue() {
         return interceptBox.isSelected();
     }
 
-    public boolean getVelCheckValue() {
-        return velBox.isSelected();
-    }
-
     public double getVelValue() {
-        return Double.parseDouble(velText.getText().trim());
+        return Utils.parseDouble(velText.getText().trim());
     }
 
     public void updatePoint() {
@@ -148,7 +134,6 @@ public class PointRow { //Make this a node?
         point.setY(getYValue());
         point.setIntercept(getInterceptValue());
         point.setTargetVelocity(getVelValue());
-        point.overrideMaxVel(getVelCheckValue());
     }
 
     public PointRow(PointRow original) {
