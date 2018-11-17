@@ -7,7 +7,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -38,7 +41,7 @@ public class UIController {
             pointHighlight;
 
     @FXML
-    private Polyline polyPos, polyLeft, polyRight; //TODO add extrapolated wheel lines
+    private Polyline polyPos, polyLeft, polyRight;
 
     @FXML
     private LineChart<Double, Double> chtVel; //TODO add accel chart
@@ -201,7 +204,7 @@ public class UIController {
 
         path = Bezier.generate(controlPoints, Utils.parseDouble(cfgMaxVel.getText().trim()),
                 Utils.parseDouble(cfgMaxAccel.getText().trim()), 15);
-        Bezier.motion(path, Utils.parseDouble(cfgLength.getText().trim()));
+//        path = Bezier.motion(path, Utils.parseDouble(cfgLength.getText().trim()));
 
         polyPos.getPoints().clear();
         path.forEach(point -> polyPos.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
@@ -214,7 +217,7 @@ public class UIController {
         if (cfgDrawWheels.isSelected()) {
             final double dist = UnitConverter.inchesToPixels(Utils.parseDouble(cfgWidth.getText()) / 2);
             for (Point point : path) {
-                double angle = UnitConverter.rotateAngle(Math.toRadians(-point.getHeading()), 90);
+                double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(point.getHeading()));
                 polyLeft.getPoints().addAll(point.getX() - dist * Math.cos(angle),
                         imageHeight() - (point.getY() + dist * Math.sin(angle)));
                 polyRight.getPoints().addAll(point.getX() + dist * Math.cos(angle),
@@ -240,6 +243,7 @@ public class UIController {
 
     private void graphVels() {
         if (!tabVel.isSelected()) return;
+        Bezier.motion(path, Utils.parseDouble(cfgWidth.getText().trim()), Utils.parseDouble(cfgRadius.getText().trim()));
         chtVel.getData().clear();
         XYChart.Series<Double, Double> points = new XYChart.Series<>();
         for (int i = 0; i < path.size(); i++) {
@@ -395,20 +399,17 @@ public class UIController {
 
     @FXML
     private void mnuExport() { //TalonSRX uses position, velocity to csv
-//        File file = new File("src/csv/path.csv");
-        Bezier.motion(path, Utils.parseDouble(cfgWidth.getText()));
+        Bezier.motion(path, Utils.parseDouble(cfgWidth.getText()), Utils.parseDouble(cfgRadius.getText().trim()));
         try (CSVWriter leftWriter = new CSVWriter("src/csv/leftpath.csv");
              CSVWriter rightWriter = new CSVWriter("src/csv/rightpath.csv")) {
             leftWriter.writePoints("Dist,Vel,Heading,Last", path,
-                    point -> String.valueOf(point.getLeftPos()), //TODO implement position
+                    point -> String.valueOf(point.getLeftPos()),
                     point -> String.valueOf(point.getLeftVel()),
-                    point -> String.valueOf(point.getHeading()),
-                    point -> String.valueOf(point.isLast()));
+                    point -> String.valueOf(point.getHeading()));
             rightWriter.writePoints("Dist,Vel,Heading,Last", path,
-                    point -> String.valueOf(point.getRightPos()), //TODO implement position
+                    point -> String.valueOf(point.getRightPos()),
                     point -> String.valueOf(point.getRightVel()),
-                    point -> String.valueOf(point.getHeading()),
-                    point -> String.valueOf(point.isLast()));
+                    point -> String.valueOf(point.getHeading()));
         } catch (IOException e) {
             e.printStackTrace();
         }

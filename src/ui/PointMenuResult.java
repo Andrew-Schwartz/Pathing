@@ -3,7 +3,7 @@ package ui;
 public enum PointMenuResult {
     DELETE_POINT("Delete This Point"),
     POINT_EDIT_MODE("Point Moving Mode"),
-    TOGGLE_OVERRIDE_VEL("(WIP) Toggle Overriding Max Vel"); //TODO maybe NOT a checkbox in pointRow
+    TOGGLE_OVERRIDE_VEL("Toggle Overriding Max Vel");
 
     String result;
 

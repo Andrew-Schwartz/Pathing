@@ -1,6 +1,7 @@
 package bezier;
 
 import ui.UIController;
+import utils.UnitConverter;
 import utils.Utils;
 
 public class Point {
@@ -86,12 +87,23 @@ public class Point {
     }
 
     /**
-     * Direction of this point
+     * Direction of this point, in robot-centric orientation (-180 to 180)
      *
-     * @return angle, in degrees
+     * @return heading, in degrees
      */
     public double getHeading() {
         return heading;
+    }
+
+    /**
+     * direction of this point, in x-axis based orientation (0 to 2pi)
+     *
+     * @return heading, in radians
+     */
+    public double getHeadingCartesian() {
+        double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(getHeading()));
+        if (angle < 180) angle = 360 - angle;
+        return angle;
     }
 
     public void setLast(boolean isLast) {
@@ -114,14 +126,27 @@ public class Point {
         this.y = y;
     }
 
+    /**
+     *
+     * @param targetVelocity calculated velocity of this point in feet/second
+     */
     public void setTargetVelocity(double targetVelocity) {
         this.targetVelocity = targetVelocity;
     }
 
+    /**
+     *
+     * @return the calculated velocity of this point in feet/second
+     */
     public double getTargetVelocity() {
         return targetVelocity;
     }
 
+    /**
+     * sets the angular velocities of left and right wheels
+     * @param leftVel rotations/second
+     * @param rightVel rotations/second
+     */
     public void setVels(double leftVel, double rightVel) {
         this.leftVel = leftVel;
         this.rightVel = rightVel;
@@ -138,6 +163,15 @@ public class Point {
     public void setPos(double leftPos, double rightPos) {
         this.leftPos = leftPos;
         this.rightPos = rightPos;
+    }
+
+    /**
+     * sets the target positions for this point based on this point's velocity
+     * @param prevLeftPos left position of previous point
+     * @param prevRightPos left position of previous point
+     */
+    public void advancePos(double prevLeftPos, double prevRightPos) {
+        setPos(prevLeftPos + leftVel * 0.05, prevRightPos + rightVel * 0.05);
     }
 
     public double getLeftPos() {

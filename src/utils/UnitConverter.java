@@ -11,7 +11,23 @@ public class UnitConverter {
     }
 
     public static double feetToPixels(double dist) {
-        return inchesToPixels(dist*12);
+        return inchesToPixels(feetToInchs(dist));
+    }
+
+    public static double feetToInchs(double dist) {
+        return 12 * dist;
+    }
+
+    public static double inchesToFeet(double dist) {
+        return dist / 12.;
+    }
+
+    public static double pixelsToInches(double dist) {
+        return dist * FIELD_WIDTH_INCHES / UIController.imageWidth();
+    }
+
+    public static double pixelsToFeet(double dist) {
+        return inchesToFeet(pixelsToInches(dist));
     }
 
     /**
@@ -27,6 +43,16 @@ public class UnitConverter {
         double newX = x * Math.cos(degrees) - y * Math.sin(degrees),
                 newY = y * Math.cos(degrees) + x * Math.sin(degrees);
         return Math.atan2(newX, newY);
+    }
+
+    /**
+     * rotates an angle from robot centric (forwards is 0, left is negative pi/2) to x-axis based (x=1 y=0 is 0, x=0 y=1 is pi/2)
+     *
+     * @param angle angle to be rotated in radians
+     * @return rotated angle in radians
+     */
+    public static double rotateRobotToCartesian(double angle) {
+        return rotateAngle(-angle, 90);
     }
 
 //    public static double inchesToScreenVert(double dist) {

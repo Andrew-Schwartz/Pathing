@@ -1,5 +1,7 @@
 package bezier;
 
+import utils.UnitConverter;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -12,12 +14,12 @@ public class Bezier {
                 .filter(Point::isIntercept)
                 .collect(Collectors.toList());
 
-        time /= throughPoints.size()-1;
+        time /= throughPoints.size() - 1;
         double startMaxVel = maxVel;
         for (int j = 0; j < throughPoints.size() - 1; j++) {
             double startVel = throughPoints.get(j).getTargetVelocity(),
-                    endVel = throughPoints.get(j+1).getTargetVelocity();
-            if (controlPoints.get(j+1).isOverrideMaxVel()) maxVel = Math.max(startVel, endVel);
+                    endVel = throughPoints.get(j + 1).getTargetVelocity();
+            if (controlPoints.get(j + 1).isOverrideMaxVel()) maxVel = Math.max(startVel, endVel);
             else maxVel = startMaxVel;
             for (double t = 0.0; t <= 1; t += 1. / 300.) {
                 double sumX = 0, sumY = 0;
@@ -36,7 +38,7 @@ public class Bezier {
                 pathPoints.get(pathPoints.size() - 1).setTargetVelocity(Math.min(up, down));
             }
             if (pathPoints.get(pathPoints.size() - 1).getTargetVelocity() != endVel) {
-                throughPoints.get(j+1).setTargetVelocity(pathPoints.get(pathPoints.size() - 1).getTargetVelocity());
+                throughPoints.get(j + 1).setTargetVelocity(pathPoints.get(pathPoints.size() - 1).getTargetVelocity());
             }
         }
         if (pathPoints.isEmpty()) return pathPoints;
@@ -52,44 +54,63 @@ public class Bezier {
         return pathPoints;
     }
 
-    public static ArrayList<Point> motion(ArrayList<Point> path, double axleLength) { //TODO tuning factor (to go from actual velocity to the num the Talon wants)
-        ArrayList<Point[]> circles = assignCircles(path);
-        ArrayList<Double> radii = assignRadii(circles);
-        ArrayList<Point> motivePath = new ArrayList<>();
-        for (Point[] circle : circles) {
-            Point p = new Point(circle[0].getX(), circle[0].getY());
-            p.setHeading(circle[0].getHeading());
-            double radius = radii.get(circles.indexOf(circle));
-            double rightVel = (p.getTargetVelocity() * (radius + axleLength / 2)) / radius,
-                    leftVel = (p.getTargetVelocity() * (radius - axleLength / 2)) / radius;
-            p.setVels(leftVel, rightVel);
+    /**
+     * <p>Calculates velocity and position of each point in the path</p>
+     * <p>turning left, equation is:</p>
+     * <p>Vr = w * (R + l/2)</p>
+     * <p>Vl = w * (R - l/2)</p>
+     *
+     * @param path        contains x,y,theta coordinates of each point, and the target velocity to travel at (if going in a line)
+     * @param axleLength  width of robot, specifically dist between left and right wheels, in inches
+     * @param wheelRadius radius of wheel in inches
+     */
+    public static void motion(ArrayList<Point> path, double axleLength, double wheelRadius) {
+        double halfWidth = axleLength / 2;
+        for (int i = 0; i < path.size() - 2; i++) {
+//            Point point = path.get(i);
+            double circleRadius;
+//            if (i + 2 > path.size()) {
+//                radius = radiusOfCircle(path.get(path.size() - 1), path.get(path.size() - 2), path.get(path.size() - 3));
+//            } else {
+            circleRadius = UnitConverter.pixelsToInches(radiusOfCircle(path.get(i), path.get(i + 1), path.get(i + 2)));
+//            }
+            double leftVel, rightVel;
+            if (Double.isInfinite(circleRadius)) { //linear path
+                leftVel = rightVel = UnitConverter.feetToInchs(path.get(i).getTargetVelocity());
+                System.out.printf("Point %-3d is infinite\n", i);
+            } else { //TODO more special cases for very small radii (ie, center inside of robot)
+                double angularVel = UnitConverter.feetToInchs(path.get(i).getTargetVelocity()) / circleRadius;
+                if (path.get(i + 2).getHeadingCartesian() < path.get(i).getHeadingCartesian()) { // turning left
+                    leftVel = angularVel * (circleRadius - halfWidth);
+                    rightVel = angularVel * (circleRadius + halfWidth);
+                } else { //turning right
+                    leftVel = angularVel * (circleRadius + halfWidth);
+                    rightVel = angularVel * (circleRadius - halfWidth);
+                }
+            }
+            leftVel = leftVel / (wheelRadius * Math.PI * 2);
+            rightVel = rightVel / (wheelRadius * Math.PI * 2);
+            path.get(i).setVels(leftVel, rightVel);
+            if (i == 0) path.get(i).setPos(leftVel, rightVel);
+            else path.get(i).advancePos(path.get(i - 1).getLeftPos(), path.get(i - 1).getRightPos());
         }
-        return motivePath;
     }
 
-    private static ArrayList<Point[]> assignCircles(ArrayList<Point> path) {
-        ArrayList<Point[]> circles = new ArrayList<>();
-        for (int i = 0; i < path.size() - 2; i++) { //exclude last two points
-            Point[] circlePoints = new Point[3];
-            for (int j = 0; j < 3; j++)
-                circlePoints[j] = path.get(i + j);
-            circles.add(circlePoints);
-        }
-        return circles;
-    }
-
-    private static ArrayList<Double> assignRadii(ArrayList<Point[]> circles) {
-        ArrayList<Double> radii = new ArrayList<>();
-        for (Point[] circle : circles) {
-            double a = circle[0].distanceTo(circle[1]),
-                    b = circle[1].distanceTo(circle[2]),
-                    c = circle[2].distanceTo(circle[0]);
-            double s = (a + b + c) / 2;
-            double area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
-            double radius = (a * b * c) / (4 * area);
-            radii.add(radius);
-        }
-        return radii;
+    /**
+     * <p>calculates the radius of the circle which the 3 points lie on</p>
+     * <p>r = a*b*c/4*area</p>
+     *
+     * @param circlePoints 3 points from which a circle is extrapolated
+     * @return radius of the circle in pixels
+     */
+    private static double radiusOfCircle(Point... circlePoints) {
+        assert circlePoints.length == 3;
+        double a = circlePoints[0].distanceTo(circlePoints[1]),
+                b = circlePoints[1].distanceTo(circlePoints[2]),
+                c = circlePoints[2].distanceTo(circlePoints[0]);
+        double s = (a + b + c) / 2;
+        double area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+        return (a * b * c) / (4 * area);
     }
 
     private static int polynomialCoeff(int line, int n) {
