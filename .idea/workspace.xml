@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2169464d-dead-4441-9174-5b56e1111ff9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/utils/Config.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bezier/Bezier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Bezier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/csv/leftpath.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/csv/leftpath.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/csv/rightpath.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/csv/rightpath.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/UI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UI.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/UIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -52,7 +44,7 @@
           <entry key="fxml" value="84" />
           <entry key="gitattributes" value="3" />
           <entry key="gitignore" value="8" />
-          <entry key="java" value="1057" />
+          <entry key="java" value="1058" />
           <entry key="json" value="1" />
           <entry key="png" value="7" />
           <entry key="properties" value="11" />
@@ -66,7 +58,7 @@
           <entry key="CSS" value="4" />
           <entry key="CSV" value="48" />
           <entry key="Image" value="7" />
-          <entry key="JAVA" value="1057" />
+          <entry key="JAVA" value="1058" />
           <entry key="JSON" value="1" />
           <entry key="PLAIN_TEXT" value="53" />
           <entry key="Properties" value="11" />
@@ -83,7 +75,7 @@
           <entry key="java" value="31790" />
           <entry key="json" value="5" />
           <entry key="properties" value="1" />
-          <entry key="txt" value="653" />
+          <entry key="txt" value="674" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
@@ -92,7 +84,7 @@
           <entry key="CSV" value="4" />
           <entry key="JAVA" value="31786" />
           <entry key="JSON" value="5" />
-          <entry key="PLAIN_TEXT" value="709" />
+          <entry key="PLAIN_TEXT" value="730" />
           <entry key="Properties" value="1" />
           <entry key="RegExp" value="4" />
           <entry key="XML" value="2537" />
@@ -103,10 +95,17 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/todo.txt">
+        <entry file="file://$PROJECT_DIR$/src/utils/Config.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="4" column="42" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
+            <state relative-caret-position="238">
+              <caret line="42" column="49" selection-start-line="42" selection-start-column="49" selection-end-line="42" selection-end-column="49" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#855#856#0" expanded="true" />
+                <element signature="e#913#914#0" expanded="true" />
+                <element signature="e#966#967#0" expanded="true" />
+                <element signature="e#1025#1026#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -192,8 +191,8 @@
         <option value="$PROJECT_DIR$/src/ui/UIController.java" />
         <option value="$PROJECT_DIR$/src/config.properties" />
         <option value="$PROJECT_DIR$/src/bezier/Bezier.java" />
-        <option value="$PROJECT_DIR$/src/utils/Config.java" />
         <option value="$PROJECT_DIR$/todo.txt" />
+        <option value="$PROJECT_DIR$/src/utils/Config.java" />
       </list>
     </option>
   </component>
@@ -229,7 +228,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;pointRo&#9;PSI&#9;JAVA://ui.PointRow" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542507661880" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542508795304" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -288,7 +287,14 @@
       <option name="project" value="LOCAL" />
       <updated>1542489236852</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="config file">
+      <created>1542508439024</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1542508439024</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -302,7 +308,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Structure" order="0" sideWeight="0.502439" side_tool="true" weight="0.24966443" />
       <window_info id="Image Layers" order="1" />
@@ -313,14 +318,14 @@
       <window_info content_ui="combo" id="Project" order="6" sideWeight="0.49756098" weight="0.25302014" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32963988" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4986577" visible="true" weight="0.030470913" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4986577" weight="0.030470913" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.41135734" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.26592797" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.11080332" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5013423" side_tool="true" weight="0.2700831" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.32963988" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="9" visible="true" weight="0.32963988" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32963988" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -368,7 +373,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="delete out dir" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete out dir" />
+    <MESSAGE value="config file" />
+    <option name="LAST_COMMIT_MESSAGE" value="config file" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -607,24 +614,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/todo.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="42" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/Config.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
-          <caret line="39" column="49" selection-start-line="39" selection-start-column="49" selection-end-line="39" selection-end-column="49" />
+          <caret line="42" column="49" selection-start-line="42" selection-start-column="49" selection-end-line="42" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#855#856#0" expanded="true" />
             <element signature="e#913#914#0" expanded="true" />
             <element signature="e#966#967#0" expanded="true" />
-            <element signature="e#1012#1013#0" expanded="true" />
+            <element signature="e#1025#1026#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/todo.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="42" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
         </state>
       </provider>
     </entry>
