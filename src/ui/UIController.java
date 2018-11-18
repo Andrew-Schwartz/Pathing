@@ -2,7 +2,6 @@ package ui;
 
 import bezier.Bezier;
 import bezier.Point;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -20,14 +19,13 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 import javafx.stage.FileChooser;
 import utils.CSVWriter;
+import utils.Config;
 import utils.UnitConverter;
-import utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class UIController {
     @FXML
@@ -62,7 +60,6 @@ public class UIController {
 
     @FXML
     private CheckBox cfgDrawWheels;
-    //TODO make a config file
 
     private static Image fieldImage = new Image("images/FRC2018.png");
     private ArrayList<Point> controlPoints, path;
@@ -73,9 +70,12 @@ public class UIController {
             dragStartIndex,
             currentState;
     private PointRow draggedRow;
+    public static Config config;
 
     @FXML
     private void initialize() {
+        config = new Config("src/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgTime, cfgRadius, cfgWidth);
+
         imgField.setImage(fieldImage);
 //        imgField.setFitWidth(imageWidth());
 //        imgField.setFitHeight(imageHeight());
@@ -202,9 +202,8 @@ public class UIController {
         rows.forEach(row -> controlPoints.add(row.getPoint()));
         rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
 
-        path = Bezier.generate(controlPoints, Utils.parseDouble(cfgMaxVel.getText().trim()),
-                Utils.parseDouble(cfgMaxAccel.getText().trim()), 15);
-//        path = Bezier.motion(path, Utils.parseDouble(cfgLength.getText().trim()));
+        path = Bezier.generate(controlPoints);
+        Bezier.motion(path);
 
         polyPos.getPoints().clear();
         path.forEach(point -> polyPos.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
@@ -214,8 +213,8 @@ public class UIController {
         polyLeft.getPoints().clear();
         polyRight.getPoints().clear();
 
-        if (cfgDrawWheels.isSelected()) {
-            final double dist = UnitConverter.inchesToPixels(Utils.parseDouble(cfgWidth.getText()) / 2);
+        if (config.getBooleanProperty("draw_wheels")) {
+            final double dist = UnitConverter.inchesToPixels(config.getDoubleProperty("width") / 2);
             for (Point point : path) {
                 double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(point.getHeading()));
                 polyLeft.getPoints().addAll(point.getX() - dist * Math.cos(angle),
@@ -243,7 +242,7 @@ public class UIController {
 
     private void graphVels() {
         if (!tabVel.isSelected()) return;
-        Bezier.motion(path, Utils.parseDouble(cfgWidth.getText().trim()), Utils.parseDouble(cfgRadius.getText().trim()));
+        Bezier.motion(path);
         chtVel.getData().clear();
         XYChart.Series<Double, Double> points = new XYChart.Series<>();
         for (int i = 0; i < path.size(); i++) {
@@ -365,12 +364,6 @@ public class UIController {
                 case DOWN:
                     rows.get(Math.min(rows.size() - 1, focusedIndex + 1)).getAllNodes().get(focusedColumn).requestFocus();
                     break;
-//                case LEFT:
-//                    rows.get(focusedIndex).getAllNodes().get(Math.max(0, focusedColumn - 1)).requestFocus();
-//                    break;
-//                case RIGHT:
-//                    rows.get(focusedIndex).getAllNodes().get(Math.min(rows.get(0).getAllNodes().size() - 1, focusedColumn + 1)).requestFocus();
-//                    break;
             }
         }
     }
@@ -399,7 +392,7 @@ public class UIController {
 
     @FXML
     private void mnuExport() { //TalonSRX uses position, velocity to csv
-        Bezier.motion(path, Utils.parseDouble(cfgWidth.getText()), Utils.parseDouble(cfgRadius.getText().trim()));
+        Bezier.motion(path);
         try (CSVWriter leftWriter = new CSVWriter("src/csv/leftpath.csv");
              CSVWriter rightWriter = new CSVWriter("src/csv/rightpath.csv")) {
             leftWriter.writePoints("Dist,Vel,Heading,Last", path,
@@ -414,24 +407,6 @@ public class UIController {
             e.printStackTrace();
         }
     }
-
-    @FXML
-    private void mnuExportCode() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("private RobotGrid SPLINENAME() {\n");
-        sb.append("\tRobotGrid grid = new RobotGrid(");
-
-        ArrayList<Point> intercepts = (ArrayList<Point>) controlPoints.stream().filter(Point::isIntercept).collect(Collectors.toList());
-        for (Point p : intercepts) {
-
-        }
-
-        for (int i = 0; i < controlPoints.size(); i++) {
-//            if ()
-        }
-    }
-
-    //TODO auto generate 90 degree curves etc. maybe
 
     public static double imageHeight() {
         return fieldImage.getHeight();
@@ -473,7 +448,9 @@ public class UIController {
         updatePolyline();
     }
 
-    public void mnuImportCode(ActionEvent event) {
+    @FXML
+    private void configUpdate() {
+        config.updateConfig();
     }
 }
 

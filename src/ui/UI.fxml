@@ -3,32 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Polyline?>
-
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <VBox fx:id="root" onKeyReleased="#keyReleasedEvent" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.UIController">
     <MenuBar>
         <menus>
             <Menu mnemonicParsing="false" text="Files">
-                <MenuItem accelerator="Shortcut+S" onAction="#mnuExport" text="Export" />
-                <MenuItem accelerator="Shortcut+E" onAction="#mnuExportCode" text="Export (code)" />
-                <MenuItem accelerator="Shortcut+O" onAction="#mnuImportCode" text="Import (code)" />
+                <MenuItem accelerator="Shortcut+E" onAction="#mnuExport" text="Export" />
                 <MenuItem accelerator="Shortcut+I" onAction="#mnuOpenImage" text="Set Image" />
             </Menu>
             <Menu mnemonicParsing="false" text="Ease">
@@ -58,17 +41,19 @@
                 <!--<TextField fx:id="txtMaxAngleDelta" GridPane.columnIndex="1" GridPane.rowIndex="1" />-->
 
                 <Label text="Wheel Radius (in)" />
-                <TextField fx:id="cfgRadius" text="3" GridPane.columnIndex="1" />
+                <TextField fx:id="cfgRadius" onKeyReleased="#configUpdate" accessibleRoleDescription="wheel_radius" GridPane.columnIndex="1" />
                 <Label text="Robot Width (in)" GridPane.rowIndex="1" />
-                <TextField fx:id="cfgWidth" text="33" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="cfgWidth" onKeyReleased="#configUpdate" accessibleRoleDescription="width" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Label text="Robot Length (in)" GridPane.rowIndex="2" />
-                <TextField fx:id="cfgLength" text="28" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="cfgLength" onKeyReleased="#configUpdate" accessibleRoleDescription="length" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label text="Max Velocity" GridPane.rowIndex="3" />
-                <TextField fx:id="cfgMaxVel" text="16" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <TextField fx:id="cfgMaxVel" onKeyReleased="#configUpdate" accessibleRoleDescription="max_vel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <Label text="Max Acceleration" GridPane.rowIndex="4" />
-                <TextField fx:id="cfgMaxAccel" text="4" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label text="Draw wheel paths?" GridPane.rowIndex="5"/>
-                <CheckBox fx:id="cfgDrawWheels" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <TextField fx:id="cfgMaxAccel" onKeyReleased="#configUpdate" accessibleRoleDescription="max_accel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label text="Time for path" GridPane.rowIndex="5" />
+                <TextField fx:id="cfgTime" onKeyReleased="#configUpdate" accessibleRoleDescription="time" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label text="Draw wheel paths?" GridPane.rowIndex="6"/>
+                <CheckBox fx:id="cfgDrawWheels" onAction="#configUpdate" accessibleRoleDescription="draw_wheels" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                 <!--<Button onAction="#angles" text="Angles" GridPane.rowIndex="5" />-->
             </GridPane>

@@ -12,4 +12,16 @@ public class Utils {
     public static double parseDouble(String s) {
         return parseDouble(s, 0);
     }
+
+    public static boolean parseBoolean(String s, boolean defaultVal) {
+        try {
+            return Boolean.parseBoolean(s);
+        } catch (Exception e) {
+            return defaultVal;
+        }
+    }
+
+    public static boolean parseBoolean(String s) {
+        return parseBoolean(s, false);
+    }
 }

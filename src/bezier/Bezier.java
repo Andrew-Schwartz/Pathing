@@ -1,5 +1,6 @@
 package bezier;
 
+import ui.UIController;
 import utils.UnitConverter;
 
 import java.util.ArrayList;
@@ -7,12 +8,15 @@ import java.util.stream.Collectors;
 
 public class Bezier {
 
-    public static ArrayList<Point> generate(ArrayList<Point> controlPoints, double maxVel, double maxAccel, double time) {
+    public static ArrayList<Point> generate(ArrayList<Point> controlPoints) {
         ArrayList<Point> pathPoints = new ArrayList<>();
 
         ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()
                 .filter(Point::isIntercept)
                 .collect(Collectors.toList());
+        double maxVel = UIController.config.getDoubleProperty("max_vel"),
+                maxAccel = UIController.config.getDoubleProperty("max_accel"),
+                time = UIController.config.getDoubleProperty("time");
 
         time /= throughPoints.size() - 1;
         double startMaxVel = maxVel;
@@ -61,10 +65,10 @@ public class Bezier {
      * <p>Vl = w * (R - l/2)</p>
      *
      * @param path        contains x,y,theta coordinates of each point, and the target velocity to travel at (if going in a line)
-     * @param axleLength  width of robot, specifically dist between left and right wheels, in inches
-     * @param wheelRadius radius of wheel in inches
      */
-    public static void motion(ArrayList<Point> path, double axleLength, double wheelRadius) {
+    public static void motion(ArrayList<Point> path) {
+        double axleLength = UIController.config.getDoubleProperty("width"),
+                wheelRadius = UIController.config.getDoubleProperty("wheel_radius");
         double halfWidth = axleLength / 2;
         for (int i = 0; i < path.size() - 2; i++) {
 //            Point point = path.get(i);

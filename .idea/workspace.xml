@@ -2,21 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2169464d-dead-4441-9174-5b56e1111ff9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/Config.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Bezier.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Bezier.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Point.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/bezier/Point.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/ui/PointMenuResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/ui/PointMenuResult.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/ui/PointRow.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/ui/PointRow.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/ui/UIController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/ui/UIController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/RobotPathing/ui/UIController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/RobotPathing/ui/UIController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bezier/Bezier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Bezier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bezier/Point.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Point.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/csv/leftpath.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/csv/leftpath.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/csv/rightpath.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/csv/rightpath.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/PointMenuResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/PointMenuResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/UI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UI.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/UIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/UnitConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/UnitConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -51,16 +45,18 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
+          <entry key="cfg" value="28" />
           <entry key="class" value="13" />
           <entry key="css" value="4" />
           <entry key="csv" value="49" />
-          <entry key="fxml" value="70" />
+          <entry key="fxml" value="84" />
           <entry key="gitattributes" value="3" />
-          <entry key="gitignore" value="7" />
-          <entry key="java" value="942" />
+          <entry key="gitignore" value="8" />
+          <entry key="java" value="1057" />
           <entry key="json" value="1" />
           <entry key="png" value="7" />
-          <entry key="txt" value="10" />
+          <entry key="properties" value="11" />
+          <entry key="txt" value="13" />
           <entry key="xml" value="2" />
         </counts>
       </usages-collector>
@@ -70,32 +66,36 @@
           <entry key="CSS" value="4" />
           <entry key="CSV" value="48" />
           <entry key="Image" value="7" />
-          <entry key="JAVA" value="942" />
+          <entry key="JAVA" value="1057" />
           <entry key="JSON" value="1" />
-          <entry key="PLAIN_TEXT" value="21" />
-          <entry key="XML" value="72" />
+          <entry key="PLAIN_TEXT" value="53" />
+          <entry key="Properties" value="11" />
+          <entry key="XML" value="86" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
+          <entry key="cfg" value="29" />
           <entry key="css" value="105" />
           <entry key="csv" value="4" />
-          <entry key="fxml" value="2381" />
+          <entry key="fxml" value="2537" />
           <entry key="gitignore" value="27" />
-          <entry key="java" value="29619" />
+          <entry key="java" value="31790" />
           <entry key="json" value="5" />
-          <entry key="txt" value="439" />
+          <entry key="properties" value="1" />
+          <entry key="txt" value="653" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="105" />
           <entry key="CSV" value="4" />
-          <entry key="JAVA" value="29615" />
+          <entry key="JAVA" value="31786" />
           <entry key="JSON" value="5" />
-          <entry key="PLAIN_TEXT" value="466" />
+          <entry key="PLAIN_TEXT" value="709" />
+          <entry key="Properties" value="1" />
           <entry key="RegExp" value="4" />
-          <entry key="XML" value="2381" />
+          <entry key="XML" value="2537" />
         </counts>
       </usages-collector>
     </session>
@@ -103,14 +103,10 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
+        <entry file="file://$PROJECT_DIR$/todo.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="31" selection-start-line="31" selection-end-line="31" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <marker date="1542416483531" expanded="true" signature="15882:15924" ph="..." />
-              </folding>
+            <state relative-caret-position="68">
+              <caret line="4" column="42" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
             </state>
           </provider>
         </entry>
@@ -127,12 +123,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>new Point</find>
-      <find>makeAll</find>
-      <find>newpoint</find>
-      <find>+ 2</find>
-      <find>init</find>
-      <find>make</find>
       <find>max</find>
       <find>addSaved</find>
       <find>TOD</find>
@@ -156,9 +146,21 @@
       <find>parseDo</find>
       <find>rotateAngle</find>
       <find>csvw</find>
+      <find>con</find>
+      <find>config</find>
+      <find>cfg.*\.getTe</find>
+      <find>cfg[^&quot;]+\.</find>
+      <find>config.</find>
+      <find>cfg.*\.</find>
+      <find>&quot;dra</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Andrew-Schwartz &lt;andrewschwartz59@gmail.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
@@ -178,17 +180,20 @@
         <option value="$PROJECT_DIR$/src/utils/Unit.java" />
         <option value="$PROJECT_DIR$/src/bezier/RunnableBezier.java" />
         <option value="$PROJECT_DIR$/src/bezier/RunnableBezierGenerate.java" />
-        <option value="$PROJECT_DIR$/src/ui/UI.fxml" />
-        <option value="$PROJECT_DIR$/src/utils/Utils.java" />
         <option value="$PROJECT_DIR$/src/ui/PointRow.java" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/ui/PointMenuResult.java" />
         <option value="$PROJECT_DIR$/src/utils/UnitConverter.java" />
-        <option value="$PROJECT_DIR$/src/bezier/Bezier.java" />
-        <option value="$PROJECT_DIR$/todo.txt" />
-        <option value="$PROJECT_DIR$/src/ui/UIController.java" />
         <option value="$PROJECT_DIR$/src/config.json" />
         <option value="$PROJECT_DIR$/src/bezier/Point.java" />
+        <option value="$PROJECT_DIR$/src/config.cfg" />
+        <option value="$PROJECT_DIR$/src/utils/Utils.java" />
+        <option value="$PROJECT_DIR$/src/ui/UI.fxml" />
+        <option value="$PROJECT_DIR$/src/ui/UIController.java" />
+        <option value="$PROJECT_DIR$/src/config.properties" />
+        <option value="$PROJECT_DIR$/src/bezier/Bezier.java" />
+        <option value="$PROJECT_DIR$/src/utils/Config.java" />
+        <option value="$PROJECT_DIR$/todo.txt" />
       </list>
     </option>
   </component>
@@ -203,7 +208,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -220,11 +224,12 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;pointRo&#9;PSI&#9;JAVA://ui.PointRow" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542489221830" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542507661880" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -276,9 +281,17 @@
       <option name="presentableId" value="Default" />
       <updated>1535305655845</updated>
     </task>
+    <task id="LOCAL-00001" summary="delete out dir">
+      <created>1542489236852</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1542489236852</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
-  <component name="TodoView">
+  <component name="TodoView" selected-index="2">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -300,7 +313,7 @@
       <window_info content_ui="combo" id="Project" order="6" sideWeight="0.49756098" weight="0.25302014" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32963988" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4986577" visible="true" weight="0.029085873" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4986577" visible="true" weight="0.030470913" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.41135734" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -322,6 +335,7 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.css" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.cfg" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -352,6 +366,10 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="delete out dir" />
+    <option name="LAST_COMMIT_MESSAGE" value="delete out dir" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -361,6 +379,12 @@
           <properties />
           <option name="timeStamp" value="7" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/ui/UIController.java</url>
+          <line>215</line>
+          <properties />
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -368,7 +392,10 @@
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
-        <watch expression="rows.get(index).getPoint().isOverrideMaxVel()" language="JAVA" />
+        <watch expression="config.getBooleanProperty(&quot;draw_wheels&quot;)" language="JAVA" />
+        <watch expression="config.getProperty(&quot;draw_wheels&quot;)" language="JAVA" />
+        <watch expression="Boolean.parseBoolean(config.getProperty(&quot;draw_wheels&quot;))" language="JAVA" />
+        <watch expression="Utils.parseBoolean(config.getProperty(&quot;draw_wheels&quot;))" language="JAVA" custom="utils.Utils" />
       </configuration>
     </watches-manager>
   </component>
@@ -382,6 +409,38 @@
       </expression>
     </expressions>
     <expressions id="watch">
+      <expression>
+        <expression-string>Utils.parseBoolean(config.getProperty(&quot;draw_wheels&quot;))</expression-string>
+        <language-id>JAVA</language-id>
+        <custom-info>utils.Utils</custom-info>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Utils.parseBoolean(&quot;true&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <custom-info>utils.Utils</custom-info>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Boolean.parseBoolean(config.getProperty(&quot;draw_wheels&quot;))</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Boolean.parseBoolean(&quot;true&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>config.getProperty(&quot;draw_wheels&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>config.getBooleanProperty(&quot;draw_wheels&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>rows.get(index).getPoint().isOverrideMaxVel()</expression-string>
         <language-id>JAVA</language-id>
@@ -402,37 +461,6 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>row.getXValue()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>UnitConverter.rotateAngle(-Math.toRadians(point.heading), -90)</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>point.heading</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>Math.toRadians(point.heading)</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>Math.cos(UnitConverter.rotateAngle(-point.heading, -90))</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>UnitConverter.rotateAngle(-point.heading, -90)</expression-string>
-        <language-id>JAVA</language-id>
-        <custom-info>org.omg.CORBA.UNKNOWN,oracle.jrockit.jfr.DCmd</custom-info>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
@@ -445,13 +473,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Dog.java" />
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="13" column="60" selection-start-line="13" selection-start-column="60" selection-end-line="13" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/CSVWriter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -462,25 +483,6 @@
     <entry file="file://$PROJECT_DIR$/src/csv/path.csv" />
     <entry file="file://$PROJECT_DIR$/src/utils/CSVReader.java" />
     <entry file="file://$PROJECT_DIR$/src/bezier/RunnableBezierGenerate.java" />
-    <entry file="file://$PROJECT_DIR$/src/utils/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="15" selection-start-line="12" selection-start-column="15" selection-end-line="12" selection-end-column="15" />
-          <folding>
-            <element signature="e#292#293#0" expanded="true" />
-            <element signature="e#325#326#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/UI.fxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="73" column="23" lean-forward="true" selection-start-line="73" selection-start-column="23" selection-end-line="73" selection-end-column="23" />
-        </state>
-      </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ui/PointRow.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="316">
@@ -519,37 +521,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/todo.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="73" lean-forward="true" selection-start-line="5" selection-start-column="73" selection-end-line="5" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/config.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="2" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bezier/Bezier.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="95" column="35" selection-start-line="95" selection-start-column="35" selection-end-line="95" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="8" lean-forward="true" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.json" />
     <entry file="file://$PROJECT_DIR$/src/csv/leftpath.csv">
       <provider selected="true" editor-type-id="csv-text-editor">
         <state relative-caret-position="20">
@@ -569,14 +541,90 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
+        <state relative-caret-position="119">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.cfg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="19" lean-forward="true" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.cfg">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
+          <folding>
+            <element signature="e#612#613#0" expanded="true" />
+            <element signature="e#657#658#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/UI.fxml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="58" column="108" selection-start-line="58" selection-start-column="108" selection-end-line="58" selection-end-column="108" />
+        </state>
+      </provider>
+      <provider editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/bezier/Bezier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="744">
+          <caret line="68" column="54" lean-forward="true" selection-start-line="68" selection-start-column="54" selection-end-line="68" selection-end-column="54" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1542416483531" expanded="true" signature="15882:15924" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/config.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="7" lean-forward="true" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="215" selection-start-line="215" selection-end-line="215" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/Config.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="39" column="49" selection-start-line="39" selection-start-column="49" selection-end-line="39" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#855#856#0" expanded="true" />
+            <element signature="e#913#914#0" expanded="true" />
+            <element signature="e#966#967#0" expanded="true" />
+            <element signature="e#1012#1013#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/todo.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="42" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
         </state>
       </provider>
     </entry>
