@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
-<VBox fx:id="root" onKeyReleased="#keyReleasedEvent" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.UIController">
+<VBox fx:id="root" onKeyReleased="#keyReleasedEvent" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.UIController">
     <MenuBar>
         <menus>
             <Menu mnemonicParsing="false" text="Files">
@@ -41,19 +40,19 @@
                 <!--<TextField fx:id="txtMaxAngleDelta" GridPane.columnIndex="1" GridPane.rowIndex="1" />-->
 
                 <Label text="Wheel Radius (in)" />
-                <TextField fx:id="cfgRadius" onKeyReleased="#configUpdate" accessibleRoleDescription="wheel_radius" GridPane.columnIndex="1" />
+                <TextField fx:id="cfgRadius" accessibleRoleDescription="wheel_radius" onKeyReleased="#configUpdate" GridPane.columnIndex="1" />
                 <Label text="Robot Width (in)" GridPane.rowIndex="1" />
-                <TextField fx:id="cfgWidth" onKeyReleased="#configUpdate" accessibleRoleDescription="width" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="cfgWidth" accessibleRoleDescription="width" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Label text="Robot Length (in)" GridPane.rowIndex="2" />
-                <TextField fx:id="cfgLength" onKeyReleased="#configUpdate" accessibleRoleDescription="length" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label text="Max Velocity" GridPane.rowIndex="3" />
-                <TextField fx:id="cfgMaxVel" onKeyReleased="#configUpdate" accessibleRoleDescription="max_vel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <TextField fx:id="cfgMaxVel" accessibleRoleDescription="max_vel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <Label text="Max Acceleration" GridPane.rowIndex="4" />
-                <TextField fx:id="cfgMaxAccel" onKeyReleased="#configUpdate" accessibleRoleDescription="max_accel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="cfgMaxAccel" accessibleRoleDescription="max_accel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="Time for path" GridPane.rowIndex="5" />
-                <TextField fx:id="cfgTime" onKeyReleased="#configUpdate" accessibleRoleDescription="time" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <Label text="Draw wheel paths?" GridPane.rowIndex="6"/>
-                <CheckBox fx:id="cfgDrawWheels" onAction="#configUpdate" accessibleRoleDescription="draw_wheels" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <TextField fx:id="cfgTime" accessibleRoleDescription="time" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label text="Draw wheel paths?" GridPane.rowIndex="6" />
+                <CheckBox fx:id="cfgDrawWheels" accessibleRoleDescription="draw_wheels" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                 <!--<Button onAction="#angles" text="Angles" GridPane.rowIndex="5" />-->
             </GridPane>
@@ -69,7 +68,7 @@
                 <Label alignment="CENTER" prefWidth="100" text="Intercept?" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                 <Label alignment="CENTER" prefWidth="100" text="Velocity" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                 <Label alignment="CENTER" prefWidth="100" text="Menu" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                <ScrollPane hbarPolicy="NEVER" vbarPolicy="ALWAYS" maxWidth="550" GridPane.columnSpan="5" GridPane.rowIndex="2">
+                <ScrollPane hbarPolicy="NEVER" maxWidth="550" vbarPolicy="ALWAYS" GridPane.columnSpan="5" GridPane.rowIndex="2">
                     <GridPane fx:id="grdPoints" hgap="10" vgap="5">
                         <padding><Insets left="10" /></padding>
                         <columnConstraints>
@@ -88,21 +87,29 @@
             <Tab closable="false" text="Position">
                 <AnchorPane onMouseMoved="#mouseMoveEvent" onMouseReleased="#clickEvent">
                     <ImageView fx:id="imgField" />
-                    <Polyline fx:id="polyPos" stroke="BLUE" strokeWidth="2"/>
-                    <Polyline fx:id="polyLeft" stroke="DARKGREEN"/>
-                    <Polyline fx:id="polyRight" stroke="DARKGREEN"/>
+                    <Polyline fx:id="polyPos" stroke="BLUE" strokeWidth="2" />
+                    <Polyline fx:id="polyLeft" stroke="DARKGREEN" />
+                    <Polyline fx:id="polyRight" stroke="DARKGREEN" />
                     <Circle fx:id="cursorHighlight" fill="#ff650080" radius="3" />
                     <Circle fx:id="pointHighlight" fill="#00970380" radius="3" />
                 </AnchorPane>
             </Tab>
-            <Tab closable="false" text="Velocity" fx:id="tabVel">
+            <Tab fx:id="tabVel" closable="false" text="Velocity">
                 <AnchorPane>
-                    <LineChart fx:id="chtVel" animated="false" createSymbols="false" legendVisible="false" AnchorPane.topAnchor="10.0">
+                    <LineChart fx:id="chtLeft" title="Left" animated="false" createSymbols="false" legendVisible="true" AnchorPane.topAnchor="10.0">
                         <xAxis>
                             <NumberAxis label="Seconds" />
                         </xAxis>
                         <yAxis>
-                            <NumberAxis label="Velocity (??? per sec)" />
+                            <NumberAxis label="Pos, Vel, Accel" />
+                        </yAxis>
+                    </LineChart>
+                    <LineChart fx:id="chtRight" title="Right" animated="false" createSymbols="false" legendVisible="true" AnchorPane.leftAnchor="500.0" AnchorPane.topAnchor="10.0">
+                        <xAxis>
+                            <NumberAxis label="Seconds" />
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Pos, Vel, Accel" />
                         </yAxis>
                     </LineChart>
                 </AnchorPane>

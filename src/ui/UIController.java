@@ -42,7 +42,7 @@ public class UIController {
     private Polyline polyPos, polyLeft, polyRight;
 
     @FXML
-    private LineChart<Double, Double> chtVel; //TODO add accel chart
+    private LineChart<Double, Double> chtLeft, chtRight;
 
     @FXML
     private ImageView imgField;
@@ -223,6 +223,7 @@ public class UIController {
                         imageHeight() - (point.getY() - dist * Math.sin(angle)));
             }
         }
+//        polyLeft.getPoints().addAll(path.stream().mapToDouble(value -> value.getX()));
 
         if (polyPos.getPoints().isEmpty())         //polyline with no points doesn't redraw
             polyPos.getPoints().addAll(0.0, 0.0);  //so this does
@@ -230,25 +231,36 @@ public class UIController {
             polyLeft.getPoints().addAll(0.0, 0.0);
         if (polyRight.getPoints().isEmpty())
             polyRight.getPoints().addAll(0.0, 0.0);
-
-//        double leftX = path.get(0).getX() + -1/Math.cos(toCoordAngle.apply(path.get(0).getHeading())) * dist,
-//                leftY = path.get(0).getY() + -1/Math.sin(toCoordAngle.apply(path.get(0).getHeading())) * dist;
-        //        for (Point p : path) {
-//            polyLeft.getPoints().addAll(leftX, imageHeight() - leftY);
-//            leftX += p.getTargetVelocity() * Math.cos(toCoordAngle.apply(p.getHeading()));
-//            leftY += p.getTargetVelocity() * Math.sin(toCoordAngle.apply(p.getHeading()));
-//        }
     }
 
     private void graphVels() {
         if (!tabVel.isSelected()) return;
         Bezier.motion(path);
-        chtVel.getData().clear();
-        XYChart.Series<Double, Double> points = new XYChart.Series<>();
+        chtLeft.getData().clear();
+        chtRight.getData().clear();
+        XYChart.Series<Double, Double> leftPos = new XYChart.Series<>(),
+                leftVel = new XYChart.Series<>(),
+                leftAccel = new XYChart.Series<>(),
+                rightPos = new XYChart.Series<>(),
+                rightVel = new XYChart.Series<>(),
+                rightAccel = new XYChart.Series<>();
+        leftPos.setName("pos");
+        leftVel.setName("vel");
+        leftAccel.setName("accel");
+        rightPos.setName("pos");
+        rightVel.setName("vel");
+        rightAccel.setName("accel");
         for (int i = 0; i < path.size(); i++) {
-            points.getData().add(new XYChart.Data<>(15.0 * i / path.size(), path.get(i).getTargetVelocity()));
+            double curTime = UIController.config.getDoubleProperty("time") * i / path.size();
+            leftPos.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftPos()));
+            leftVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftVel()));
+            rightPos.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightPos()));
+            rightVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightVel()));
+            leftAccel.getData().add(new XYChart.Data<>(curTime, i == 0 ? 0 : path.get(i).getLeftVel() - path.get(i - 1).getLeftVel()));
+            rightAccel.getData().add(new XYChart.Data<>(curTime, i == 0 ? 0 : path.get(i).getRightVel() - path.get(i - 1).getRightVel()));
         }
-        chtVel.getData().add(points);
+        chtLeft.getData().addAll(leftPos, leftVel, leftAccel);
+        chtRight.getData().addAll(rightPos, rightVel, rightAccel);
     }
 
     @FXML

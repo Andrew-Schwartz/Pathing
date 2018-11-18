@@ -9,14 +9,14 @@ import java.util.stream.Collectors;
 public class Bezier {
 
     public static ArrayList<Point> generate(ArrayList<Point> controlPoints) {
-        ArrayList<Point> pathPoints = new ArrayList<>();
-
-        ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()
-                .filter(Point::isIntercept)
-                .collect(Collectors.toList());
         double maxVel = UIController.config.getDoubleProperty("max_vel"),
                 maxAccel = UIController.config.getDoubleProperty("max_accel"),
                 time = UIController.config.getDoubleProperty("time");
+
+        ArrayList<Point> pathPoints = new ArrayList<>();
+        ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()
+                .filter(Point::isIntercept)
+                .collect(Collectors.toList());
 
         time /= throughPoints.size() - 1;
         double startMaxVel = maxVel;
@@ -37,8 +37,8 @@ public class Bezier {
                 }
                 pathPoints.add(new Point(sumX, sumY));
                 //trapezoidal velocities
-                double up = Math.min(maxAccel * t * time + startVel, maxVel),              //TODO make going backwards work
-                        down = Math.min(-maxAccel * (t * time - time) + endVel, maxVel);    //TODO make work with dragging
+                double up = Math.min(maxAccel * t * time + startVel, maxVel),
+                        down = Math.min(-maxAccel * (t * time - time) + endVel, maxVel);
                 pathPoints.get(pathPoints.size() - 1).setTargetVelocity(Math.min(up, down));
             }
             if (pathPoints.get(pathPoints.size() - 1).getTargetVelocity() != endVel) {
@@ -64,25 +64,24 @@ public class Bezier {
      * <p>Vr = w * (R + l/2)</p>
      * <p>Vl = w * (R - l/2)</p>
      *
-     * @param path        contains x,y,theta coordinates of each point, and the target velocity to travel at (if going in a line)
+     * @param path contains x,y,theta coordinates of each point, and the target velocity to travel at (if going in a line)
      */
     public static void motion(ArrayList<Point> path) {
         double axleLength = UIController.config.getDoubleProperty("width"),
                 wheelRadius = UIController.config.getDoubleProperty("wheel_radius");
         double halfWidth = axleLength / 2;
-        for (int i = 0; i < path.size() - 2; i++) {
-//            Point point = path.get(i);
+        for (int i = 0; i < path.size(); i++) {
             double circleRadius;
-//            if (i + 2 > path.size()) {
-//                radius = radiusOfCircle(path.get(path.size() - 1), path.get(path.size() - 2), path.get(path.size() - 3));
-//            } else {
-            circleRadius = UnitConverter.pixelsToInches(radiusOfCircle(path.get(i), path.get(i + 1), path.get(i + 2)));
-//            }
+            if (i + 2 > path.size() - 1) {
+                circleRadius = radiusOfCircle(path.get(path.size() - 1), path.get(path.size() - 2), path.get(path.size() - 3));
+            } else {
+                circleRadius = UnitConverter.pixelsToInches(radiusOfCircle(path.get(i), path.get(i + 1), path.get(i + 2)));
+            }
             double leftVel, rightVel;
             if (Double.isInfinite(circleRadius)) { //linear path
                 leftVel = rightVel = UnitConverter.feetToInchs(path.get(i).getTargetVelocity());
                 System.out.printf("Point %-3d is infinite\n", i);
-            } else { //TODO more special cases for very small radii (ie, center inside of robot)
+            } else {
                 double angularVel = UnitConverter.feetToInchs(path.get(i).getTargetVelocity()) / circleRadius;
                 if (path.get(i + 2).getHeadingCartesian() < path.get(i).getHeadingCartesian()) { // turning left
                     leftVel = angularVel * (circleRadius - halfWidth);
@@ -113,6 +112,9 @@ public class Bezier {
                 b = circlePoints[1].distanceTo(circlePoints[2]),
                 c = circlePoints[2].distanceTo(circlePoints[0]);
         double s = (a + b + c) / 2;
+        a = Math.min(s, a);     //fix rounding error
+        b = Math.min(s, b);     //if any were > s, NaN results
+        c = Math.min(s, c);
         double area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
         return (a * b * c) / (4 * area);
     }
