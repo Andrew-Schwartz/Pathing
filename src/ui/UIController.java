@@ -56,7 +56,8 @@ public class UIController {
             cfgLength,
             cfgMaxVel,
             cfgMaxAccel,
-            cfgTime;
+            cfgTime,
+            cfgTimeStep;
 
     @FXML
     private CheckBox cfgDrawWheels;
@@ -74,7 +75,7 @@ public class UIController {
 
     @FXML
     private void initialize() {
-        config = new Config("src/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgTime, cfgRadius, cfgWidth);
+        config = new Config("src/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgTime, cfgRadius, cfgWidth, cfgTimeStep);
 
         imgField.setImage(fieldImage);
 //        imgField.setFitWidth(imageWidth());
@@ -92,7 +93,7 @@ public class UIController {
             dndHandling(draggedRow, false);
             updatePolyline();
         });
-        tabVel.setOnSelectionChanged(event -> graphVels());
+        tabVel.setOnSelectionChanged(event -> graphMotion());
     }
 
     @FXML
@@ -202,19 +203,19 @@ public class UIController {
         rows.forEach(row -> controlPoints.add(row.getPoint()));
         rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
 
-        path = Bezier.generate(controlPoints);
-        Bezier.motion(path);
+        path = Bezier.generateAll(controlPoints);
+//        Bezier.motion(path);
 
         polyPos.getPoints().clear();
         path.forEach(point -> polyPos.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
 
-        graphVels();
+        graphMotion();
 
         polyLeft.getPoints().clear();
         polyRight.getPoints().clear();
 
-        if (config.getBooleanProperty("draw_wheels")) {
-            final double dist = UnitConverter.inchesToPixels(config.getDoubleProperty("width") / 2);
+        if (Config.getBooleanProperty("draw_wheels")) {
+            final double dist = UnitConverter.inchesToPixels(Config.getDoubleProperty("width") / 2);
             for (Point point : path) {
                 double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(point.getHeading()));
                 polyLeft.getPoints().addAll(point.getX() - dist * Math.cos(angle),
@@ -223,7 +224,6 @@ public class UIController {
                         imageHeight() - (point.getY() - dist * Math.sin(angle)));
             }
         }
-//        polyLeft.getPoints().addAll(path.stream().mapToDouble(value -> value.getX()));
 
         if (polyPos.getPoints().isEmpty())         //polyline with no points doesn't redraw
             polyPos.getPoints().addAll(0.0, 0.0);  //so this does
@@ -233,9 +233,9 @@ public class UIController {
             polyRight.getPoints().addAll(0.0, 0.0);
     }
 
-    private void graphVels() {
+    private void graphMotion() {
         if (!tabVel.isSelected()) return;
-        Bezier.motion(path);
+//        Bezier.motion(path);
         chtLeft.getData().clear();
         chtRight.getData().clear();
         XYChart.Series<Double, Double> leftPos = new XYChart.Series<>(),
@@ -251,13 +251,15 @@ public class UIController {
         rightVel.setName("vel");
         rightAccel.setName("accel");
         for (int i = 0; i < path.size(); i++) {
-            double curTime = UIController.config.getDoubleProperty("time") * i / path.size();
-            leftPos.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftPos()));
+            double curTime = path.get(path.size() - 1).getTime() * i / path.size();
+            double curLeftAccel = i == 0 ? 0 : path.get(i).getLeftVel() - path.get(i - 1).getLeftVel(),
+                    curRightAccel = i == 0 ? 0 : path.get(i).getRightVel() - path.get(i - 1).getRightVel();
+            leftPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getLeftPos())));
             leftVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftVel()));
-            rightPos.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightPos()));
+            leftAccel.getData().add(new XYChart.Data<>(curTime, curLeftAccel / Config.getDoubleProperty("time_step")));
+            rightPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getRightPos())));
             rightVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightVel()));
-            leftAccel.getData().add(new XYChart.Data<>(curTime, i == 0 ? 0 : path.get(i).getLeftVel() - path.get(i - 1).getLeftVel()));
-            rightAccel.getData().add(new XYChart.Data<>(curTime, i == 0 ? 0 : path.get(i).getRightVel() - path.get(i - 1).getRightVel()));
+            rightAccel.getData().add(new XYChart.Data<>(curTime, curRightAccel / Config.getDoubleProperty("time_step")));
         }
         chtLeft.getData().addAll(leftPos, leftVel, leftAccel);
         chtRight.getData().addAll(rightPos, rightVel, rightAccel);
@@ -404,14 +406,14 @@ public class UIController {
 
     @FXML
     private void mnuExport() { //TalonSRX uses position, velocity to csv
-        Bezier.motion(path);
+//        Bezier.motion(path);
         try (CSVWriter leftWriter = new CSVWriter("src/csv/leftpath.csv");
              CSVWriter rightWriter = new CSVWriter("src/csv/rightpath.csv")) {
-            leftWriter.writePoints("Dist,Vel,Heading,Last", path,
+            leftWriter.writePoints("Dist,Vel,Heading", path,
                     point -> String.valueOf(point.getLeftPos()),
                     point -> String.valueOf(point.getLeftVel()),
                     point -> String.valueOf(point.getHeading()));
-            rightWriter.writePoints("Dist,Vel,Heading,Last", path,
+            rightWriter.writePoints("Dist,Vel,Heading", path,
                     point -> String.valueOf(point.getRightPos()),
                     point -> String.valueOf(point.getRightVel()),
                     point -> String.valueOf(point.getHeading()));

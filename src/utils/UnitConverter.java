@@ -11,10 +11,10 @@ public class UnitConverter {
     }
 
     public static double feetToPixels(double dist) {
-        return inchesToPixels(feetToInchs(dist));
+        return inchesToPixels(feetToInches(dist));
     }
 
-    public static double feetToInchs(double dist) {
+    public static double feetToInches(double dist) {
         return 12 * dist;
     }
 
@@ -31,8 +31,23 @@ public class UnitConverter {
     }
 
     /**
-     *
-     * @param angle angle to be rotated, in radians
+     * @param rotationalVel in rotations/sec
+     * @return linear velocity in (inches)/sec
+     */
+    public static double rotationalToLinear(double rotationalVel) {
+        return rotationalVel * Config.getDoubleProperty("wheel_radius") * Math.PI * 2;
+    }
+
+    /**
+     * @param linearVel in inches/sec
+     * @return rotational velocity in rotations/sec
+     */
+    public static double linearToRotational(double linearVel) {
+        return linearVel / (Config.getDoubleProperty("wheel_radius") * Math.PI * 2);
+    }
+
+    /**
+     * @param angle   angle to be rotated, in radians
      * @param degrees number of degrees to rotate angle, in degrees. CCW is positive
      * @return rotated angle, in radians
      */
@@ -52,11 +67,6 @@ public class UnitConverter {
      * @return rotated angle in radians
      */
     public static double rotateRobotToCartesian(double angle) {
-        return rotateAngle(-angle, 90);
+        return rotateAngle(-angle, -90);
     }
-
-//    public static double inchesToScreenVert(double dist) {
-//        dist = UIController.imageHeight() - dist;
-//        return dist * UIController.imageHeight() / FIELD_LENGTH_INCHES;
-//    }
 }

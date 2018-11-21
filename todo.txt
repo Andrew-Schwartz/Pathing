@@ -1,0 +1,25 @@
+features
+[x] calculate velocity
+[x] config file
+[x] vel chart, one per wheel
+[x] generate curve according to time and time interval
+[/] redo velocity targeting (not always use full time)
+[/] make Config static
+[ ] thread drawing paths
+[ ] paths end according to dist traveled
+[ ] backwards path
+[ ] make polylines with map
+[ ] offset by length feature
+[ ] wheel paths based on vel and heading
+[ ] more special cases for velocity if center point is inside of robot
+[ ] add jerk config
+[ ] rotations to linear and vice versa not automatically do inches
+[ ] Path class, take some of the dumb parts of Point and put them where they make sense
+
+bugs
+[x] NaNs in velocity
+[x] config and textfields are empty -> NPE
+[x] position should be measured in feet on chart
+[x] accel on chart is wrong
+[/] vel being calculated wrong
+[ ] left and right path seem backwards

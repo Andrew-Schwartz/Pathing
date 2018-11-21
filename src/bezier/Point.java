@@ -1,13 +1,14 @@
 package bezier;
 
 import ui.UIController;
+import utils.Config;
 import utils.UnitConverter;
 import utils.Utils;
 
 public class Point {
     private double x, y;
     private boolean intercept;
-    private double targetVelocity;
+    private double targetVelocity, time, distance;
 
     private double leftPos, leftVel, rightPos, rightVel, heading;
     private boolean last = false;
@@ -82,8 +83,12 @@ public class Point {
         return theta;
     }
 
-    public void setHeading(double angleToNext) {
-        heading = angleToNext;
+    public void setHeading(double angle) {
+        heading = angle;
+    }
+
+    public void setHeadingTo(Point p) {
+        setHeading(angleTo(p));
     }
 
     /**
@@ -142,6 +147,26 @@ public class Point {
         return targetVelocity;
     }
 
+    public void setDistanceTo(Point p) {
+        setDistance(distanceTo(p));
+    }
+
+    public void setDistance(double dist) {
+        this.distance = dist;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setTime(double time) {
+        this.time = time;
+    }
+
+    public double getTime() {
+        return time;
+    }
+
     /**
      * sets the angular velocities of left and right wheels
      * @param leftVel rotations/second
@@ -152,10 +177,18 @@ public class Point {
         this.rightVel = rightVel;
     }
 
+    /**
+     *
+     * @return angular velocity in rotations/second
+     */
     public double getLeftVel() {
         return leftVel;
     }
 
+    /**
+     *
+     * @return angular velocity in rotations/second
+     */
     public double getRightVel() {
         return rightVel;
     }
@@ -167,11 +200,13 @@ public class Point {
 
     /**
      * sets the target positions for this point based on this point's velocity
-     * @param prevLeftPos left position of previous point
+ * @param prevLeftPos left position of previous point
      * @param prevRightPos left position of previous point
      */
     public void advancePos(double prevLeftPos, double prevRightPos) {
-        setPos(prevLeftPos + leftVel * 0.05, prevRightPos + rightVel * 0.05);
+        double timeStep = Config.getDoubleProperty("time_step");
+        setPos(prevLeftPos + UnitConverter.rotationalToLinear(leftVel) * timeStep,
+                prevRightPos + UnitConverter.rotationalToLinear(rightVel) * timeStep);
     }
 
     public double getLeftPos() {

@@ -51,8 +51,10 @@
                 <TextField fx:id="cfgMaxAccel" accessibleRoleDescription="max_accel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="Time for path" GridPane.rowIndex="5" />
                 <TextField fx:id="cfgTime" accessibleRoleDescription="time" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <Label text="Draw wheel paths?" GridPane.rowIndex="6" />
-                <CheckBox fx:id="cfgDrawWheels" accessibleRoleDescription="draw_wheels" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Label text="Time step" GridPane.rowIndex="6" />
+                <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Label text="Draw wheel paths?" GridPane.rowIndex="7" />
+                <CheckBox fx:id="cfgDrawWheels" accessibleRoleDescription="draw_wheels" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
                 <!--<Button onAction="#angles" text="Angles" GridPane.rowIndex="5" />-->
             </GridPane>
@@ -96,20 +98,20 @@
             </Tab>
             <Tab fx:id="tabVel" closable="false" text="Velocity">
                 <AnchorPane>
-                    <LineChart fx:id="chtLeft" title="Left" animated="false" createSymbols="false" legendVisible="true" AnchorPane.topAnchor="10.0">
+                    <LineChart fx:id="chtLeft" title="Left" animated="false" createSymbols="false" AnchorPane.topAnchor="10.0">
                         <xAxis>
                             <NumberAxis label="Seconds" />
                         </xAxis>
                         <yAxis>
-                            <NumberAxis label="Pos, Vel, Accel" />
+                            <NumberAxis label="Feet" />
                         </yAxis>
                     </LineChart>
-                    <LineChart fx:id="chtRight" title="Right" animated="false" createSymbols="false" legendVisible="true" AnchorPane.leftAnchor="500.0" AnchorPane.topAnchor="10.0">
+                    <LineChart fx:id="chtRight" title="Right" animated="false" createSymbols="false" AnchorPane.leftAnchor="500.0" AnchorPane.topAnchor="10.0">
                         <xAxis>
                             <NumberAxis label="Seconds" />
                         </xAxis>
                         <yAxis>
-                            <NumberAxis label="Pos, Vel, Accel" />
+                            <NumberAxis label="Feet" />
                         </yAxis>
                     </LineChart>
                 </AnchorPane>
