@@ -36,37 +36,39 @@ public class Bezier {
                 if (t == 0)
                     path.get(path.size() - 1).setIntercept(true); //start and end of each segment is at same point as an intercept
             }
-            path.get(path.size() - 1).setIntercept(true);
         }
+        if (path.isEmpty()) return new ArrayList<>();
+        path.get(0).setDistance(0);
+        path.get(path.size() - 1).setIntercept(true);
         for (int i = 0; i < path.size(); i++) {
             Point p = path.get(i);
-            if (i != path.size() - 1)
+            if (i != path.size() - 1) {
                 p.setHeadingTo(path.get(i + 1));
-            if (i != 0)
-                p.setDistanceTo(path.get(i - 1));
+            }
+            if (i != 0) {
+                p.setDistance(path.get(i - 1).getDistance() + p.distanceTo(path.get(i - 1)));
+//                p.setDistanceTo(path.get(i - 1));
+            }
         }
-        if (path.size() != 0) {
-            path.get(path.size() - 1).setHeading(path.get(path.size() - 2).getHeading());
-            path.get(0).setDistance(0);
-        }
-
+        path.get(path.size() - 1).setHeading(path.get(path.size() - 2).getHeading());
         return path;
     }
 
-    public static ArrayList<Double> trapezoidalTimes(ArrayList<Point> pathWithIntercepts) {
-        if (pathWithIntercepts.size() == 0) return new ArrayList<>();
+    public static ArrayList<Double> trapezoidalTimes(ArrayList<Point> pathXY) { //TODO work with end vels != 0
+        if (pathXY.isEmpty()) return new ArrayList<>();
         double velMax = Config.getDoubleProperty("max_vel"),
                 accelMax = Config.getDoubleProperty("max_accel");
         ArrayList<Double> times = new ArrayList<>();
-        ArrayList<Point> throughPoints = (ArrayList<Point>) pathWithIntercepts.stream()
+        ArrayList<Point> throughPoints = (ArrayList<Point>) pathXY.stream()
                 .filter(Point::isIntercept)
                 .collect(Collectors.toList());
         for (int j = 0; j < throughPoints.size() - 1; j++) {
-            double lengthOfCurve = pathWithIntercepts.get(j + 1).getDistance();
+            double lengthOfCurve = throughPoints.get(j + 1).getDistance() - throughPoints.get(j).getDistance();
+            lengthOfCurve = UnitConverter.pixelsToFeet(lengthOfCurve);
             double velInitial = 0; //TODO not just 0 -- pointrow.get(j).getPoint().isOverrideMaxVel()
             //if triangle, quadratic; if trapezoid vel. the smaller is the always the right one //TODO "ALWAYS"?
             double timeAccelTrapezoid = (velMax - velInitial) / accelMax; //t = deltaV / a
-            double timeAccelTriangle = quadratic(0.5 * accelMax, velInitial, -lengthOfCurve); //x = v0t + 1/2at^2
+            double timeAccelTriangle = quadratic(0.5 * accelMax, velInitial, -lengthOfCurve / 2); //x = v0t + 1/2at^2
             if (timeAccelTrapezoid < timeAccelTriangle) { //is a trapezoid
                 double timeConst = (lengthOfCurve - 2 * timeAccelTrapezoid * (velInitial + velMax)) / velMax;
                 times.add(timeAccelTrapezoid + timeConst + timeAccelTrapezoid);
@@ -81,7 +83,6 @@ public class Bezier {
     public static ArrayList<Point> generateWithVel(ArrayList<Point> controlPoints, ArrayList<Double> times) {
         double maxVel = Config.getDoubleProperty("max_vel"),
                 maxAccel = Config.getDoubleProperty("max_accel"),
-//                time = Config.getDoubleProperty("time"),
                 timeStep = Config.getDoubleProperty("time_step");
 
         ArrayList<Point> path = new ArrayList<>();
@@ -89,15 +90,17 @@ public class Bezier {
                 .filter(Point::isIntercept)
                 .collect(Collectors.toList());
 
-//        time /= throughPoints.size() - 1;
         double startMaxVel = maxVel;
         for (int j = 0; j < throughPoints.size() - 1; j++) {
             double startVel = throughPoints.get(j).getTargetVelocity(),
-                    endVel = throughPoints.get(j + 1).getTargetVelocity();
+                    endVel = throughPoints.get(j + 1).getTargetVelocity(); //problem is that is is being changed in prior runnings of this method
             if (controlPoints.get(j + 1).isOverrideMaxVel()) maxVel = Math.max(startVel, endVel);
             else maxVel = startMaxVel;
             double time = times.get(j);
-            for (double t = 0.0; t <= 1; t += 1. / (time / timeStep)) {
+//            for (double t = 0.0; t <= 1; t += 1. / (time / timeStep)) {
+            double precision = Math.ceil(time / timeStep);
+            for (int fakeT = 0; fakeT <= precision; fakeT++) {
+                double t = fakeT / precision;
                 double sumX = 0, sumY = 0;
                 double T = 1 - t;
                 int startPoint = controlPoints.indexOf(throughPoints.get(j));
@@ -118,17 +121,18 @@ public class Bezier {
                 throughPoints.get(j + 1).setTargetVelocity(path.get(path.size() - 1).getTargetVelocity());
             }
         }
+        if (path.isEmpty()) return new ArrayList<>();
+        path.get(0).setDistance(0);
         for (int i = 0; i < path.size(); i++) {
             Point p = path.get(i);
-            if (i != path.size() - 1)
+            if (i != path.size() - 1) {
                 p.setHeadingTo(path.get(i + 1));
-            if (i != 0)
-                p.setDistanceTo(path.get(i - 1));
+            }
+            if (i != 0) {
+                p.setDistance(path.get(i - 1).getDistance() + p.distanceTo(path.get(i - 1)));
+            }
         }
-        if (path.size() != 0) {
-            path.get(0).setDistance(0);
-            path.get(path.size() - 1).setHeading(path.get(path.size() - 2).getHeading());
-        }
+        path.get(path.size() - 1).setHeading(path.get(path.size() - 2).getHeading());
         return path;
     }
 
@@ -141,8 +145,8 @@ public class Bezier {
      * @param path contains x,y,theta coordinates of each point, and the target velocity to travel at (as if going in a line)
      */
     public static void motion(ArrayList<Point> path) {
-        double axleLength = Config.getDoubleProperty("width"),
-                wheelRadius = Config.getDoubleProperty("wheel_radius");
+        if (path.size() == 0) return;
+        double axleLength = Config.getDoubleProperty("width");
         double halfWidth = axleLength / 2;
         for (int i = 0; i < path.size(); i++) {
             int iAdjusted;

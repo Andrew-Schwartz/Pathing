@@ -57,7 +57,7 @@ public class UnitConverter {
         degrees = Math.toRadians(degrees);
         double newX = x * Math.cos(degrees) - y * Math.sin(degrees),
                 newY = y * Math.cos(degrees) + x * Math.sin(degrees);
-        return Math.atan2(newX, newY);
+        return Math.atan2(newY, newX);
     }
 
     /**
@@ -67,6 +67,6 @@ public class UnitConverter {
      * @return rotated angle in radians
      */
     public static double rotateRobotToCartesian(double angle) {
-        return rotateAngle(-angle, -90);
+        return rotateAngle(-angle, 90);
     }
 }

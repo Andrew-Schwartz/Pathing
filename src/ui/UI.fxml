@@ -12,6 +12,7 @@
             <Menu mnemonicParsing="false" text="Files">
                 <MenuItem accelerator="Shortcut+E" onAction="#mnuExport" text="Export" />
                 <MenuItem accelerator="Shortcut+I" onAction="#mnuOpenImage" text="Set Image" />
+                <MenuItem accelerator="Shortcut+M" onAction="#mnuChangeCSVOut" text="Change CSV location" />
             </Menu>
             <Menu mnemonicParsing="false" text="Ease">
                 <MenuItem accelerator="Shortcut+Z" onAction="#undo" text="Undo" />
@@ -24,37 +25,54 @@
         <padding>
             <Insets bottom="10" left="10" right="10" top="10" />
         </padding>
-        <TitledPane collapsible="true" text="Config" GridPane.valignment="TOP">
+        <TitledPane text="Config" GridPane.rowIndex="0" GridPane.valignment="TOP">
             <GridPane hgap="10" vgap="10">
                 <!--<Label text="Unit" />-->
                 <!--<ComboBox fx:id="comboUnits" GridPane.columnIndex="1">-->
-                    <!--<items>-->
-                        <!--<FXCollections fx:factory="observableArrayList">-->
-                            <!--<String fx:value="Inches" />-->
-                            <!--<String fx:value="Feet" />-->
-                        <!--</FXCollections>-->
-                    <!--</items>-->
+                <!--<items>-->
+                <!--<FXCollections fx:factory="observableArrayList">-->
+                <!--<String fx:value="Inches" />-->
+                <!--<String fx:value="Feet" />-->
+                <!--</FXCollections>-->
+                <!--</items>-->
                 <!--</ComboBox>-->
 
                 <!--<Label text="Max angle delta" GridPane.rowIndex="1" />-->
                 <!--<TextField fx:id="txtMaxAngleDelta" GridPane.columnIndex="1" GridPane.rowIndex="1" />-->
 
-                <Label text="Wheel Radius (in)" />
-                <TextField fx:id="cfgRadius" accessibleRoleDescription="wheel_radius" onKeyReleased="#configUpdate" GridPane.columnIndex="1" />
-                <Label text="Robot Width (in)" GridPane.rowIndex="1" />
-                <TextField fx:id="cfgWidth" accessibleRoleDescription="width" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Robot Length (in)" GridPane.rowIndex="2" />
-                <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Max Velocity" GridPane.rowIndex="3" />
-                <TextField fx:id="cfgMaxVel" accessibleRoleDescription="max_vel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Label text="Max Acceleration" GridPane.rowIndex="4" />
-                <TextField fx:id="cfgMaxAccel" accessibleRoleDescription="max_accel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label text="Time for path" GridPane.rowIndex="5" />
-                <TextField fx:id="cfgTime" accessibleRoleDescription="time" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <Label text="Time step" GridPane.rowIndex="6" />
-                <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                <Label text="Draw wheel paths?" GridPane.rowIndex="7" />
-                <CheckBox fx:id="cfgDrawWheels" accessibleRoleDescription="draw_wheels" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <Label text="Path Name:" GridPane.rowIndex="0" />
+                <TextField fx:id="cfgPathName" accessibleRoleDescription="path_name" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label text="Wheel Radius (in)" GridPane.rowIndex="1" />
+                <TextField fx:id="cfgRadius" accessibleRoleDescription="wheel_radius" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label text="Robot Width (in)" GridPane.rowIndex="2" />
+                <TextField fx:id="cfgWidth" accessibleRoleDescription="width" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label text="Robot Length (in)" GridPane.rowIndex="3" />
+                <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label text="Max Velocity" GridPane.rowIndex="4" />
+                <TextField fx:id="cfgMaxVel" accessibleRoleDescription="max_vel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label text="Max Acceleration" GridPane.rowIndex="5" />
+                <TextField fx:id="cfgMaxAccel" accessibleRoleDescription="max_accel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label text="Max Jerk" GridPane.rowIndex="6" />
+                <TextField fx:id="cfgJerk" accessibleRoleDescription="jerk" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Label text="Time step" GridPane.rowIndex="7" />
+                <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <Label text="Draw wheel paths?" GridPane.rowIndex="8" />
+                <CheckBox fx:id="cfgDrawWheels" accessibleRoleDescription="draw_wheels" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <columnConstraints>
+               <ColumnConstraints />
+               <ColumnConstraints />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
 
                 <!--<Button onAction="#angles" text="Angles" GridPane.rowIndex="5" />-->
             </GridPane>
@@ -98,7 +116,7 @@
             </Tab>
             <Tab fx:id="tabVel" closable="false" text="Velocity">
                 <AnchorPane>
-                    <LineChart fx:id="chtLeft" title="Left" animated="false" createSymbols="false" AnchorPane.topAnchor="10.0">
+                    <LineChart fx:id="chtLeft" animated="false" createSymbols="false" title="Left" AnchorPane.topAnchor="10.0">
                         <xAxis>
                             <NumberAxis label="Seconds" />
                         </xAxis>
@@ -106,7 +124,15 @@
                             <NumberAxis label="Feet" />
                         </yAxis>
                     </LineChart>
-                    <LineChart fx:id="chtRight" title="Right" animated="false" createSymbols="false" AnchorPane.leftAnchor="500.0" AnchorPane.topAnchor="10.0">
+                    <LineChart fx:id="chtRight" animated="false" createSymbols="false" title="Right" AnchorPane.leftAnchor="500.0" AnchorPane.topAnchor="10.0">
+                        <xAxis>
+                            <NumberAxis label="Seconds" />
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Feet" />
+                        </yAxis>
+                    </LineChart>
+                    <LineChart fx:id="chtCenter" animated="false" createSymbols="false" title="Ideal Center" AnchorPane.leftAnchor="280.0" AnchorPane.topAnchor="400.0">
                         <xAxis>
                             <NumberAxis label="Seconds" />
                         </xAxis>

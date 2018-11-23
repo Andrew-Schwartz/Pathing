@@ -17,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import utils.CSVWriter;
 import utils.Config;
@@ -42,7 +43,7 @@ public class UIController {
     private Polyline polyPos, polyLeft, polyRight;
 
     @FXML
-    private LineChart<Double, Double> chtLeft, chtRight;
+    private LineChart<Double, Double> chtLeft, chtRight, chtCenter;
 
     @FXML
     private ImageView imgField;
@@ -50,19 +51,21 @@ public class UIController {
     @FXML
     private GridPane grdPoints;
 
+    //config values
     @FXML
     private TextField cfgRadius,
             cfgWidth,
             cfgLength,
             cfgMaxVel,
             cfgMaxAccel,
-            cfgTime,
-            cfgTimeStep;
+            cfgJerk,
+            cfgTimeStep,
+            cfgPathName;
 
     @FXML
     private CheckBox cfgDrawWheels;
 
-    private static Image fieldImage = new Image("images/FRC2018.png");
+    private static Image backgroundImage = new Image("images/FRC2018.png");
     private ArrayList<Point> controlPoints, path;
     private ArrayList<ArrayList<PointRow>> previousStates; //for undo/redo
     private ArrayList<PointRow> rows;
@@ -71,13 +74,15 @@ public class UIController {
             dragStartIndex,
             currentState;
     private PointRow draggedRow;
-    public static Config config;
+    private static Config config;
 
     @FXML
     private void initialize() {
-        config = new Config("src/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgTime, cfgRadius, cfgWidth, cfgTimeStep);
+        config = new Config("src/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
+                cfgRadius, cfgWidth, cfgTimeStep, cfgPathName);
 
-        imgField.setImage(fieldImage);
+//        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
+        imgField.setImage(backgroundImage);
 //        imgField.setFitWidth(imageWidth());
 //        imgField.setFitHeight(imageHeight());
         controlPoints = new ArrayList<>();
@@ -135,10 +140,9 @@ public class UIController {
             });
         if (node instanceof ComboBox)
             ((ComboBox) node).setOnAction(event -> {
-//                row.updatePoint();
                 handleComboResults(row.getComboBox().getValue(), row.getIndex());
                 ((ComboBox) node).getSelectionModel().clearSelection();
-                imgField.requestFocus();
+                imgField.requestFocus(); //to prevent double selection
             });
 
         //Drag and Drop listeners
@@ -164,8 +168,7 @@ public class UIController {
         for (PointMenuResult r : PointMenuResult.values()) {
             if (r.toString().equals(res)) result = r;
         }
-        assert result != null;
-        switch (result) {
+        switch (result) {   //can't actually be null
             case DELETE_POINT:
                 deletePoints(index, index);
                 break;
@@ -204,7 +207,6 @@ public class UIController {
         rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
 
         path = Bezier.generateAll(controlPoints);
-//        Bezier.motion(path);
 
         polyPos.getPoints().clear();
         path.forEach(point -> polyPos.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
@@ -218,12 +220,17 @@ public class UIController {
             final double dist = UnitConverter.inchesToPixels(Config.getDoubleProperty("width") / 2);
             for (Point point : path) {
                 double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(point.getHeading()));
-                polyLeft.getPoints().addAll(point.getX() - dist * Math.cos(angle),
-                        imageHeight() - (point.getY() + dist * Math.sin(angle)));
-                polyRight.getPoints().addAll(point.getX() + dist * Math.cos(angle),
-                        imageHeight() - (point.getY() - dist * Math.sin(angle)));
+                polyLeft.getPoints().addAll(point.getX() - dist * Math.sin(angle),
+                        imageHeight() - (point.getY() + dist * Math.cos(angle)));
+                polyRight.getPoints().addAll(point.getX() + dist * Math.sin(angle),
+                        imageHeight() - (point.getY() - dist * Math.cos(angle)));
             }
         }
+
+//        final double dist = UnitConverter.inchesToPixels(Config.getDoubleProperty("width") / 2);
+//        polyLeft.getPoints().addAll(path.stream()
+//                .map(p -> p.getX() - dist * Math.cos(UnitConverter.rotateRobotToCartesian(Math.toRadians(p.getHeading()))))
+//                .collect(Collectors.toList()));
 
         if (polyPos.getPoints().isEmpty())         //polyline with no points doesn't redraw
             polyPos.getPoints().addAll(0.0, 0.0);  //so this does
@@ -235,34 +242,41 @@ public class UIController {
 
     private void graphMotion() {
         if (!tabVel.isSelected()) return;
-//        Bezier.motion(path);
         chtLeft.getData().clear();
         chtRight.getData().clear();
+        chtCenter.getData().clear();
         XYChart.Series<Double, Double> leftPos = new XYChart.Series<>(),
                 leftVel = new XYChart.Series<>(),
                 leftAccel = new XYChart.Series<>(),
                 rightPos = new XYChart.Series<>(),
                 rightVel = new XYChart.Series<>(),
-                rightAccel = new XYChart.Series<>();
-        leftPos.setName("pos");
-        leftVel.setName("vel");
-        leftAccel.setName("accel");
-        rightPos.setName("pos");
-        rightVel.setName("vel");
-        rightAccel.setName("accel");
+                rightAccel = new XYChart.Series<>(),
+                centerPos = new XYChart.Series<>(),
+                centerVel = new XYChart.Series<>(),
+                centerAccel = new XYChart.Series<>();
+        leftPos.setName("pos");leftVel.setName("vel");leftAccel.setName("accel");
+        rightPos.setName("pos");rightVel.setName("vel");rightAccel.setName("accel");
+        centerPos.setName("pos");centerVel.setName("vel");centerAccel.setName("accel");
+        double totalDist = 0;
         for (int i = 0; i < path.size(); i++) {
             double curTime = path.get(path.size() - 1).getTime() * i / path.size();
-            double curLeftAccel = i == 0 ? 0 : path.get(i).getLeftVel() - path.get(i - 1).getLeftVel(),
-                    curRightAccel = i == 0 ? 0 : path.get(i).getRightVel() - path.get(i - 1).getRightVel();
+            double curLeftAccel = i == 0 ? 0 : path.get(i).getLeftVelLinearFeet() - path.get(i - 1).getLeftVelLinearFeet();
+            double curRightAccel = i == 0 ? 0 : path.get(i).getRightVelLinearFeet() - path.get(i - 1).getRightVelLinearFeet();
+            double curCenterAccel = i == 0 ? 0 : path.get(i).getTargetVelocity() - path.get(i - 1).getTargetVelocity();
+            totalDist += path.get(i).getTargetVelocity() * Config.getDoubleProperty("time_step");
             leftPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getLeftPos())));
-            leftVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftVel()));
+            leftVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftVelLinearFeet()));
             leftAccel.getData().add(new XYChart.Data<>(curTime, curLeftAccel / Config.getDoubleProperty("time_step")));
             rightPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getRightPos())));
-            rightVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightVel()));
+            rightVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightVelLinearFeet()));
             rightAccel.getData().add(new XYChart.Data<>(curTime, curRightAccel / Config.getDoubleProperty("time_step")));
+            centerPos.getData().add(new XYChart.Data<>(curTime, totalDist));
+            centerVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getTargetVelocity()));
+            centerAccel.getData().add(new XYChart.Data<>(curTime, curCenterAccel / Config.getDoubleProperty("time_step")));
         }
         chtLeft.getData().addAll(leftPos, leftVel, leftAccel);
         chtRight.getData().addAll(rightPos, rightVel, rightAccel);
+        chtCenter.getData().addAll(centerPos, centerVel, centerAccel);
     }
 
     @FXML
@@ -275,16 +289,29 @@ public class UIController {
         deletePoints(0, rows.size() - 1);
     }
 
+    /**
+     * deletes a number of PointRows equal to endIndex - startIndex + 1.
+     * <p>to delete one point, startIndex and endIndex should be equal</p>
+     */
     private void deletePoints(int startIndex, int endIndex) {
         for (int i = endIndex; i >= startIndex; i--) {
-            grdPoints.getChildren().removeAll(rows.get(i).getAllNodes());
-            rows.remove(i);
+            PointRow currentRow = rowAtIndex(i);
+            grdPoints.getChildren().removeAll(currentRow.getAllNodes());
+            rows.remove(currentRow);
         }
         rows.stream().
                 filter(row -> row.getIndex() > endIndex).
                 forEach(row -> row.moveIndex(endIndex - startIndex + 1));
         updatePolyline();
         addSavedState(rows);
+    }
+
+    private PointRow rowAtIndex(int index) {
+        for (PointRow row : rows) {
+            if (row.getIndex() == index)
+                return row;
+        }
+        throw new RuntimeException();
     }
 
     @FXML
@@ -309,17 +336,6 @@ public class UIController {
     private void mouseMoveEvent(MouseEvent event) {
         cursorHighlight.setCenterX(Math.max(0, Math.min(imageWidth(), event.getX())));
         cursorHighlight.setCenterY(Math.max(0, Math.min(imageHeight(), event.getY())));
-    }
-
-    @FXML
-    private void angles() {
-        double total = 0,
-                currAngle;
-        for (int i = 0; i < path.size() - 1; i++) {
-            currAngle = path.get(i).distanceTo(path.get(i + 1));
-            total += currAngle;
-        }
-        System.out.println(total / path.size());
     }
 
     @FXML
@@ -392,23 +408,28 @@ public class UIController {
     private void mnuOpenImage() throws MalformedURLException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Field Image");
+//        String imgDir = Config.getStringProperty("img_path", "src\\images");
+//        if (imgDir.contains("."))
+//            imgDir = imgDir.substring(0, imgDir.indexOf("."));
+//        fileChooser.setInitialDirectory(new File(imgDir));
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg", "*.gif", "*.bmp", "*.pdn"),
                 new FileChooser.ExtensionFilter("JPG", "*.jpg", "*.jpeg"),
                 new FileChooser.ExtensionFilter("PNG", "*.png")
         );
         File chosenImage = fileChooser.showOpenDialog(root.getScene().getWindow());
-        fieldImage = new Image(chosenImage.toURI().toURL().toString());
-        imgField.setImage(fieldImage);
+//        config.setProperty("img_path", chosenImage.getAbsolutePath());
+        backgroundImage = new Image(chosenImage.toURI().toURL().toString());
+        imgField.setImage(backgroundImage);
         imgField.setFitWidth(imageWidth());
         imgField.setFitHeight(imageHeight());
     }
 
     @FXML
-    private void mnuExport() { //TalonSRX uses position, velocity to csv
-//        Bezier.motion(path);
-        try (CSVWriter leftWriter = new CSVWriter("src/csv/leftpath.csv");
-             CSVWriter rightWriter = new CSVWriter("src/csv/rightpath.csv")) {
+    private void mnuExport() { //TODO make a temporary backup when doing this
+        String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
+        try (CSVWriter leftWriter = new CSVWriter(url + "_left.csv");
+             CSVWriter rightWriter = new CSVWriter(url + "_right.csv")) {
             leftWriter.writePoints("Dist,Vel,Heading", path,
                     point -> String.valueOf(point.getLeftPos()),
                     point -> String.valueOf(point.getLeftVel()),
@@ -423,11 +444,11 @@ public class UIController {
     }
 
     public static double imageHeight() {
-        return fieldImage.getHeight();
+        return backgroundImage.getHeight();
     }
 
     public static double imageWidth() {
-        return fieldImage.getWidth();
+        return backgroundImage.getWidth();
     }
 
     @FXML
@@ -465,6 +486,16 @@ public class UIController {
     @FXML
     private void configUpdate() {
         config.updateConfig();
+    }
+
+    @FXML
+    private void mnuChangeCSVOut() {
+        configUpdate();
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("CSV Generation Location");
+        dirChooser.setInitialDirectory(new File(Config.getStringProperty("csv_out_dir", "src")));
+        File dir = dirChooser.showDialog(root.getScene().getWindow());
+        config.setProperty("csv_out_dir", dir.getAbsolutePath());
     }
 }
 

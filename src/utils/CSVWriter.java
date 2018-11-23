@@ -22,7 +22,7 @@ public class CSVWriter extends OutputStreamWriter {
 
     @SafeVarargs
     public final void writePoints(String header, ArrayList<Point> path, Function<Point, String>... values) throws IOException {
-        assert path.size() == values.length;
+        assert header.split(String.valueOf(COMMA_DELIMITER)).length == values.length;
         write(header);
         append(NEWLINE);
         for (Point p : path) {
@@ -31,6 +31,6 @@ public class CSVWriter extends OutputStreamWriter {
             }
             append(NEWLINE);
         }
-    }
+   }
 
 }

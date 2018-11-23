@@ -132,7 +132,6 @@ public class Point {
     }
 
     /**
-     *
      * @param targetVelocity calculated velocity of this point in feet/second
      */
     public void setTargetVelocity(double targetVelocity) {
@@ -140,16 +139,15 @@ public class Point {
     }
 
     /**
-     *
      * @return the calculated velocity of this point in feet/second
      */
     public double getTargetVelocity() {
         return targetVelocity;
     }
 
-    public void setDistanceTo(Point p) {
-        setDistance(distanceTo(p));
-    }
+//    public void setDistanceTo(Point p) {
+//        setDistance(distanceTo(p));
+//    }
 
     public void setDistance(double dist) {
         this.distance = dist;
@@ -169,7 +167,8 @@ public class Point {
 
     /**
      * sets the angular velocities of left and right wheels
-     * @param leftVel rotations/second
+     *
+     * @param leftVel  rotations/second
      * @param rightVel rotations/second
      */
     public void setVels(double leftVel, double rightVel) {
@@ -178,7 +177,6 @@ public class Point {
     }
 
     /**
-     *
      * @return angular velocity in rotations/second
      */
     public double getLeftVel() {
@@ -186,7 +184,21 @@ public class Point {
     }
 
     /**
-     *
+     * @return linear vel in feet/second
+     */
+    public double getLeftVelLinearFeet() {
+        return UnitConverter.inchesToFeet(UnitConverter.rotationalToLinear(leftVel));
+    }
+
+    /**
+     * @return linear vel in feet/second
+     */
+    public double getRightVelLinearFeet() {
+        return UnitConverter.inchesToFeet(UnitConverter.rotationalToLinear(rightVel));
+    }
+
+
+    /**
      * @return angular velocity in rotations/second
      */
     public double getRightVel() {
@@ -200,7 +212,8 @@ public class Point {
 
     /**
      * sets the target positions for this point based on this point's velocity
- * @param prevLeftPos left position of previous point
+     *
+     * @param prevLeftPos  left position of previous point
      * @param prevRightPos left position of previous point
      */
     public void advancePos(double prevLeftPos, double prevRightPos) {

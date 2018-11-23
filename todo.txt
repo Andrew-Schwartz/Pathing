@@ -1,25 +1,46 @@
+legend:
+[x] = done in this commit
+[.] = in progress
+[ ] = not started
+
 features
+[ ] organize this by importance and difficulty for having other people work on it
+[x] csv output dir in config file
+[x] have path name be settable for use with csv file names
+[ ] make all things in Point be in inches, not pixels. include the values displayed to user in gridpane
+[ ] image location in config file
+[ ] wheel paths based on vel and heading
+[ ] backwards path
+[ ] add jerk config
+[ ] more special cases for velocity if center point is inside of robot
+[ ] rotations to linear and vice versa not automatically do inches
+[ ] Path class, take some of the dumb parts of Point and put them where they make sense
+[ ] thread drawing paths
+[ ] offset by length feature
+[.] make polylines with map (no real purpose except that I want to be able to)
+
+bugs
+[x] delete last button deletes the most recently created pointrow, not the furthest down
+[x] distance/time calculation wrong
+[x] rotateAngle not working -- (theta, 90) = (theta, -90)
+[x] left and right path seem backwards
+[x] spamming "intercept?" on first point changes it's kinematics
+[x] left and right acceleration too low
+[ ] left and right graphs don't appear when there is more than one segment
+
+------------------------------------------------------------------------------------------------------------------------
+
+prior implemented features:
 [x] calculate velocity
 [x] config file
 [x] vel chart, one per wheel
 [x] generate curve according to time and time interval
-[/] redo velocity targeting (not always use full time)
-[/] make Config static
-[ ] thread drawing paths
-[ ] paths end according to dist traveled
-[ ] backwards path
-[ ] make polylines with map
-[ ] offset by length feature
-[ ] wheel paths based on vel and heading
-[ ] more special cases for velocity if center point is inside of robot
-[ ] add jerk config
-[ ] rotations to linear and vice versa not automatically do inches
-[ ] Path class, take some of the dumb parts of Point and put them where they make sense
+[x] redo velocity targeting (not always use full time)
+[x] make Config static
 
-bugs
+prior fixed bugs
 [x] NaNs in velocity
 [x] config and textfields are empty -> NPE
 [x] position should be measured in feet on chart
 [x] accel on chart is wrong
-[/] vel being calculated wrong
-[ ] left and right path seem backwards
+[x] vel being calculated wrong

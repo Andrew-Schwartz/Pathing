@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/src/ui/UIController.java" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="2169464d-dead-4441-9174-5b56e1111ff9" name="Default Changelist" comment="velocity works now yay!&#10;config is also static">
+    <list default="true" id="2169464d-dead-4441-9174-5b56e1111ff9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bezier/Bezier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Bezier.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bezier/Point.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Point.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/csv/leftpath.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/csv/leftpath.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/csv/rightpath.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/csv/rightpath.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/csv/leftpath.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/csv/rightpath.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/images/White.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/UI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UI.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/UIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/CSVWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/CSVWriter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Config.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/UnitConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/UnitConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,95 +26,13 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="-203712396">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="8" />
-          <entry key="project.open.time.1" value="2" />
-          <entry key="project.open.time.101" value="1" />
-          <entry key="project.open.time.115" value="1" />
-          <entry key="project.open.time.2" value="2" />
-          <entry key="project.open.time.28" value="1" />
-          <entry key="project.open.time.30" value="1" />
-          <entry key="project.open.time.31" value="1" />
-          <entry key="project.open.time.35" value="1" />
-          <entry key="project.open.time.43" value="1" />
-          <entry key="project.open.time.49" value="2" />
-          <entry key="project.open.time.53" value="1" />
-          <entry key="project.open.time.54" value="1" />
-          <entry key="project.open.time.58" value="2" />
-          <entry key="project.open.time.6" value="1" />
-          <entry key="project.open.time.65" value="1" />
-          <entry key="project.open.time.87" value="1" />
-          <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="21" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="cfg" value="28" />
-          <entry key="class" value="13" />
-          <entry key="css" value="4" />
-          <entry key="csv" value="84" />
-          <entry key="fxml" value="92" />
-          <entry key="gitattributes" value="3" />
-          <entry key="gitignore" value="8" />
-          <entry key="java" value="1249" />
-          <entry key="json" value="1" />
-          <entry key="png" value="7" />
-          <entry key="properties" value="15" />
-          <entry key="txt" value="49" />
-          <entry key="xml" value="2" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="CLASS" value="13" />
-          <entry key="CSS" value="4" />
-          <entry key="CSV" value="83" />
-          <entry key="Image" value="7" />
-          <entry key="JAVA" value="1249" />
-          <entry key="JSON" value="1" />
-          <entry key="PLAIN_TEXT" value="89" />
-          <entry key="Properties" value="15" />
-          <entry key="XML" value="94" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="cfg" value="29" />
-          <entry key="css" value="105" />
-          <entry key="csv" value="9" />
-          <entry key="fxml" value="2645" />
-          <entry key="gitignore" value="27" />
-          <entry key="java" value="38998" />
-          <entry key="json" value="5" />
-          <entry key="properties" value="1" />
-          <entry key="txt" value="1946" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="CSS" value="105" />
-          <entry key="CSV" value="9" />
-          <entry key="JAVA" value="38994" />
-          <entry key="JSON" value="5" />
-          <entry key="PLAIN_TEXT" value="2002" />
-          <entry key="Properties" value="1" />
-          <entry key="RegExp" value="4" />
-          <entry key="XML" value="2645" />
-        </counts>
-      </usages-collector>
-    </session>
-  </component>
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/todo.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="22" lean-forward="true" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+            <state relative-caret-position="289">
+              <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -124,14 +49,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>toR</find>
-      <find>tor</find>
-      <find>update</find>
-      <find>click</find>
-      <find>setNextIndex</find>
-      <find>?</find>
-      <find>parseDo</find>
-      <find>rotateAngle</find>
       <find>csvw</find>
       <find>con</find>
       <find>config</find>
@@ -154,7 +71,18 @@
       <find>time</find>
       <find>graph</find>
       <find>graphVe</find>
+      <find>file</find>
+      <find>menu</find>
+      <find>expo</find>
+      <find>graphM</find>
+      <find>bezier.mo</find>
+      <find>image</find>
+      <find>delete</find>
+      <find>csv</find>
     </findStrings>
+    <replaceStrings>
+      <replace />
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
@@ -182,20 +110,21 @@
         <option value="$PROJECT_DIR$/src/bezier/RunnableBezier.java" />
         <option value="$PROJECT_DIR$/src/bezier/RunnableBezierGenerate.java" />
         <option value="$PROJECT_DIR$/src/ui/PointRow.java" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/ui/PointMenuResult.java" />
         <option value="$PROJECT_DIR$/src/config.json" />
         <option value="$PROJECT_DIR$/src/config.cfg" />
-        <option value="$PROJECT_DIR$/src/utils/Utils.java" />
         <option value="$PROJECT_DIR$/src/config.properties" />
-        <option value="$PROJECT_DIR$/src/utils/CSVWriter.java" />
         <option value="$PROJECT_DIR$/src/csv/leftpath.csv" />
         <option value="$PROJECT_DIR$/src/bezier/Path.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/src/utils/Utils.java" />
+        <option value="$PROJECT_DIR$/src/utils/CSVWriter.java" />
+        <option value="$PROJECT_DIR$/src/ui/UIController.kt" />
         <option value="$PROJECT_DIR$/src/utils/Config.java" />
-        <option value="$PROJECT_DIR$/src/bezier/Point.java" />
-        <option value="$PROJECT_DIR$/src/bezier/Bezier.java" />
         <option value="$PROJECT_DIR$/src/utils/UnitConverter.java" />
         <option value="$PROJECT_DIR$/src/ui/UI.fxml" />
+        <option value="$PROJECT_DIR$/src/bezier/Bezier.java" />
+        <option value="$PROJECT_DIR$/src/bezier/Point.java" />
         <option value="$PROJECT_DIR$/src/ui/UIController.java" />
         <option value="$PROJECT_DIR$/todo.txt" />
       </list>
@@ -210,54 +139,20 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="bezier" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="csv" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RobotPathing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotPathing" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="todo&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;fxm&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UI.fxml&#10;bez&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;Uti&#9;PSI&#9;JAVA://utils.Utils&#10;left&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;b&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;config&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;lef&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;uicon&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;to&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;po&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;point&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;unitc&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/UnitConverter.java&#10;be&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;t&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;ui&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;tod&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;uic&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;.c&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;onfig.pr&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;onf&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;config.p&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;conf&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;con&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;fx&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UI.fxml&#10;pointRo&#9;PSI&#9;JAVA://ui.PointRow" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542763585185" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;lef&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;.pr&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;uti&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Utils.java&#10;.pro&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;confi&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;conf&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;todo&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;to&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;bezi&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;UIC&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;bez&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;fxm&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UI.fxml&#10;fx&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UI.fxml&#10;Uti&#9;PSI&#9;JAVA://utils.Utils&#10;left&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;b&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;config&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;uicon&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;po&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;point&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;unitc&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/UnitConverter.java&#10;be&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;t&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;ui&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;tod&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;uic&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;.c&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;onfig.pr&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;onf&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;config.p&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;con&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;pointRo&#9;PSI&#9;JAVA://ui.PointRow" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542990481398" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+    <property name="settings.editor.selected.configurable" value="terminal" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Andrew Schwartz\IdeaProjects\RobotPathing\src" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="utils" />
     </key>
@@ -265,6 +160,11 @@
       <recent name="C:\Users\Andrew Schwartz\IdeaProjects\RobotPathing\src\images" />
       <recent name="C:\Users\Andrew Schwartz\IdeaProjects\RobotPathing\src" />
     </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="gradle build" />
+    </option>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -325,7 +225,14 @@
       <option name="project" value="LOCAL" />
       <updated>1542560092070</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="velocity calculations&#10;-velocity works now!!!&#10;-config is static for shorter reference&#10;-removed todo.txt from gitignore">
+      <created>1542763693098</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1542763693098</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -349,14 +256,14 @@
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="6" sideWeight="0.49756098" weight="0.16015625" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32963988" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4986577" weight="0.2671141" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2797784" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32841823" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4986577" visible="true" weight="0.15951742" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4302949" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.2657718" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.11080332" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5013423" side_tool="true" weight="0.2700831" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.28284183" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5013423" side_tool="true" weight="0.26979867" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" weight="0.32963988" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32885906" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -367,7 +274,8 @@
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Palette&#9;" order="6" />
       <window_info anchor="right" id="Maven Projects" order="7" />
-      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="8" side_tool="true" weight="0.3295302" />
+      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="8" side_tool="true" weight="0.3294271" />
+      <window_info anchor="right" id="Maven" order="9" />
     </layout>
   </component>
   <component name="UnknownFeatures">
@@ -399,15 +307,27 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="delete out dir" />
     <MESSAGE value="config file" />
     <MESSAGE value="graph show pos,vel,accel" />
-    <option name="LAST_COMMIT_MESSAGE" value="graph show pos,vel,accel" />
+    <MESSAGE value="velocity calculations&#10;-velocity works now!!!&#10;-config is static for shorter reference&#10;-removed todo.txt from gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="velocity calculations&#10;-velocity works now!!!&#10;-config is static for shorter reference&#10;-removed todo.txt from gitignore" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -420,19 +340,56 @@
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/bezier/Bezier.java</url>
-          <line>31</line>
+          <url>file://$PROJECT_DIR$/src/utils/CSVWriter.java</url>
+          <line>33</line>
           <properties />
-          <option name="timeStamp" value="35" />
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/ui/UIController.java</url>
+          <line>260</line>
+          <properties />
+          <option name="timeStamp" value="96" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/utils/Utils.java</url>
+          <line>27</line>
+          <properties class="utils.Utils" method="parseString">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/utils/CSVWriter.java</url>
+          <line>23</line>
+          <properties class="utils.CSVWriter" method="writePoints">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/utils/CSVWriter.java</url>
+          <line>17</line>
+          <properties class="utils.CSVWriter" method="&lt;init&gt;">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="56" />
         </line-breakpoint>
       </breakpoints>
-      <breakpoints-dialog>
-        <breakpoints-dialog />
-      </breakpoints-dialog>
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>t &gt; .95</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>i == path.size - 1</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>t &gt; .98</expression-string>
         <language-id>JAVA</language-id>
@@ -473,52 +430,32 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>name.equals(PointMenuResult.DELETE_POINT.toString())</expression-string>
-        <language-id>JAVA</language-id>
-        <custom-info>ui.PointMenuResult</custom-info>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
     <expressions id="watch">
       <expression>
-        <expression-string>time / timeStep</expression-string>
+        <expression-string>UnitConverter.rotationalToLinear(leftVel)</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>path</expression-string>
+        <expression-string>UnitConverter.inchesToFeet(UnitConverter.rotationalToLinear(leftVel))</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>quadratic(1.5, 0, -lengthOfCurve)</expression-string>
+        <expression-string>UnitConverter.inchesToFeet(UnitConverter.feetToInches(5))</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>this.distanceTo(p)</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>pathWithIntercepts.get(pathWithIntercepts.size - 1)</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>t==0.0</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>wheelRadius * Math.PI * 2</expression-string>
+        <expression-string>UnitConverter.rotationalToLinear(UnitConverter.linearToRotational(5))</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
         <expression-string>UnitConverter.feetToInches(path.get(i).targetVelocity)</expression-string>
         <language-id>JAVA</language-id>
+        <custom-info>jdk.nashorn.internal.ir.UnaryNode</custom-info>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
@@ -527,7 +464,22 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>((TextField) node).getText().trim()</expression-string>
+        <expression-string>path.get(i)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>time / timeStep</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pathWithIntercepts.stream().filter(Point::isIntercept).collect(Collectors.toList())</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pathWithIntercepts.stream()                 .filter(Point::isIntercept)                 .collect(Collectors.toList())</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -543,77 +495,107 @@
     <entry file="file://$PROJECT_DIR$/src/config.cfg" />
     <entry file="file://$PROJECT_DIR$/config.cfg" />
     <entry file="file://$PROJECT_DIR$/config.properties" />
-    <entry file="file://$PROJECT_DIR$/src/config.properties">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/csv/rightpath.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/bezier/Path.java" />
-    <entry file="file://$PROJECT_DIR$/src/utils/Config.java">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="21" column="13" lean-forward="true" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#854#855#0" expanded="true" />
-            <element signature="e#900#901#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/csv/leftpath.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/CSVWriter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/bezier/Point.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="108" column="48" lean-forward="true" selection-start-line="108" selection-start-column="48" selection-end-line="108" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2195#2196#0" expanded="true" />
-            <element signature="e#2233#2234#0" expanded="true" />
-            <element signature="e#3534#3535#0" expanded="true" />
-            <element signature="e#3576#3577#0" expanded="true" />
-            <element signature="e#3620#3621#0" expanded="true" />
-            <element signature="e#3656#3657#0" expanded="true" />
-            <element signature="e#3825#3826#0" expanded="true" />
-            <element signature="e#3852#3853#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="85">
+          <caret line="5" column="5" lean-forward="true" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/Utils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+        <state relative-caret-position="153">
+          <caret line="9" column="5" lean-forward="true" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
+          <folding>
+            <element signature="e#295#296#0" expanded="true" />
+            <element signature="e#335#336#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/CSVWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csvleftpath.csv" />
+    <entry file="file://$PROJECT_DIR$/src/config.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="5" lean-forward="true" selection-start-line="1" selection-start-column="5" selection-end-line="1" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/Config.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="20" column="13" lean-forward="true" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#873#874#0" expanded="true" />
+            <element signature="e#944#945#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csv/rightpath.csv" />
+    <entry file="file://$PROJECT_DIR$/src/csv/_left.csv" />
+    <entry file="file://$PROJECT_DIR$/src/csv/leftpath.csv" />
     <entry file="file://$PROJECT_DIR$/src/utils/UnitConverter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="69" column="37" lean-forward="true" selection-start-line="69" selection-start-column="37" selection-end-line="69" selection-end-column="37" />
+        <state relative-caret-position="477">
+          <caret line="68" column="31" lean-forward="true" selection-start-line="68" selection-start-column="31" selection-end-line="68" selection-end-column="31" />
           <folding>
             <element signature="e#478#479#0" expanded="true" />
             <element signature="e#510#511#0" expanded="true" />
             <element signature="e#2247#2248#0" expanded="true" />
-            <element signature="e#2294#2295#0" expanded="true" />
+            <element signature="e#2293#2294#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/UI.fxml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="151" column="38" selection-start-line="151" selection-start-column="38" selection-end-line="151" selection-end-column="38" />
+        </state>
+      </provider>
+      <provider editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csv/test_left.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="381">
+          <caret line="26" column="46" lean-forward="true" selection-start-line="26" selection-start-column="46" selection-end-line="26" selection-end-column="46" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_162/jre/lib/rt.jar!/sun/reflect/misc/Trampoline.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret lean-forward="true" />
+          <folding>
+            <element signature="e#0#1100#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bezier/Bezier.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="165" column="71" lean-forward="true" selection-start-line="165" selection-start-column="71" selection-end-line="165" selection-end-column="71" />
+        <state relative-caret-position="167">
+          <caret line="160" selection-start-line="160" selection-end-line="160" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#polynomialCoeff#0;class#Bezier#0" />
@@ -621,28 +603,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/UI.fxml">
-      <provider editor-type-id="JavaFX-Scene-Builder" />
+    <entry file="file://$PROJECT_DIR$/src/bezier/Point.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="113" column="53" selection-start-line="113" selection-start-column="53" selection-end-line="113" selection-end-column="53" />
+        <state relative-caret-position="450">
+          <caret line="197" column="5" lean-forward="true" selection-start-line="197" selection-start-column="5" selection-end-line="197" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2195#2196#0" expanded="true" />
+            <element signature="e#2233#2234#0" expanded="true" />
+            <element signature="e#4254#4255#0" expanded="true" />
+            <element signature="e#4284#4285#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="474">
-          <caret line="235" column="32" selection-start-line="235" selection-start-column="32" selection-end-line="235" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="413">
+          <caret line="270" column="101" lean-forward="true" selection-start-line="270" selection-start-column="101" selection-end-line="270" selection-end-column="101" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/todo.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="22" lean-forward="true" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+        <state relative-caret-position="289">
+          <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
         </state>
       </provider>
     </entry>

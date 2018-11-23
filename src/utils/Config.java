@@ -16,7 +16,6 @@ public class Config {
     private Node[] nodes;
 
     public Config(String path, Node... configNodes) {
-//        config = new Properties();
         nodes = configNodes;
         configFile = new File(path);
         try {
@@ -27,29 +26,34 @@ public class Config {
         updateNodes();
     }
 
-    private static String getProperty(String key) {
-        return config.getProperty(key);
-    }
-
-    private void setProperty(String key, String value) {
+    public void setProperty(String key, String value) {
         config.setProperty(key, value);
+        store();
     }
 
     public static double getDoubleProperty(String key) {
-        return Utils.parseDouble(getProperty(key));
+        return Double.parseDouble(config.getProperty(key, "0"));
     }
 
     public static boolean getBooleanProperty(String key) {
-        return Utils.parseBoolean(getProperty(key));
+        return Boolean.parseBoolean(config.getProperty(key, "false"));
+    }
+
+    public static String getStringProperty(String key) {
+        return config.getProperty(key);
+    }
+
+    public static String getStringProperty(String key, String defaultVal) {
+        return config.getProperty(key, defaultVal);
     }
 
     private void updateNodes() {
         for (Node node : nodes) {
             String key = node.getAccessibleRoleDescription();
             if (node instanceof TextField) {
-                ((TextField) node).setText(getProperty(key));
+                ((TextField) node).setText(config.getProperty(key));
             } else if (node instanceof CheckBox) {
-                ((CheckBox) node).setSelected(Boolean.valueOf(getProperty(key)));
+                ((CheckBox) node).setSelected(Boolean.valueOf(config.getProperty(key)));
             }
         }
     }
@@ -62,8 +66,11 @@ public class Config {
             } else if (node instanceof CheckBox) {
                 value = String.valueOf(((CheckBox) node).isSelected());
             }
-            setProperty(key, value != null ? value : " ");
+            setProperty(key, value != null ? value : "");
         }
+    }
+
+    private void store() {
         try {
             config.store(new FileOutputStream(configFile), null);
         } catch (IOException e) {
