@@ -3,7 +3,6 @@ package bezier;
 import ui.UIController;
 import utils.Config;
 import utils.UnitConverter;
-import utils.Utils;
 
 public class Point {
     private double x, y;
@@ -11,12 +10,9 @@ public class Point {
     private double targetVelocity, time, distance;
 
     private double leftPos, leftVel, rightPos, rightVel, heading;
-    private boolean last = false;
     private boolean overrideMaxVel;
 
-    private boolean empty = false; //allow blank point
-
-    public Point(double x, double y, boolean intercept) {
+    public Point(double x, double y, boolean intercept, double targetVelocity) {
 //        x = Math.round(x * 10) / 10.0;
 //        y = Math.round(y * 10) / 10.0;
         if (intercept) {
@@ -27,20 +23,15 @@ public class Point {
             this.y = y;
         }
         this.intercept = intercept;
+        this.targetVelocity = targetVelocity;
+    }
+
+    public Point(double x, double y, boolean intercept) {
+        this(x, y, intercept, 0);
     }
 
     public Point(double x, double y) {
-        this(x, y, false);
-    }
-
-    public Point(String x, String y, boolean intercept) {
-        if (x.isEmpty() || y.isEmpty()) {
-            empty = true;
-        }
-        this.x = Utils.parseDouble(x);
-        this.y = Utils.parseDouble(y);
-
-        this.intercept = intercept;
+        this(x, y, false, 0);
     }
 
     public double getX() {
@@ -56,11 +47,11 @@ public class Point {
     }
 
     public String getXString() {
-        return empty ? "" : String.valueOf(x);
+        return String.valueOf(x);
     }
 
     public String getYString() {
-        return empty ? "" : String.valueOf(y);
+        return String.valueOf(y);
     }
 
     public double distanceTo(Point p) {
@@ -111,14 +102,6 @@ public class Point {
         return angle;
     }
 
-    public void setLast(boolean isLast) {
-        last = isLast;
-    }
-
-    public boolean isLast() {
-        return last;
-    }
-
     public void setIntercept(boolean intercept) {
         this.intercept = intercept;
     }
@@ -144,10 +127,6 @@ public class Point {
     public double getTargetVelocity() {
         return targetVelocity;
     }
-
-//    public void setDistanceTo(Point p) {
-//        setDistance(distanceTo(p));
-//    }
 
     public void setDistance(double dist) {
         this.distance = dist;

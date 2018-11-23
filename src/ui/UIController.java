@@ -23,7 +23,9 @@ import utils.CSVWriter;
 import utils.Config;
 import utils.UnitConverter;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -103,19 +105,19 @@ public class UIController {
 
     @FXML
     private void btnNewPointEvent() {
-        addNewPointRow("", "", false);
+        addNewPointRow(new Point(0, 0, false, 0), true);
     }
 
-    private void addNewPointRow(String x, String y, boolean intercept) {
+    private void addNewPointRow(Point point, boolean save) {
         PointRow row = new PointRow(rows.size());
-        row.makeAllNodes(new Point(x, y, intercept));
+        row.makeAllNodes(point);
         row.getAllNodes().forEach(node -> pointRowListeners(node, row));
         rows.add(row);
-        addSavedState(rows);
+        if (save) addSavedState();
         grdPoints.getChildren().addAll(row.getAllNodes());
     }
 
-    private void addSavedState(ArrayList<PointRow> rows) {
+    private void addSavedState() {
         if (currentState != previousStates.size() - 1) {
             previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
         }
@@ -129,13 +131,13 @@ public class UIController {
         if (node instanceof TextField)
             node.setOnKeyReleased(event -> {
                 row.updatePoint();
-                addSavedState(rows);
+                addSavedState();
                 updatePolyline();
             });
         if (node instanceof CheckBox)
             ((CheckBox) node).setOnAction(event -> {
                 row.updatePoint();
-                addSavedState(rows);
+                addSavedState();
                 updatePolyline();
             });
         if (node instanceof ComboBox)
@@ -179,7 +181,7 @@ public class UIController {
                 break;
             case TOGGLE_OVERRIDE_VEL:
                 rows.get(index).getPoint().toggleOverride();
-                addSavedState(rows);
+                addSavedState();
                 updatePolyline();
                 break;
         }
@@ -198,7 +200,7 @@ public class UIController {
             }
         }
         draggedRow.setIndex(gridDnDIndex);
-        if (save) addSavedState(rows);
+        if (save) addSavedState();
     }
 
     private void updatePolyline() {
@@ -227,11 +229,6 @@ public class UIController {
             }
         }
 
-//        final double dist = UnitConverter.inchesToPixels(Config.getDoubleProperty("width") / 2);
-//        polyLeft.getPoints().addAll(path.stream()
-//                .map(p -> p.getX() - dist * Math.cos(UnitConverter.rotateRobotToCartesian(Math.toRadians(p.getHeading()))))
-//                .collect(Collectors.toList()));
-
         if (polyPos.getPoints().isEmpty())         //polyline with no points doesn't redraw
             polyPos.getPoints().addAll(0.0, 0.0);  //so this does
         if (polyLeft.getPoints().isEmpty())
@@ -254,9 +251,15 @@ public class UIController {
                 centerPos = new XYChart.Series<>(),
                 centerVel = new XYChart.Series<>(),
                 centerAccel = new XYChart.Series<>();
-        leftPos.setName("pos");leftVel.setName("vel");leftAccel.setName("accel");
-        rightPos.setName("pos");rightVel.setName("vel");rightAccel.setName("accel");
-        centerPos.setName("pos");centerVel.setName("vel");centerAccel.setName("accel");
+        leftPos.setName("pos");
+        leftVel.setName("vel");
+        leftAccel.setName("accel");
+        rightPos.setName("pos");
+        rightVel.setName("vel");
+        rightAccel.setName("accel");
+        centerPos.setName("pos");
+        centerVel.setName("vel");
+        centerAccel.setName("accel");
         double totalDist = 0;
         for (int i = 0; i < path.size(); i++) {
             double curTime = path.get(path.size() - 1).getTime() * i / path.size();
@@ -303,7 +306,7 @@ public class UIController {
                 filter(row -> row.getIndex() > endIndex).
                 forEach(row -> row.moveIndex(endIndex - startIndex + 1));
         updatePolyline();
-        addSavedState(rows);
+        addSavedState();
     }
 
     private PointRow rowAtIndex(int index) {
@@ -323,10 +326,10 @@ public class UIController {
             return;
         y = imageHeight() - y;
         if (nextIndex == -1) {
-            addNewPointRow(String.valueOf(x), String.valueOf(y), intercept);
+            addNewPointRow(new Point(x, y, intercept), true);
         } else {
             rows.get(nextIndex).setPoint(new Point(x, y, rows.get(nextIndex).getInterceptValue()));
-            addSavedState(rows);
+            addSavedState();
             setNextIndex(-1);
         }
         updatePolyline();
@@ -364,7 +367,7 @@ public class UIController {
                     break;
                 case ENTER:
                     setNextIndex(-1);
-                    addSavedState(rows);
+                    addSavedState();
                     break;
                 case ESCAPE:
                     setNextIndex(-1);
@@ -426,21 +429,57 @@ public class UIController {
     }
 
     @FXML
-    private void mnuExport() { //TODO make a temporary backup when doing this
+    private void mnuExport() {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
         try (CSVWriter leftWriter = new CSVWriter(url + "_left.csv");
              CSVWriter rightWriter = new CSVWriter(url + "_right.csv")) {
             leftWriter.writePoints("Dist,Vel,Heading", path,
-                    point -> String.valueOf(point.getLeftPos()),
-                    point -> String.valueOf(point.getLeftVel()),
-                    point -> String.valueOf(point.getHeading()));
+                    Point::getLeftPos,
+                    Point::getLeftVel,
+                    Point::getHeading);
             rightWriter.writePoints("Dist,Vel,Heading", path,
-                    point -> String.valueOf(point.getRightPos()),
-                    point -> String.valueOf(point.getRightVel()),
-                    point -> String.valueOf(point.getHeading()));
+                    Point::getRightPos,
+                    Point::getRightVel,
+                    Point::getHeading);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void mnuSavePoints() {
+        String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
+        try (CSVWriter writer = new CSVWriter(url + "_save.csv")) {
+            writer.writePoints("X,Y,Intercept,Velocity", controlPoints,
+                    Point::getX,
+                    Point::getY,
+                    Point::isIntercept,
+                    Point::getTargetVelocity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void mnuOpenPoints() {
+        FileChooser saveFile = new FileChooser();
+        saveFile.setTitle("Choose save");
+        saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
+        try (BufferedReader reader = new BufferedReader(new FileReader(saveFile.showOpenDialog(root.getScene().getWindow())))) {
+            deleteAllPoints();
+            reader.lines()
+                    .skip(1)
+                    .map(line -> {
+                        String[] val = line.split(",");
+                        return new Point(Double.parseDouble(val[0]), Double.parseDouble(val[1]),
+                                Boolean.parseBoolean(val[2]), Double.parseDouble(val[3]));
+                    })
+                    .forEach(point -> addNewPointRow(point, false));
+            addSavedState();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        updatePolyline();
     }
 
     public static double imageHeight() {
@@ -497,5 +536,14 @@ public class UIController {
         File dir = dirChooser.showDialog(root.getScene().getWindow());
         config.setProperty("csv_out_dir", dir.getAbsolutePath());
     }
-}
 
+    @FXML
+    private void mnuChangeSaveOut() {
+        configUpdate();
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Save location");
+        dirChooser.setInitialDirectory(new File(Config.getStringProperty("points_save_dir", "src")));
+        File dir = dirChooser.showDialog(root.getScene().getWindow());
+        config.setProperty("points_save_dir", dir.getAbsolutePath());
+    }
+}

@@ -6,17 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="2169464d-dead-4441-9174-5b56e1111ff9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/bezier/Bezier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Bezier.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bezier/Point.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/bezier/Point.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/csv/leftpath.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/csv/rightpath.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/images/White.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/UI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UI.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/UIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/UIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/CSVWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/CSVWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/UnitConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/UnitConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/todo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/todo.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -29,10 +24,10 @@
   <component name="FileEditorManager">
     <leaf>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/todo.txt">
+        <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+            <state relative-caret-position="-3145">
+              <caret line="36" column="13" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -49,10 +44,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>csvw</find>
-      <find>con</find>
-      <find>config</find>
-      <find>cfg.*\.getTe</find>
       <find>cfg[^&quot;]+\.</find>
       <find>config.</find>
       <find>cfg.*\.</find>
@@ -79,6 +70,10 @@
       <find>image</find>
       <find>delete</find>
       <find>csv</find>
+      <find>Config.getDou</find>
+      <find>csv_out_dir</find>
+      <find>Point</find>
+      <find>addSavedState</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -109,7 +104,6 @@
         <option value="$PROJECT_DIR$/src/utils/Unit.java" />
         <option value="$PROJECT_DIR$/src/bezier/RunnableBezier.java" />
         <option value="$PROJECT_DIR$/src/bezier/RunnableBezierGenerate.java" />
-        <option value="$PROJECT_DIR$/src/ui/PointRow.java" />
         <option value="$PROJECT_DIR$/src/ui/PointMenuResult.java" />
         <option value="$PROJECT_DIR$/src/config.json" />
         <option value="$PROJECT_DIR$/src/config.cfg" />
@@ -118,15 +112,16 @@
         <option value="$PROJECT_DIR$/src/bezier/Path.java" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/utils/Utils.java" />
-        <option value="$PROJECT_DIR$/src/utils/CSVWriter.java" />
         <option value="$PROJECT_DIR$/src/ui/UIController.kt" />
         <option value="$PROJECT_DIR$/src/utils/Config.java" />
         <option value="$PROJECT_DIR$/src/utils/UnitConverter.java" />
-        <option value="$PROJECT_DIR$/src/ui/UI.fxml" />
         <option value="$PROJECT_DIR$/src/bezier/Bezier.java" />
+        <option value="$PROJECT_DIR$/src/utils/CSVWriter.java" />
+        <option value="$PROJECT_DIR$/src/ui/UI.fxml" />
+        <option value="$PROJECT_DIR$/src/ui/PointRow.java" />
         <option value="$PROJECT_DIR$/src/bezier/Point.java" />
-        <option value="$PROJECT_DIR$/src/ui/UIController.java" />
         <option value="$PROJECT_DIR$/todo.txt" />
+        <option value="$PROJECT_DIR$/src/ui/UIController.java" />
       </list>
     </option>
   </component>
@@ -139,11 +134,15 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;lef&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;.pr&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;uti&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Utils.java&#10;.pro&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;confi&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;conf&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;todo&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;to&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;bezi&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;UIC&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;bez&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;fxm&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UI.fxml&#10;fx&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UI.fxml&#10;Uti&#9;PSI&#9;JAVA://utils.Utils&#10;left&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;b&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;config&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;uicon&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;po&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;point&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Point.java&#10;unitc&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/UnitConverter.java&#10;be&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/bezier/Bezier.java&#10;t&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;ui&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;tod&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/todo.txt&#10;uic&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;.c&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/csv/leftpath.csv&#10;onfig.pr&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;onf&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/utils/Config.java&#10;config.p&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/config.properties&#10;con&#9;FILE&#9;file://C:/Users/Andrew Schwartz/IdeaProjects/RobotPathing/src/ui/UIController.java&#10;pointRo&#9;PSI&#9;JAVA://ui.PointRow" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542990481398" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1543012247143" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -257,15 +256,15 @@
       <window_info content_ui="combo" id="Project" order="6" sideWeight="0.49756098" weight="0.16015625" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32841823" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4986577" visible="true" weight="0.15951742" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4302949" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4986577" visible="true" weight="0.12734585" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.37265417" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.2657718" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.28284183" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5013423" side_tool="true" weight="0.26979867" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5013423" side_tool="true" weight="0.269437" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" weight="0.32963988" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.32885906" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.32841823" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -274,7 +273,7 @@
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Palette&#9;" order="6" />
       <window_info anchor="right" id="Maven Projects" order="7" />
-      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="8" side_tool="true" weight="0.3294271" />
+      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="8" side_tool="true" weight="0.4153646" />
       <window_info anchor="right" id="Maven" order="9" />
     </layout>
   </component>
@@ -340,16 +339,10 @@
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/utils/CSVWriter.java</url>
-          <line>33</line>
+          <url>file://$PROJECT_DIR$/src/ui/PointRow.java</url>
+          <line>94</line>
           <properties />
-          <option name="timeStamp" value="52" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/ui/UIController.java</url>
-          <line>260</line>
-          <properties />
-          <option name="timeStamp" value="96" />
+          <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/utils/Utils.java</url>
@@ -359,27 +352,22 @@
           </properties>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/utils/CSVWriter.java</url>
-          <line>23</line>
-          <properties class="utils.CSVWriter" method="writePoints">
-            <option name="EMULATED" value="true" />
-          </properties>
-          <option name="timeStamp" value="50" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/utils/CSVWriter.java</url>
-          <line>17</line>
-          <properties class="utils.CSVWriter" method="&lt;init&gt;">
-            <option name="EMULATED" value="true" />
-          </properties>
-          <option name="timeStamp" value="56" />
-        </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="java-exception">
+          <condition disabled="true" expression="NullPointerException" language="JAVA" />
+          <properties />
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>NullPointerException</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>t &gt; .95</expression-string>
         <language-id>JAVA</language-id>
@@ -420,18 +408,13 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>!Double.isInfinite(circleRadius)</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>!Di=ou</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
     <expressions id="watch">
+      <expression>
+        <expression-string>getAllNodes()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>UnitConverter.rotationalToLinear(leftVel)</expression-string>
         <language-id>JAVA</language-id>
@@ -478,11 +461,6 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>pathWithIntercepts.stream()                 .filter(Point::isIntercept)                 .collect(Collectors.toList())</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
@@ -496,39 +474,7 @@
     <entry file="file://$PROJECT_DIR$/config.cfg" />
     <entry file="file://$PROJECT_DIR$/config.properties" />
     <entry file="file://$PROJECT_DIR$/src/bezier/Path.java" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="5" lean-forward="true" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="5" lean-forward="true" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
-          <folding>
-            <element signature="e#295#296#0" expanded="true" />
-            <element signature="e#335#336#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/CSVWriter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="13" column="29" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/csvleftpath.csv" />
-    <entry file="file://$PROJECT_DIR$/src/config.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -536,65 +482,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/Config.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="20" column="13" lean-forward="true" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#873#874#0" expanded="true" />
-            <element signature="e#944#945#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/csv/rightpath.csv" />
     <entry file="file://$PROJECT_DIR$/src/csv/_left.csv" />
-    <entry file="file://$PROJECT_DIR$/src/csv/leftpath.csv" />
-    <entry file="file://$PROJECT_DIR$/src/utils/UnitConverter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
-          <caret line="68" column="31" lean-forward="true" selection-start-line="68" selection-start-column="31" selection-end-line="68" selection-end-column="31" />
-          <folding>
-            <element signature="e#478#479#0" expanded="true" />
-            <element signature="e#510#511#0" expanded="true" />
-            <element signature="e#2247#2248#0" expanded="true" />
-            <element signature="e#2293#2294#0" expanded="true" />
-          </folding>
-        </state>
+    <entry file="file://$PROJECT_DIR$/src/csvtest_left">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csv/leftpath.csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" rowLines="3" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/UI.fxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="151" column="38" selection-start-line="151" selection-start-column="38" selection-end-line="151" selection-end-column="38" />
-        </state>
+    <entry file="file://$PROJECT_DIR$/src/csv/test_right_backup.csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" rowLines="3" />
       </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csv/testleft.csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csv/test_left_backup.csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" rowLines="3" />
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/csv/test_left.csv">
       <provider selected="true" editor-type-id="csv-text-editor">
-        <state relative-caret-position="381">
-          <caret line="26" column="46" lean-forward="true" selection-start-line="26" selection-start-column="46" selection-end-line="26" selection-end-column="46" />
+        <state relative-caret-position="374">
+          <caret line="22" column="55" lean-forward="true" selection-start-line="22" selection-start-column="55" selection-end-line="22" selection-end-column="55" />
         </state>
       </provider>
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" rowLines="3" />
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_162/jre/lib/rt.jar!/sun/reflect/misc/Trampoline.class">
+    <entry file="file://$PROJECT_DIR$/src/ui/UI.fxml">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret lean-forward="true" />
-          <folding>
-            <element signature="e#0#1100#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="238">
+          <caret line="14" column="74" lean-forward="true" selection-start-line="14" selection-start-column="74" selection-end-line="14" selection-end-column="74" />
         </state>
       </provider>
+      <provider editor-type-id="JavaFX-Scene-Builder" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bezier/Bezier.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
+        <state relative-caret-position="830">
           <caret line="160" selection-start-line="160" selection-end-line="160" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -603,31 +540,52 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bezier/Point.java">
+    <entry file="file://$PROJECT_DIR$/src/saves/test.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/PointRow.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="197" column="5" lean-forward="true" selection-start-line="197" selection-start-column="5" selection-end-line="197" selection-end-column="5" />
+        <state relative-caret-position="187">
+          <caret line="24" column="14" selection-start-line="24" selection-start-column="14" selection-end-line="24" selection-end-column="14" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2195#2196#0" expanded="true" />
-            <element signature="e#2233#2234#0" expanded="true" />
-            <element signature="e#4254#4255#0" expanded="true" />
-            <element signature="e#4284#4285#0" expanded="true" />
+            <element signature="e#669#670#0" expanded="true" />
+            <element signature="e#703#704#0" expanded="true" />
+            <element signature="e#734#735#0" expanded="true" />
+            <element signature="e#762#763#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
+    <entry file="file://$PROJECT_DIR$/src/bezier/Point.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="270" column="101" lean-forward="true" selection-start-line="270" selection-start-column="101" selection-end-line="270" selection-end-column="101" />
+        <state relative-caret-position="-119">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1588#1589#0" expanded="true" />
+            <element signature="e#1641#1642#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/todo.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="17" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+        <state relative-caret-position="153">
+          <caret line="9" column="27" lean-forward="true" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ui/UIController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3145">
+          <caret line="36" column="13" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
         </state>
       </provider>
     </entry>

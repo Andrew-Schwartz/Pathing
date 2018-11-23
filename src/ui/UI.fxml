@@ -11,8 +11,11 @@
         <menus>
             <Menu mnemonicParsing="false" text="Files">
                 <MenuItem accelerator="Shortcut+E" onAction="#mnuExport" text="Export" />
+                <MenuItem accelerator="Shortcut+S" onAction="#mnuSavePoints" text="Save Points"/>
+                <MenuItem accelerator="Shortcut+O" onAction="#mnuOpenPoints" text="Open from Point" />
                 <MenuItem accelerator="Shortcut+I" onAction="#mnuOpenImage" text="Set Image" />
-                <MenuItem accelerator="Shortcut+M" onAction="#mnuChangeCSVOut" text="Change CSV location" />
+                <MenuItem onAction="#mnuChangeCSVOut" text="Change CSV Location" />
+                <MenuItem onAction="#mnuChangeSaveOut" text="Change Save Location" />
             </Menu>
             <Menu mnemonicParsing="false" text="Ease">
                 <MenuItem accelerator="Shortcut+Z" onAction="#undo" text="Undo" />
@@ -58,21 +61,6 @@
                 <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                 <Label text="Draw wheel paths?" GridPane.rowIndex="8" />
                 <CheckBox fx:id="cfgDrawWheels" accessibleRoleDescription="draw_wheels" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <columnConstraints>
-               <ColumnConstraints />
-               <ColumnConstraints />
-            </columnConstraints>
-            <rowConstraints>
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-               <RowConstraints />
-            </rowConstraints>
 
                 <!--<Button onAction="#angles" text="Angles" GridPane.rowIndex="5" />-->
             </GridPane>
