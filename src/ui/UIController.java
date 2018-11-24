@@ -22,6 +22,7 @@ import javafx.stage.FileChooser;
 import utils.CSVWriter;
 import utils.Config;
 import utils.UnitConverter;
+import utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,6 +30,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+
+import static java.util.stream.Collectors.toList;
 
 public class UIController {
     @FXML
@@ -109,8 +113,8 @@ public class UIController {
     }
 
     private void addNewPointRow(Point point, boolean save) {
-        PointRow row = new PointRow(rows.size());
-        row.makeAllNodes(point);
+        PointRow row = new PointRow(rows.size(), point);
+//        row.makeAllNodes(point);
         row.getAllNodes().forEach(node -> pointRowListeners(node, row));
         rows.add(row);
         if (save) addSavedState();
@@ -122,7 +126,7 @@ public class UIController {
             previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
         }
         previousStates.add(new ArrayList<>());
-        rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row)));
+        rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row.getIndex(), row.getPoint())));
         previousStates.get(previousStates.size() - 1).forEach(row -> row.getAllNodes().forEach(node -> pointRowListeners(node, row)));
         currentState = previousStates.size() - 1;
     }
@@ -143,8 +147,10 @@ public class UIController {
         if (node instanceof ComboBox)
             ((ComboBox) node).setOnAction(event -> {
                 handleComboResults(row.getComboBox().getValue(), row.getIndex());
-                ((ComboBox) node).getSelectionModel().clearSelection();
-                imgField.requestFocus(); //to prevent double selection
+                row.remakeComboBox();
+                pointRowListeners(node, row);
+                //                ((ComboBox) node).getSelectionModel().clearSelection();
+//                imgField.requestFocus(); //to prevent double selection
             });
 
         //Drag and Drop listeners
@@ -170,7 +176,8 @@ public class UIController {
         for (PointMenuResult r : PointMenuResult.values()) {
             if (r.toString().equals(res)) result = r;
         }
-        switch (result) {   //can't actually be null
+        if (result == null) return;
+        switch (result) {
             case DELETE_POINT:
                 deletePoints(index, index);
                 break;
@@ -204,14 +211,18 @@ public class UIController {
     }
 
     private void updatePolyline() {
-        controlPoints.clear();
-        rows.forEach(row -> controlPoints.add(row.getPoint()));
-        rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
+//        controlPoints.clear();
+//        rows.forEach(row -> controlPoints.add(row.getPoint()));
+//        rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
+        controlPoints = (ArrayList<Point>) rows.stream()
+                .sorted(Comparator.comparingInt(PointRow::getIndex))
+                .map(PointRow::getPoint)
+                .collect(toList());
 
         path = Bezier.generateAll(controlPoints);
 
         polyPos.getPoints().clear();
-        path.forEach(point -> polyPos.getPoints().addAll(point.getX(), imageHeight() - point.getY()));
+        path.forEach(point -> polyPos.getPoints().addAll(point.getXPixels(), imageHeight() - point.getYPixels()));
 
         graphMotion();
 
@@ -219,13 +230,15 @@ public class UIController {
         polyRight.getPoints().clear();
 
         if (Config.getBooleanProperty("draw_wheels")) {
-            final double dist = UnitConverter.inchesToPixels(Config.getDoubleProperty("width") / 2);
+            final double dist = Config.getDoubleProperty("width") / 2;
             for (Point point : path) {
                 double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(point.getHeading()));
-                polyLeft.getPoints().addAll(point.getX() - dist * Math.sin(angle),
-                        imageHeight() - (point.getY() + dist * Math.cos(angle)));
-                polyRight.getPoints().addAll(point.getX() + dist * Math.sin(angle),
-                        imageHeight() - (point.getY() - dist * Math.cos(angle)));
+                double offsetX = UnitConverter.inchesToPixels(dist * Math.sin(angle)),
+                        offsetY = UnitConverter.inchesToPixels(dist * Math.cos(angle));
+                polyLeft.getPoints().addAll(point.getXPixels() - offsetX,
+                        imageHeight() - (point.getYPixels() + offsetY));
+                polyRight.getPoints().addAll(point.getXPixels() + offsetX,
+                        imageHeight() - (point.getYPixels() - offsetY));
             }
         }
 
@@ -239,6 +252,8 @@ public class UIController {
 
     private void graphMotion() {
         if (!tabVel.isSelected()) return;
+        double timeStep = Config.getDoubleProperty("time_step"),
+                maxAccel = Config.getDoubleProperty("max_accel");
         chtLeft.getData().clear();
         chtRight.getData().clear();
         chtCenter.getData().clear();
@@ -269,13 +284,13 @@ public class UIController {
             totalDist += path.get(i).getTargetVelocity() * Config.getDoubleProperty("time_step");
             leftPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getLeftPos())));
             leftVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftVelLinearFeet()));
-            leftAccel.getData().add(new XYChart.Data<>(curTime, curLeftAccel / Config.getDoubleProperty("time_step")));
+            leftAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curLeftAccel / timeStep, 0, maxAccel)));
             rightPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getRightPos())));
             rightVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightVelLinearFeet()));
-            rightAccel.getData().add(new XYChart.Data<>(curTime, curRightAccel / Config.getDoubleProperty("time_step")));
+            rightAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curRightAccel / timeStep, 0, maxAccel)));
             centerPos.getData().add(new XYChart.Data<>(curTime, totalDist));
             centerVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getTargetVelocity()));
-            centerAccel.getData().add(new XYChart.Data<>(curTime, curCenterAccel / Config.getDoubleProperty("time_step")));
+            centerAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curCenterAccel / timeStep, 0, maxAccel)));
         }
         chtLeft.getData().addAll(leftPos, leftVel, leftAccel);
         chtRight.getData().addAll(rightPos, rightVel, rightAccel);
@@ -325,6 +340,8 @@ public class UIController {
         if (x < 0 || y < 0 || x > imageWidth() || y > imageHeight())
             return;
         y = imageHeight() - y;
+        x = UnitConverter.pixelsToInches(x);
+        y = UnitConverter.pixelsToInches(y);
         if (nextIndex == -1) {
             addNewPointRow(new Point(x, y, intercept), true);
         } else {

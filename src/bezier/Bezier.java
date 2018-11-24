@@ -4,7 +4,8 @@ import utils.Config;
 import utils.UnitConverter;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class Bezier {
 
@@ -20,7 +21,7 @@ public class Bezier {
         ArrayList<Point> path = new ArrayList<>();
         ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()
                 .filter(Point::isIntercept)
-                .collect(Collectors.toList());
+                .collect(toList());
         for (int j = 0; j < throughPoints.size() - 1; j++) {
             for (double t = 0.0; t <= 1; t += 1. / 299.) { //some large number of points
                 double sumX = 0, sumY = 0;
@@ -61,10 +62,11 @@ public class Bezier {
         ArrayList<Double> times = new ArrayList<>();
         ArrayList<Point> throughPoints = (ArrayList<Point>) pathXY.stream()
                 .filter(Point::isIntercept)
-                .collect(Collectors.toList());
+                .collect(toList());
         for (int j = 0; j < throughPoints.size() - 1; j++) {
             double lengthOfCurve = throughPoints.get(j + 1).getDistance() - throughPoints.get(j).getDistance();
-            lengthOfCurve = UnitConverter.pixelsToFeet(lengthOfCurve);
+//            lengthOfCurve = UnitConverter.pixelsToFeet(lengthOfCurve);
+            lengthOfCurve = UnitConverter.inchesToFeet(lengthOfCurve);
             double velInitial = 0; //TODO not just 0 -- pointrow.get(j).getPoint().isOverrideMaxVel()
             //if triangle, quadratic; if trapezoid vel. the smaller is the always the right one //TODO "ALWAYS"?
             double timeAccelTrapezoid = (velMax - velInitial) / accelMax; //t = deltaV / a
@@ -88,7 +90,7 @@ public class Bezier {
         ArrayList<Point> path = new ArrayList<>();
         ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()
                 .filter(Point::isIntercept)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         double startMaxVel = maxVel;
         for (int j = 0; j < throughPoints.size() - 1; j++) {
@@ -98,7 +100,7 @@ public class Bezier {
             else maxVel = startMaxVel;
             double time = times.get(j);
 //            for (double t = 0.0; t <= 1; t += 1. / (time / timeStep)) {
-            double precision = Math.ceil(time / timeStep);
+            double precision = Math.ceil(time / timeStep) + 1;
             for (int fakeT = 0; fakeT <= precision; fakeT++) {
                 double t = fakeT / precision;
                 double sumX = 0, sumY = 0;
@@ -117,9 +119,10 @@ public class Bezier {
                 path.get(path.size() - 1).setTargetVelocity(Math.min(up, down));
                 path.get(path.size() - 1).setTime(time * t);
             }
-            if (path.get(path.size() - 1).getTargetVelocity() != endVel) {
-                throughPoints.get(j + 1).setTargetVelocity(path.get(path.size() - 1).getTargetVelocity());
-            }
+            if (j != throughPoints.size() - 2) path.remove(path.size() - 1);
+//            if (path.get(path.size() - 1).getTargetVelocity() != endVel) {
+//                throughPoints.get(j + 1).setTargetVelocity(path.get(path.size() - 1).getTargetVelocity());
+//            }
         }
         if (path.isEmpty()) return new ArrayList<>();
         path.get(0).setDistance(0);
@@ -149,12 +152,11 @@ public class Bezier {
         double axleLength = Config.getDoubleProperty("width");
         double halfWidth = axleLength / 2;
         for (int i = 0; i < path.size(); i++) {
-            int iAdjusted;
+            int iAdjusted = i;
             if (i + 2 > path.size() - 1)
                 iAdjusted = path.size() - 3;
-            else
-                iAdjusted = i;
-            double circleRadius = UnitConverter.pixelsToInches(radiusOfCircle(path.get(iAdjusted), path.get(iAdjusted + 1), path.get(iAdjusted + 2)));
+//            double circleRadius = UnitConverter.pixelsToInches(radiusOfCircle(path.get(iAdjusted), path.get(iAdjusted + 1), path.get(iAdjusted + 2)));
+            double circleRadius = radiusOfCircle(path.get(iAdjusted), path.get(iAdjusted + 1), path.get(iAdjusted + 2));
             double leftVel, rightVel;
             if (Double.isInfinite(circleRadius)) { //linear path
                 leftVel = UnitConverter.feetToInches(path.get(i).getTargetVelocity());
@@ -205,7 +207,7 @@ public class Bezier {
      * <p>r = a*b*c/4*area</p>
      *
      * @param circlePoints 3 points from which a circle is extrapolated
-     * @return radius of the circle in same unit as represented in the circlePoints (pixels)
+     * @return radius of the circle in same unit as represented in the circlePoints in inches
      */
     private static double radiusOfCircle(Point... circlePoints) {
         assert circlePoints.length == 3;

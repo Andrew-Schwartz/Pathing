@@ -38,12 +38,12 @@ public class Point {
         return x;
     }
 
-    public boolean isIntercept() {
-        return intercept;
-    }
-
     public double getY() {
         return y;
+    }
+
+    public boolean isIntercept() {
+        return intercept;
     }
 
     public String getXString() {
@@ -52,6 +52,14 @@ public class Point {
 
     public String getYString() {
         return String.valueOf(y);
+    }
+
+    public double getXPixels() {
+        return UnitConverter.inchesToPixels(x);
+    }
+
+    public double getYPixels() {
+        return UnitConverter.inchesToPixels(y);
     }
 
     public double distanceTo(Point p) {

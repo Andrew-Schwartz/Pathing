@@ -33,4 +33,10 @@ public class Utils {
     public static String parseString(String s) {
         return parseString(s, "");
     }
+
+    public static double absRange(double d, double min, double max) {
+        double sign = Math.signum(d);
+        d = Math.abs(d);
+        return sign * Math.max(Math.min(d, max), min);
+    }
 }

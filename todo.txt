@@ -5,8 +5,8 @@ legend:
 
 features
 [ ] organize this by importance and difficulty for having other people work on it
-[x] save and open from a list of pointRows
-[ ] make all things in Point be in inches, not pixels. include the values displayed to user in gridpane
+[x] make all things in Point be in inches, not pixels. include the values displayed to user in gridpane
+[ ] new PointMenuResult - Menu, show lots of details in popup for one box (x,y,vel,overrides)
 [ ] CSVWriter makes backups
 [ ] image location in config file
 [ ] wheel paths based on vel and heading
@@ -19,7 +19,8 @@ features
 [ ] offset by length feature
 
 bugs
-[ ] left and right graphs don't appear when there is more than one segment
+[x] left and right graphs don't appear when there is more than one segment
+[ ] combobox cant pick same thing 2x in a row
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -28,10 +29,10 @@ prior implemented features:
 [x] config file
 [x] vel chart, one per wheel
 [x] generate curve according to time and time interval
-[x] redo velocity targeting (not always use full time)
 [x] make Config static
 [x] csv output dir in config file
 [x] have path name be settable for use with csv file names
+[x] save and open from a list of pointRows
 
 prior fixed bugs
 [x] NaNs in velocity
