@@ -1,2 +1,2 @@
 # Pathing
-Draw bezier curves on FRC field
+Draw bezier curves on FRC field, and generate CSVs a robot can follow

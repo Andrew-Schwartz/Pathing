@@ -5,12 +5,12 @@ legend:
 
 features
 [ ] organize this by importance and difficulty for having other people work on it
-[x] make all things in Point be in inches, not pixels. include the values displayed to user in gridpane
+[x] account for != start and end vels
+[ ] backwards path
 [ ] new PointMenuResult - Menu, show lots of details in popup for one box (x,y,vel,overrides)
 [ ] CSVWriter makes backups
 [ ] image location in config file
 [ ] wheel paths based on vel and heading
-[ ] backwards path
 [ ] add jerk config
 [ ] more special cases for velocity if center point is inside of robot
 [ ] rotations to linear and vice versa not automatically do inches
@@ -19,8 +19,8 @@ features
 [ ] offset by length feature
 
 bugs
-[x] left and right graphs don't appear when there is more than one segment
-[ ] combobox cant pick same thing 2x in a row
+[?] combobox cant pick same thing 2x in a row
+    ? = no longer happening but I didn't change anything
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -33,6 +33,7 @@ prior implemented features:
 [x] csv output dir in config file
 [x] have path name be settable for use with csv file names
 [x] save and open from a list of pointRows
+[x] make all things in Point be in inches, not pixels. include the values displayed to user in gridpane
 
 prior fixed bugs
 [x] NaNs in velocity
@@ -46,3 +47,4 @@ prior fixed bugs
 [x] left and right path seem backwards
 [x] spamming "intercept?" on first point changes it's kinematics
 [x] left and right acceleration too low
+[x] left and right graphs don't appear when there is more than one segment

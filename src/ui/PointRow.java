@@ -92,11 +92,6 @@ public class PointRow { //Make this a node?
         GridPane.setRowIndex(comboBox, index);
     }
 
-    public void remakeComboBox() {
-        comboBox.setVisible(false);
-        makeComboBox();
-        }
-
     public void setIndex(int index) {
         this.index = index;
         getAllNodes().forEach(node -> GridPane.setRowIndex(node, index));
@@ -120,19 +115,19 @@ public class PointRow { //Make this a node?
         return comboBox;
     }
 
-    public double getXValue() {
+    private double getXValue() {
         return Utils.parseDouble(xText.getText().trim());
     }
 
-    public double getYValue() {
+    private double getYValue() {
         return Utils.parseDouble(yText.getText().trim());
     }
 
-    public boolean getInterceptValue() {
+    private boolean getInterceptValue() {
         return interceptBox.isSelected();
     }
 
-    public double getVelValue() {
+    private double getVelValue() {
         return Utils.parseDouble(velText.getText().trim());
     }
 

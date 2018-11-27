@@ -56,7 +56,7 @@
                 <Label text="Max Acceleration" GridPane.rowIndex="5" />
                 <TextField fx:id="cfgMaxAccel" accessibleRoleDescription="max_accel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <Label text="Max Jerk" GridPane.rowIndex="6" />
-                <TextField fx:id="cfgJerk" accessibleRoleDescription="jerk" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <TextField fx:id="cfgJerk" accessibleRoleDescription="max_jerk" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <Label text="Time step" GridPane.rowIndex="7" />
                 <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                 <Label text="Draw wheel paths?" GridPane.rowIndex="8" />

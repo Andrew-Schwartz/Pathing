@@ -77,4 +77,12 @@ public class Config {
             e.printStackTrace();
         }
     }
+
+    //short methods for getting doubles
+    public static double wheelRadius() { return getDoubleProperty("wheel_radius"); }
+    public static double width() { return getDoubleProperty("width"); }
+    public static double length() { return getDoubleProperty("length"); }
+    public static double maxAccel() { return getDoubleProperty("max_accel"); }
+    public static double maxVel() { return getDoubleProperty("max_vel"); }
+    public static double timeStep() { return getDoubleProperty("time_step"); }
 }

@@ -1,8 +1,9 @@
 package bezier;
 
 import ui.UIController;
-import utils.Config;
-import utils.UnitConverter;
+
+import static utils.Config.timeStep;
+import static utils.UnitConverter.*;
 
 public class Point {
     private double x, y;
@@ -46,20 +47,12 @@ public class Point {
         return intercept;
     }
 
-    public String getXString() {
-        return String.valueOf(x);
-    }
-
-    public String getYString() {
-        return String.valueOf(y);
-    }
-
     public double getXPixels() {
-        return UnitConverter.inchesToPixels(x);
+        return inchesToPixels(x);
     }
 
     public double getYPixels() {
-        return UnitConverter.inchesToPixels(y);
+        return inchesToPixels(y);
     }
 
     public double distanceTo(Point p) {
@@ -105,7 +98,7 @@ public class Point {
      * @return heading, in radians
      */
     public double getHeadingCartesian() {
-        double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(getHeading()));
+        double angle = rotateRobotToCartesian(Math.toRadians(getHeading()));
         if (angle < 180) angle = 360 - angle;
         return angle;
     }
@@ -174,14 +167,14 @@ public class Point {
      * @return linear vel in feet/second
      */
     public double getLeftVelLinearFeet() {
-        return UnitConverter.inchesToFeet(UnitConverter.rotationalToLinear(leftVel));
+        return inchesToFeet(rotationalToLinear(leftVel));
     }
 
     /**
      * @return linear vel in feet/second
      */
     public double getRightVelLinearFeet() {
-        return UnitConverter.inchesToFeet(UnitConverter.rotationalToLinear(rightVel));
+        return inchesToFeet(rotationalToLinear(rightVel));
     }
 
 
@@ -204,9 +197,8 @@ public class Point {
      * @param prevRightPos left position of previous point
      */
     public void advancePos(double prevLeftPos, double prevRightPos) {
-        double timeStep = Config.getDoubleProperty("time_step");
-        setPos(prevLeftPos + UnitConverter.rotationalToLinear(leftVel) * timeStep,
-                prevRightPos + UnitConverter.rotationalToLinear(rightVel) * timeStep);
+        setPos(prevLeftPos + rotationalToLinear(leftVel) * timeStep(),
+                prevRightPos + rotationalToLinear(rightVel) * timeStep());
     }
 
     public double getLeftPos() {

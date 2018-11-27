@@ -2,6 +2,8 @@ package utils;
 
 import ui.UIController;
 
+import static utils.Config.wheelRadius;
+
 public class UnitConverter {
     private static final int FIELD_WIDTH_INCHES = 324;
 //    private static final int FIELD_LENGTH_INCHES = 384;
@@ -35,7 +37,7 @@ public class UnitConverter {
      * @return linear velocity in (inches)/sec
      */
     public static double rotationalToLinear(double rotationalVel) {
-        return rotationalVel * Config.getDoubleProperty("wheel_radius") * Math.PI * 2;
+        return rotationalVel * wheelRadius() * Math.PI * 2;
     }
 
     /**
@@ -43,7 +45,7 @@ public class UnitConverter {
      * @return rotational velocity in rotations/sec
      */
     public static double linearToRotational(double linearVel) {
-        return linearVel / (Config.getDoubleProperty("wheel_radius") * Math.PI * 2);
+        return linearVel / (wheelRadius() * Math.PI * 2);
     }
 
     /**

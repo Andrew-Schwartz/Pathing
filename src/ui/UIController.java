@@ -21,7 +21,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import utils.CSVWriter;
 import utils.Config;
-import utils.UnitConverter;
 import utils.Utils;
 
 import java.io.BufferedReader;
@@ -33,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import static java.util.stream.Collectors.toList;
+import static utils.Config.*;
+import static utils.UnitConverter.*;
 
 public class UIController {
     @FXML
@@ -114,7 +115,6 @@ public class UIController {
 
     private void addNewPointRow(Point point, boolean save) {
         PointRow row = new PointRow(rows.size(), point);
-//        row.makeAllNodes(point);
         row.getAllNodes().forEach(node -> pointRowListeners(node, row));
         rows.add(row);
         if (save) addSavedState();
@@ -147,10 +147,10 @@ public class UIController {
         if (node instanceof ComboBox)
             ((ComboBox) node).setOnAction(event -> {
                 handleComboResults(row.getComboBox().getValue(), row.getIndex());
-                row.remakeComboBox();
-                pointRowListeners(node, row);
-                //                ((ComboBox) node).getSelectionModel().clearSelection();
-//                imgField.requestFocus(); //to prevent double selection
+                ((ComboBox) node).getSelectionModel().clearSelection();
+                imgField.requestFocus(); //to prevent double selection
+//                row.remakeComboBox();
+//                pointRowListeners(node, row);
             });
 
         //Drag and Drop listeners
@@ -183,8 +183,8 @@ public class UIController {
                 break;
             case POINT_EDIT_MODE:
                 setNextIndex(index);
-                pointHighlight.setCenterX(rows.get(index).getXValue());
-                pointHighlight.setCenterY(imageHeight() - rows.get(index).getYValue());
+                pointHighlight.setCenterX(rows.get(index).getPoint().getXPixels());
+                pointHighlight.setCenterY(imageHeight() - rows.get(index).getPoint().getYPixels());
                 break;
             case TOGGLE_OVERRIDE_VEL:
                 rows.get(index).getPoint().toggleOverride();
@@ -230,11 +230,11 @@ public class UIController {
         polyRight.getPoints().clear();
 
         if (Config.getBooleanProperty("draw_wheels")) {
-            final double dist = Config.getDoubleProperty("width") / 2;
+            final double dist = width() / 2;
             for (Point point : path) {
-                double angle = UnitConverter.rotateRobotToCartesian(Math.toRadians(point.getHeading()));
-                double offsetX = UnitConverter.inchesToPixels(dist * Math.sin(angle)),
-                        offsetY = UnitConverter.inchesToPixels(dist * Math.cos(angle));
+                double angle = rotateRobotToCartesian(Math.toRadians(point.getHeading()));
+                double offsetX = inchesToPixels(dist * Math.sin(angle)),
+                        offsetY = inchesToPixels(dist * Math.cos(angle));
                 polyLeft.getPoints().addAll(point.getXPixels() - offsetX,
                         imageHeight() - (point.getYPixels() + offsetY));
                 polyRight.getPoints().addAll(point.getXPixels() + offsetX,
@@ -252,8 +252,6 @@ public class UIController {
 
     private void graphMotion() {
         if (!tabVel.isSelected()) return;
-        double timeStep = Config.getDoubleProperty("time_step"),
-                maxAccel = Config.getDoubleProperty("max_accel");
         chtLeft.getData().clear();
         chtRight.getData().clear();
         chtCenter.getData().clear();
@@ -281,16 +279,16 @@ public class UIController {
             double curLeftAccel = i == 0 ? 0 : path.get(i).getLeftVelLinearFeet() - path.get(i - 1).getLeftVelLinearFeet();
             double curRightAccel = i == 0 ? 0 : path.get(i).getRightVelLinearFeet() - path.get(i - 1).getRightVelLinearFeet();
             double curCenterAccel = i == 0 ? 0 : path.get(i).getTargetVelocity() - path.get(i - 1).getTargetVelocity();
-            totalDist += path.get(i).getTargetVelocity() * Config.getDoubleProperty("time_step");
-            leftPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getLeftPos())));
+            totalDist += path.get(i).getTargetVelocity() * timeStep();
+            leftPos.getData().add(new XYChart.Data<>(curTime, inchesToFeet(path.get(i).getLeftPos())));
             leftVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftVelLinearFeet()));
-            leftAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curLeftAccel / timeStep, 0, maxAccel)));
-            rightPos.getData().add(new XYChart.Data<>(curTime, UnitConverter.inchesToFeet(path.get(i).getRightPos())));
+            leftAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curLeftAccel / timeStep(), 0, maxAccel())));
+            rightPos.getData().add(new XYChart.Data<>(curTime, inchesToFeet(path.get(i).getRightPos())));
             rightVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightVelLinearFeet()));
-            rightAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curRightAccel / timeStep, 0, maxAccel)));
+            rightAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curRightAccel / timeStep(), 0, maxAccel())));
             centerPos.getData().add(new XYChart.Data<>(curTime, totalDist));
             centerVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getTargetVelocity()));
-            centerAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curCenterAccel / timeStep, 0, maxAccel)));
+            centerAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curCenterAccel / timeStep(), 0, maxAccel())));
         }
         chtLeft.getData().addAll(leftPos, leftVel, leftAccel);
         chtRight.getData().addAll(rightPos, rightVel, rightAccel);
@@ -340,12 +338,12 @@ public class UIController {
         if (x < 0 || y < 0 || x > imageWidth() || y > imageHeight())
             return;
         y = imageHeight() - y;
-        x = UnitConverter.pixelsToInches(x);
-        y = UnitConverter.pixelsToInches(y);
+        x = pixelsToInches(x);
+        y = pixelsToInches(y);
         if (nextIndex == -1) {
             addNewPointRow(new Point(x, y, intercept), true);
         } else {
-            rows.get(nextIndex).setPoint(new Point(x, y, rows.get(nextIndex).getInterceptValue()));
+            rows.get(nextIndex).setPoint(new Point(x, y, rows.get(nextIndex).getPoint().isIntercept()));
             addSavedState();
             setNextIndex(-1);
         }
@@ -365,10 +363,9 @@ public class UIController {
             imgField.requestFocus();
             boolean ctrl = keyEvent.isControlDown(),
                     shift = keyEvent.isShiftDown();
-            int change;
-            change = shift ? ctrl ? 20 : 1 : ctrl ? 10 : 5;    //shift = 1      ctrl = 10       both = 20
-            double x = row.getXValue();
-            double y = row.getYValue();
+            int change = shift ? ctrl ? 24 : 1 : ctrl ? 12 : 6; //key = in -> shift=1, none=6, ctrl=12, both=24
+            double x = row.getPoint().getX();
+            double y = row.getPoint().getY();
             switch (keyEvent.getCode()) {
                 case UP:
                     y += change;
@@ -390,10 +387,10 @@ public class UIController {
                     setNextIndex(-1);
                     break;
             }
-            row.setPoint(new Point(x, y, row.getInterceptValue()));
+            row.setPoint(new Point(x, y, row.getPoint().isIntercept()));
             updatePolyline();
-            pointHighlight.setCenterX(x);
-            pointHighlight.setCenterY(imageHeight() - y);
+//            pointHighlight.setCenterX(UnitConverter.inchesToPixels(x));
+//            pointHighlight.setCenterY(imageHeight() - UnitConverter.inchesToPixels(y));
         } else {
             boolean pointsFocused = false;
             int focusedIndex = 0, focusedColumn = 0;
@@ -450,14 +447,12 @@ public class UIController {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
         try (CSVWriter leftWriter = new CSVWriter(url + "_left.csv");
              CSVWriter rightWriter = new CSVWriter(url + "_right.csv")) {
-            leftWriter.writePoints("Dist,Vel,Heading", path,
+            leftWriter.writePoints("Dist,Vel", path,
                     Point::getLeftPos,
-                    Point::getLeftVel,
-                    Point::getHeading);
-            rightWriter.writePoints("Dist,Vel,Heading", path,
+                    Point::getLeftVel);
+            rightWriter.writePoints("Dist,Vel", path,
                     Point::getRightPos,
-                    Point::getRightVel,
-                    Point::getHeading);
+                    Point::getRightVel);
         } catch (IOException e) {
             e.printStackTrace();
         }
