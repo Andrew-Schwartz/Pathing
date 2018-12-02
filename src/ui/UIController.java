@@ -6,10 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -68,7 +65,6 @@ public class UIController {
             cfgJerk,
             cfgTimeStep,
             cfgPathName;
-
     @FXML
     private CheckBox cfgDrawWheels;
 
@@ -110,7 +106,7 @@ public class UIController {
 
     @FXML
     private void btnNewPointEvent() {
-        addNewPointRow(new Point(0, 0, false, 0), true);
+        addNewPointRow(new Point(0, 0), true);
     }
 
     private void addNewPointRow(Point point, boolean save) {
@@ -149,8 +145,6 @@ public class UIController {
                 handleComboResults(row.getComboBox().getValue(), row.getIndex());
                 ((ComboBox) node).getSelectionModel().clearSelection();
                 imgField.requestFocus(); //to prevent double selection
-//                row.remakeComboBox();
-//                pointRowListeners(node, row);
             });
 
         //Drag and Drop listeners
@@ -178,6 +172,12 @@ public class UIController {
         }
         if (result == null) return;
         switch (result) {
+            case MENU:
+                Dialog<Point> menu = MenuFactory.menu(rows.get(index).getPoint());
+                menu.showAndWait().ifPresent(rows.get(index)::setPoint);
+                addSavedState();
+                updatePolyline();
+                break;
             case DELETE_POINT:
                 deletePoints(index, index);
                 break;
@@ -187,7 +187,12 @@ public class UIController {
                 pointHighlight.setCenterY(imageHeight() - rows.get(index).getPoint().getYPixels());
                 break;
             case TOGGLE_OVERRIDE_VEL:
-                rows.get(index).getPoint().toggleOverride();
+                rows.get(index).getPoint().setOverrideMaxVel(!rows.get(index).getPoint().isOverrideMaxVel());
+                addSavedState();
+                updatePolyline();
+                break;
+            case TOGGLE_BACKWARDS:
+                rows.get(index).getPoint().setReverse(!rows.get(index).getPoint().isReverse());
                 addSavedState();
                 updatePolyline();
                 break;
@@ -389,8 +394,6 @@ public class UIController {
             }
             row.setPoint(new Point(x, y, row.getPoint().isIntercept()));
             updatePolyline();
-//            pointHighlight.setCenterX(UnitConverter.inchesToPixels(x));
-//            pointHighlight.setCenterY(imageHeight() - UnitConverter.inchesToPixels(y));
         } else {
             boolean pointsFocused = false;
             int focusedIndex = 0, focusedColumn = 0;
@@ -406,10 +409,10 @@ public class UIController {
             if (!pointsFocused) return;
             switch (keyEvent.getCode()) {
                 case UP:
-                    rows.get(Math.max(0, focusedIndex - 1)).getAllNodes().get(focusedColumn).requestFocus();
+                    rowAtIndex(Math.max(0, focusedIndex - 1)).getAllNodes().get(focusedColumn).requestFocus();
                     break;
                 case DOWN:
-                    rows.get(Math.min(rows.size() - 1, focusedIndex + 1)).getAllNodes().get(focusedColumn).requestFocus();
+                    rowAtIndex(Math.min(rows.size() - 1, focusedIndex + 1)).getAllNodes().get(focusedColumn).requestFocus();
                     break;
             }
         }
@@ -462,11 +465,13 @@ public class UIController {
     private void mnuSavePoints() {
         String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
         try (CSVWriter writer = new CSVWriter(url + "_save.csv")) {
-            writer.writePoints("X,Y,Intercept,Velocity", controlPoints,
+            writer.writePoints("X,Y,Intercept,Velocity,Override,Reverse", controlPoints,
                     Point::getX,
                     Point::getY,
                     Point::isIntercept,
-                    Point::getTargetVelocity);
+                    Point::getTargetVelocity,
+                    Point::isOverrideMaxVel,
+                    Point::isReverse);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -483,8 +488,12 @@ public class UIController {
                     .skip(1)
                     .map(line -> {
                         String[] val = line.split(",");
-                        return new Point(Double.parseDouble(val[0]), Double.parseDouble(val[1]),
-                                Boolean.parseBoolean(val[2]), Double.parseDouble(val[3]));
+                        return new Point(Double.parseDouble(val[0]),
+                                Double.parseDouble(val[1]),
+                                Boolean.parseBoolean(val[2]),
+                                Double.parseDouble(val[3]),
+                                Boolean.parseBoolean(val[4]),
+                                Boolean.parseBoolean(val[5]));
                     })
                     .forEach(point -> addNewPointRow(point, false));
             addSavedState();

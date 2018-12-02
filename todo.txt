@@ -5,9 +5,8 @@ legend:
 
 features
 [ ] organize this by importance and difficulty for having other people work on it
-[x] account for != start and end vels
-[ ] backwards path
-[ ] new PointMenuResult - Menu, show lots of details in popup for one box (x,y,vel,overrides)
+[x] backwards path
+[x] new PointMenuResult - Menu, show lots of details in popup for one box (x,y,vel,overrides)
 [ ] CSVWriter makes backups
 [ ] image location in config file
 [ ] wheel paths based on vel and heading
@@ -19,8 +18,6 @@ features
 [ ] offset by length feature
 
 bugs
-[?] combobox cant pick same thing 2x in a row
-    ? = no longer happening but I didn't change anything
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -34,17 +31,4 @@ prior implemented features:
 [x] have path name be settable for use with csv file names
 [x] save and open from a list of pointRows
 [x] make all things in Point be in inches, not pixels. include the values displayed to user in gridpane
-
-prior fixed bugs
-[x] NaNs in velocity
-[x] config and textfields are empty -> NPE
-[x] position should be measured in feet on chart
-[x] accel on chart is wrong
-[x] vel being calculated wrong
-[x] delete last button deletes the most recently created pointrow, not the furthest down
-[x] distance/time calculation wrong
-[x] rotateAngle not working -- (theta, 90) = (theta, -90)
-[x] left and right path seem backwards
-[x] spamming "intercept?" on first point changes it's kinematics
-[x] left and right acceleration too low
-[x] left and right graphs don't appear when there is more than one segment
+[x] account for != start and end vels

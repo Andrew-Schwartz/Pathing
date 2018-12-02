@@ -5,15 +5,15 @@ import ui.UIController;
 import static utils.Config.timeStep;
 import static utils.UnitConverter.*;
 
-public class Point {
+public class Point implements Cloneable {
     private double x, y;
     private boolean intercept;
     private double targetVelocity, time, distance;
 
     private double leftPos, leftVel, rightPos, rightVel, heading;
-    private boolean overrideMaxVel;
+    private boolean overrideMaxVel, reverse;
 
-    public Point(double x, double y, boolean intercept, double targetVelocity) {
+    public Point(double x, double y, boolean intercept, double targetVelocity, boolean overrideMaxVel, boolean reverse) {
 //        x = Math.round(x * 10) / 10.0;
 //        y = Math.round(y * 10) / 10.0;
         if (intercept) {
@@ -25,14 +25,16 @@ public class Point {
         }
         this.intercept = intercept;
         this.targetVelocity = targetVelocity;
+        this.overrideMaxVel = overrideMaxVel;
+        this.reverse = reverse;
     }
 
     public Point(double x, double y, boolean intercept) {
-        this(x, y, intercept, 0);
+        this(x, y, intercept, 0, false, false);
     }
 
     public Point(double x, double y) {
-        this(x, y, false, 0);
+        this(x, y, false, 0, false, false);
     }
 
     public double getX() {
@@ -101,6 +103,11 @@ public class Point {
         double angle = rotateRobotToCartesian(Math.toRadians(getHeading()));
         if (angle < 180) angle = 360 - angle;
         return angle;
+    }
+
+    public void reverse() {
+        setTargetVelocity(-targetVelocity);
+        setVels(-leftVel, -rightVel);
     }
 
     public void setIntercept(boolean intercept) {
@@ -209,17 +216,29 @@ public class Point {
         return rightPos;
     }
 
-    public void overrideMaxVel(boolean overrideMaxVel) {
-        this.overrideMaxVel = overrideMaxVel;
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
     }
 
-    public void
-    toggleOverride() {
-        overrideMaxVel(!isOverrideMaxVel());
+    public boolean isReverse() {
+        return reverse;
+    }
+
+    public void setOverrideMaxVel(boolean overrideMaxVel) {
+        this.overrideMaxVel = overrideMaxVel;
     }
 
     public boolean isOverrideMaxVel() {
         return overrideMaxVel;
+    }
+
+    public Point clone() {
+        try {
+            return (Point) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
     }
 
     @Override

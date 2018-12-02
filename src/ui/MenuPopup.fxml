@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" hgap="15" vgap="10">
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20"/>
+    </padding>
+
+    <Label text="X"                     GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.halignment="CENTER"/>
+    <TextField fx:id="txtX"             GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.halignment="CENTER"/>
+    <Label text="Y"                     GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.halignment="CENTER"/>
+    <TextField fx:id="txtY"             GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.halignment="CENTER"/>
+    <Label text="Is Intercept"          GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.halignment="CENTER"/>
+    <CheckBox fx:id="chkIntercept"      GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.halignment="CENTER"/>
+    <Label text="Vel"                   GridPane.columnIndex="3" GridPane.rowIndex="0" GridPane.halignment="CENTER"/>
+    <TextField fx:id="txtVel"           GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.halignment="CENTER"/>
+    <Label text="Override Max Vel"      GridPane.columnIndex="4" GridPane.rowIndex="0" GridPane.halignment="CENTER"/>
+    <CheckBox fx:id="chkOverrideMaxVel" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.halignment="CENTER"/>
+    <Label text="Is Intercept"          GridPane.columnIndex="5" GridPane.rowIndex="0" GridPane.halignment="CENTER"/>
+    <CheckBox fx:id="chkReverse"        GridPane.columnIndex="5" GridPane.rowIndex="1" GridPane.halignment="CENTER"/>
+
+    <columnConstraints>
+        <ColumnConstraints maxWidth="100"/>
+        <ColumnConstraints maxWidth="100"/>
+        <ColumnConstraints maxWidth="100"/>
+        <ColumnConstraints maxWidth="100"/>
+        <ColumnConstraints maxWidth="120"/>
+        <ColumnConstraints maxWidth="100"/>
+    </columnConstraints>
+</GridPane>

@@ -138,8 +138,4 @@ public class PointRow { //Make this a node?
         point.setTargetVelocity(getVelValue());
     }
 
-//    public PointRow(PointRow original) {
-//        makeAllNodes(original.getPoint());
-//        setIndex(original.getIndex());
-//    }
 }

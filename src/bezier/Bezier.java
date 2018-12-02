@@ -49,7 +49,6 @@ public class Bezier {
             }
             if (i != 0) {
                 p.setDistance(path.get(i - 1).getDistance() + p.distanceTo(path.get(i - 1)));
-//                p.setDistanceTo(path.get(i - 1));
             }
         }
         path.get(path.size() - 1).setHeading(path.get(path.size() - 2).getHeading());
@@ -73,6 +72,15 @@ public class Bezier {
             double velMax = oldThroughPoints.get(j + 1).isOverrideMaxVel()
                     ? oldThroughPoints.get(j + 1).getTargetVelocity()
                     : maxVel();
+
+            if (velMax == 0) {
+                String errorMsg = "with a max speed of 0, you'll never get anywhere!";
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Impossible Physics");
+                alert.setContentText(errorMsg);
+                alert.showAndWait();
+                throw new IllegalStateException(errorMsg);
+            }
 
             //if accel and deccel take same time, calculations are much easier
             double velInitialAndFinal = velInitial;
@@ -125,9 +133,9 @@ public class Bezier {
             double startVel = throughPoints.get(j).getTargetVelocity(),
                     endVel = throughPoints.get(j + 1).getTargetVelocity(); //problem is that is is being changed in prior runnings of this method
             double curMaxVel = maxVel();
-            if (controlPoints.get(j + 1).isOverrideMaxVel()) curMaxVel = Math.max(startVel, endVel);
+            if (controlPoints.get(j + 1).isOverrideMaxVel())
+                curMaxVel = Math.max(startVel, endVel);
             double time = times.get(j);
-//            for (double t = 0.0; t <= 1; t += 1. / (time / timeStep())) {
             double precision = Math.ceil(time / timeStep()) + 1;
             for (int fakeT = 0; fakeT <= precision; fakeT++) {
                 double t = fakeT / precision;
@@ -147,10 +155,9 @@ public class Bezier {
                 path.get(path.size() - 1).setTargetVelocity(Math.min(up, down));
                 path.get(path.size() - 1).setTime(time * t);
             }
+            if (throughPoints.get(j + 1).isReverse())
+                path.stream().skip((long) (path.size() - precision)).forEach(Point::reverse);
             if (j != throughPoints.size() - 2 && !path.isEmpty()) path.remove(path.size() - 1);
-//            if (path.get(path.size() - 1).getTargetVelocity() != endVel) {
-//                throughPoints.get(j + 1).setTargetVelocity(path.get(path.size() - 1).getTargetVelocity());
-//            }
         }
         if (path.isEmpty()) return new ArrayList<>();
         path.get(0).setDistance(0);
@@ -182,13 +189,11 @@ public class Bezier {
             int iAdjusted = i;
             if (i + 2 > path.size() - 1)
                 iAdjusted = path.size() - 3;
-//            double circleRadius = UnitConverter.pixelsToInches(radiusOfCircle(path.get(iAdjusted), path.get(iAdjusted + 1), path.get(iAdjusted + 2)));
             double circleRadius = radiusOfCircle(path.get(iAdjusted), path.get(iAdjusted + 1), path.get(iAdjusted + 2));
             double leftVel, rightVel;
             if (Double.isInfinite(circleRadius)) { //linear path
                 leftVel = feetToInches(path.get(i).getTargetVelocity());
                 rightVel = feetToInches(path.get(i).getTargetVelocity());
-                //                System.out.printf("Point %-3d is infinite\n", i);
             } else {
                 double angularVel = feetToInches(path.get(i).getTargetVelocity()) / circleRadius;
                 if (path.get(iAdjusted + 2).getHeadingCartesian() < path.get(iAdjusted).getHeadingCartesian()) { // turning left
