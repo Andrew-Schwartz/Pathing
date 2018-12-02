@@ -24,7 +24,7 @@ public class Bezier {
                 .filter(Point::isIntercept)
                 .collect(toList());
         for (int j = 0; j < throughPoints.size() - 1; j++) {
-            for (double t = 0.0; t <= 1; t += 1. / 299.) { //some large number of points
+            for (double t = 0.0; t <= 1; t += 1. / 299.) { //some large number of saves.points
                 double sumX = 0, sumY = 0;
                 double T = 1 - t;
                 int startPoint = controlPoints.indexOf(throughPoints.get(j));
@@ -214,10 +214,10 @@ public class Bezier {
     }
 
     /**
-     * <p>calculates the radius of the circle which the 3 points lie on</p>
+     * <p>calculates the radius of the circle which the 3 saves.points lie on</p>
      * <p>r = a*b*c/4*area</p>
      *
-     * @param circlePoints 3 points from which a circle is extrapolated
+     * @param circlePoints 3 saves.points from which a circle is extrapolated
      * @return radius of the circle in same unit as represented in the circlePoints in inches
      */
     private static double radiusOfCircle(Point... circlePoints) {

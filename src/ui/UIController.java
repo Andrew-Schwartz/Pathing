@@ -247,7 +247,7 @@ public class UIController {
             }
         }
 
-        if (polyPos.getPoints().isEmpty())         //polyline with no points doesn't redraw
+        if (polyPos.getPoints().isEmpty())         //polyline with no saves.points doesn't redraw
             polyPos.getPoints().addAll(0.0, 0.0);  //so this does
         if (polyLeft.getPoints().isEmpty())
             polyLeft.getPoints().addAll(0.0, 0.0);
@@ -448,8 +448,8 @@ public class UIController {
     @FXML
     private void mnuExport() {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter leftWriter = new CSVWriter(url + "_left.csv");
-             CSVWriter rightWriter = new CSVWriter(url + "_right.csv")) {
+        try (CSVWriter leftWriter = new CSVWriter(url + "_left.saves.csv");
+             CSVWriter rightWriter = new CSVWriter(url + "_right.saves.csv")) {
             leftWriter.writePoints("Dist,Vel", path,
                     Point::getLeftPos,
                     Point::getLeftVel);
@@ -464,7 +464,7 @@ public class UIController {
     @FXML
     private void mnuSavePoints() {
         String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter writer = new CSVWriter(url + "_save.csv")) {
+        try (CSVWriter writer = new CSVWriter(url + "_save.saves.csv")) {
             writer.writePoints("X,Y,Intercept,Velocity,Override,Reverse", controlPoints,
                     Point::getX,
                     Point::getY,

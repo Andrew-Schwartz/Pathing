@@ -5,8 +5,6 @@ legend:
 
 features
 [ ] organize this by importance and difficulty for having other people work on it
-[x] backwards path
-[x] new PointMenuResult - Menu, show lots of details in popup for one box (x,y,vel,overrides)
 [ ] CSVWriter makes backups
 [ ] image location in config file
 [ ] wheel paths based on vel and heading
@@ -15,6 +13,7 @@ features
 [ ] rotations to linear and vice versa not automatically do inches
 [ ] Path class, take some of the dumb parts of Point and put them where they make sense
 [ ] thread drawing paths
+[ ] css for pretification
 [ ] offset by length feature
 
 bugs
@@ -27,8 +26,10 @@ prior implemented features:
 [x] vel chart, one per wheel
 [x] generate curve according to time and time interval
 [x] make Config static
-[x] csv output dir in config file
-[x] have path name be settable for use with csv file names
+[x] saves.csv output dir in config file
+[x] have path name be settable for use with saves.csv file names
 [x] save and open from a list of pointRows
 [x] make all things in Point be in inches, not pixels. include the values displayed to user in gridpane
 [x] account for != start and end vels
+[x] backwards path
+[x] new PointMenuResult - Menu, show lots of details in popup for one box (x,y,vel,overrides)
