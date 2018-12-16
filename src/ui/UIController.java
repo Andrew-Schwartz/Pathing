@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static utils.Config.*;
@@ -234,25 +235,53 @@ public class UIController {
         polyLeft.getPoints().clear();
         polyRight.getPoints().clear();
 
-        if (Config.getBooleanProperty("draw_wheels")) {
-            final double dist = width() / 2;
-            for (Point point : path) {
-                double angle = rotateRobotToCartesian(Math.toRadians(point.getHeading()));
-                double offsetX = inchesToPixels(dist * Math.sin(angle)),
-                        offsetY = inchesToPixels(dist * Math.cos(angle));
-                polyLeft.getPoints().addAll(point.getXPixels() - offsetX,
-                        imageHeight() - (point.getYPixels() + offsetY));
-                polyRight.getPoints().addAll(point.getXPixels() + offsetX,
-                        imageHeight() - (point.getYPixels() - offsetY));
-            }
+
+        if (path.isEmpty()) {
+            polyPos.getPoints().addAll(0.0, 0.0);  //polyline with no points doesn't redraw
+            polyLeft.getPoints().addAll(0.0, 0.0); //so this does
+            polyRight.getPoints().addAll(0.0, 0.0);
+            return;
         }
 
-        if (polyPos.getPoints().isEmpty())         //polyline with no saves.points doesn't redraw
-            polyPos.getPoints().addAll(0.0, 0.0);  //so this does
-        if (polyLeft.getPoints().isEmpty())
-            polyLeft.getPoints().addAll(0.0, 0.0);
-        if (polyRight.getPoints().isEmpty())
-            polyRight.getPoints().addAll(0.0, 0.0);
+        if (Config.getBooleanProperty("draw_wheels")) {
+            final double dist = width() / 2;
+
+            double angle = rotateRobotToCartesian(Math.toRadians(path.get(0).getHeading()));
+            double offsetX = inchesToPixels(dist * Math.sin(angle)),
+                    offsetY = inchesToPixels(dist * Math.cos(angle));
+
+            double xl = path.get(0).getXPixels() - offsetX,
+                    yl = imageHeight() - (path.get(0).getYPixels() + offsetY),
+                    xr = path.get(0).getXPixels() + offsetX,
+                    yr = imageHeight() - (path.get(0).getYPixels() - offsetY);
+            polyLeft.getPoints().addAll(xl, yl);
+            polyRight.getPoints().addAll(xr, yr);
+
+            for (Point point : path) {
+                double angBetween = rotateRobotToCartesian(Math.toRadians((new Point(xl, yl)).angleTo(new Point(xr, yr))));
+                xl += pointDistFromVel(point, point.getLeftVelLinearFeet(), angBetween, Math::sin);
+                yl -= pointDistFromVel(point, point.getLeftVelLinearFeet(), angBetween, Math::cos); //TODO make the angle be perp to angle between prev left and right
+                polyLeft.getPoints().addAll(xl, yl);
+                xr += pointDistFromVel(point, point.getRightVelLinearFeet(), angBetween, Math::sin);
+                yr -= pointDistFromVel(point, point.getRightVelLinearFeet(), angBetween, Math::cos);
+                polyRight.getPoints().addAll(xr, yr);
+            }
+//            for (Point point : path) {
+//                double angle = rotateRobotToCartesian(Math.toRadians(point.getHeading()));
+//                double offsetX = inchesToPixels(dist * Math.sin(angle)),
+//                        offsetY = inchesToPixels(dist * Math.cos(angle));
+//                polyLeft.getPoints().addAll(point.getXPixels() - offsetX,
+//                        imageHeight() - (point.getYPixels() + offsetY));
+//                polyRight.getPoints().addAll(point.getXPixels() + offsetX,
+//                        imageHeight() - (point.getYPixels() - offsetY));
+//            }
+        }
+    }
+
+    private double pointDistFromVel(Point point, double linearVelFeet, double angleBetween, Function<Double, Double> cosOrSin) {
+//        double angle = rotateRobotToCartesian(Math.toRadians(point.getHeading()));
+        double distTraveled = feetToPixels(linearVelFeet * timeStep());
+        return cosOrSin.apply(angleBetween) * distTraveled;
     }
 
     private void graphMotion() {
@@ -315,6 +344,7 @@ public class UIController {
      * <p>to delete one point, startIndex and endIndex should be equal</p>
      */
     private void deletePoints(int startIndex, int endIndex) {
+        if (nextIndex >= startIndex && nextIndex <= endIndex) setNextIndex(-1);
         for (int i = endIndex; i >= startIndex; i--) {
             PointRow currentRow = rowAtIndex(i);
             grdPoints.getChildren().removeAll(currentRow.getAllNodes());
@@ -448,8 +478,8 @@ public class UIController {
     @FXML
     private void mnuExport() {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter leftWriter = new CSVWriter(url + "_left.saves.csv");
-             CSVWriter rightWriter = new CSVWriter(url + "_right.saves.csv")) {
+        try (CSVWriter leftWriter = new CSVWriter(url + "_left.csv");
+             CSVWriter rightWriter = new CSVWriter(url + "_right.csv")) {
             leftWriter.writePoints("Dist,Vel", path,
                     Point::getLeftPos,
                     Point::getLeftVel);
@@ -464,7 +494,7 @@ public class UIController {
     @FXML
     private void mnuSavePoints() {
         String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter writer = new CSVWriter(url + "_save.saves.csv")) {
+        try (CSVWriter writer = new CSVWriter(url + "_save.csv")) {
             writer.writePoints("X,Y,Intercept,Velocity,Override,Reverse", controlPoints,
                     Point::getX,
                     Point::getY,
@@ -481,26 +511,30 @@ public class UIController {
     private void mnuOpenPoints() {
         FileChooser saveFile = new FileChooser();
         saveFile.setTitle("Choose save");
-        saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
-        try (BufferedReader reader = new BufferedReader(new FileReader(saveFile.showOpenDialog(root.getScene().getWindow())))) {
-            deleteAllPoints();
-            reader.lines()
-                    .skip(1)
-                    .map(line -> {
-                        String[] val = line.split(",");
-                        return new Point(Double.parseDouble(val[0]),
-                                Double.parseDouble(val[1]),
-                                Boolean.parseBoolean(val[2]),
-                                Double.parseDouble(val[3]),
-                                Boolean.parseBoolean(val[4]),
-                                Boolean.parseBoolean(val[5]));
-                    })
-                    .forEach(point -> addNewPointRow(point, false));
-            addSavedState();
-        } catch (IOException e) {
+        try {
+            saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
+            try (BufferedReader reader = new BufferedReader(new FileReader(saveFile.showOpenDialog(root.getScene().getWindow())))) {
+                deleteAllPoints();
+                reader.lines()
+                        .skip(1)
+                        .map(line -> {
+                            String[] val = line.split(",");
+                            return new Point(Double.parseDouble(val[0]),
+                                    Double.parseDouble(val[1]),
+                                    Boolean.parseBoolean(val[2]),
+                                    Double.parseDouble(val[3]),
+                                    Boolean.parseBoolean(val[4]),
+                                    Boolean.parseBoolean(val[5]));
+                        })
+                        .forEach(point -> addNewPointRow(point, false));
+                addSavedState();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            updatePolyline();
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        updatePolyline();
     }
 
     public static double imageHeight() {

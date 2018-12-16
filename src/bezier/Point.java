@@ -184,7 +184,6 @@ public class Point implements Cloneable {
         return inchesToFeet(rotationalToLinear(rightVel));
     }
 
-
     /**
      * @return angular velocity in rotations/second
      */

@@ -5,18 +5,23 @@ legend:
 
 features
 [ ] organize this by importance and difficulty for having other people work on it
+[.] wheel paths based on vel and heading
+[ ] point dragging mode
+[ ] pointmenuresult that sets a points vel to its max (has to account for max vel reachable)
+[ ] units classes
 [ ] CSVWriter makes backups
 [ ] image location in config file
-[ ] wheel paths based on vel and heading
 [ ] add jerk config
 [ ] more special cases for velocity if center point is inside of robot
+[ ] thread drawing paths
 [ ] rotations to linear and vice versa not automatically do inches
 [ ] Path class, take some of the dumb parts of Point and put them where they make sense
-[ ] thread drawing paths
 [ ] css for pretification
 [ ] offset by length feature
 
 bugs
+[ ] if a point save dir is closed, java.lang.IllegalArgumentException: Folder parameter must be a valid folder
+[ ] Exception in thread "JavaFX Application Thread" java.lang.IndexOutOfBoundsException
 
 ------------------------------------------------------------------------------------------------------------------------
 
