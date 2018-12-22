@@ -16,9 +16,9 @@ public enum PointMenuResult {
     }
 
     public static String[] valueStrings() {
-        return (String[]) Arrays.stream(values())
+        return Arrays.stream(values())
                 .map(PointMenuResult::toString)
-                .toArray();
+                .toArray(String[]::new);
 //        var vals = PointMenuResult.values();
 //        var stringVals = new String[vals.length];
 //        for (int i = 0; i < vals.length; i++) {
