@@ -4,7 +4,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Objects;
 
@@ -12,7 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+        var screensize = Toolkit.getDefaultToolkit().getScreenSize();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("ui/UI.fxml")));
 
         Scene scene = new Scene(root, screensize.getWidth(), screensize.getHeight());

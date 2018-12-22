@@ -5,22 +5,28 @@ import javafx.scene.control.Alert;
 import java.util.ArrayList;
 
 import static java.util.stream.Collectors.toList;
-import static utils.Config.*;
-import static utils.UnitConverter.*;
+import static utils.Config.maxAccel;
+import static utils.Config.maxVel;
+import static utils.Config.timeStep;
+import static utils.Config.width;
+import static utils.UnitConverter.feetToInches;
+import static utils.UnitConverter.inchesToFeet;
+import static utils.UnitConverter.linearToRotational;
+import static utils.UnitConverter.rotationalToLinear;
 
 public class Bezier {
 
     public static ArrayList<Point> generateAll(ArrayList<Point> controlPoints) {
-        ArrayList<Point> pathPureXY = generatePureXY(controlPoints);
-        ArrayList<Double> times = trapezoidalTimes(pathPureXY, controlPoints);
-        ArrayList<Point> path = generateWithVel(controlPoints, times);
+        var pathPureXY = generatePureXY(controlPoints);
+        var times = trapezoidalTimes(pathPureXY, controlPoints);
+        var path = generateWithVel(controlPoints, times);
         motion(path);
         return path;
     }
 
     public static ArrayList<Point> generatePureXY(ArrayList<Point> controlPoints) {
-        ArrayList<Point> path = new ArrayList<>();
-        ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()
+        var path = new ArrayList<Point>();
+        var throughPoints = (ArrayList<Point>) controlPoints.stream()
                 .filter(Point::isIntercept)
                 .collect(toList());
         for (int j = 0; j < throughPoints.size() - 1; j++) {
@@ -57,11 +63,11 @@ public class Bezier {
 
     public static ArrayList<Double> trapezoidalTimes(ArrayList<Point> pathXY, ArrayList<Point> controlPoints) {
         if (pathXY.isEmpty()) return new ArrayList<>();
-        ArrayList<Double> times = new ArrayList<>();
-        ArrayList<Point> throughPoints = (ArrayList<Point>) pathXY.stream()
+        var times = new ArrayList<Double>();
+        var throughPoints = (ArrayList<Point>) pathXY.stream()
                 .filter(Point::isIntercept)
                 .collect(toList());
-        ArrayList<Point> oldThroughPoints = (ArrayList<Point>) controlPoints.stream()
+        var oldThroughPoints = (ArrayList<Point>) controlPoints.stream()
                 .filter(Point::isIntercept)
                 .collect(toList());
         for (int j = 0; j < throughPoints.size() - 1; j++) {
@@ -124,8 +130,8 @@ public class Bezier {
     }
 
     public static ArrayList<Point> generateWithVel(ArrayList<Point> controlPoints, ArrayList<Double> times) {
-        ArrayList<Point> path = new ArrayList<>();
-        ArrayList<Point> throughPoints = (ArrayList<Point>) controlPoints.stream()
+        var path = new ArrayList<Point>();
+        var throughPoints = (ArrayList<Point>) controlPoints.stream()
                 .filter(Point::isIntercept)
                 .collect(toList());
 

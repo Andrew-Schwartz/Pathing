@@ -3,7 +3,10 @@ package bezier;
 import ui.UIController;
 
 import static utils.Config.timeStep;
-import static utils.UnitConverter.*;
+import static utils.UnitConverter.inchesToFeet;
+import static utils.UnitConverter.inchesToPixels;
+import static utils.UnitConverter.rotateRobotToCartesian;
+import static utils.UnitConverter.rotationalToLinear;
 
 public class Point implements Cloneable {
     private double x, y;

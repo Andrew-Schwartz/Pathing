@@ -6,10 +6,18 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -30,8 +38,14 @@ import java.util.function.Function;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
-import static utils.Config.*;
-import static utils.UnitConverter.*;
+import static utils.Config.maxAccel;
+import static utils.Config.timeStep;
+import static utils.Config.width;
+import static utils.UnitConverter.feetToPixels;
+import static utils.UnitConverter.inchesToFeet;
+import static utils.UnitConverter.inchesToPixels;
+import static utils.UnitConverter.pixelsToInches;
+import static utils.UnitConverter.rotateRobotToCartesian;
 
 public class UIController {
     @FXML
@@ -111,7 +125,7 @@ public class UIController {
     }
 
     private void addNewPointRow(Point point, boolean save) {
-        PointRow row = new PointRow(rows.size(), point);
+        var row = new PointRow(rows.size(), point);
         row.getAllNodes().forEach(node -> pointRowListeners(node, row));
         rows.add(row);
         if (save) addSavedState();
@@ -173,7 +187,7 @@ public class UIController {
         if (result == null) return;
         switch (result) {
             case MENU:
-                Dialog<Point> menu = MenuFactory.menu(rows.get(index).getPoint());
+                var menu = MenuFactory.menu(rows.get(index).getPoint());
                 menu.showAndWait().ifPresent(rows.get(index)::setPoint);
                 addSavedState();
                 updatePolyline();
@@ -346,9 +360,9 @@ public class UIController {
             grdPoints.getChildren().removeAll(currentRow.getAllNodes());
             rows.remove(currentRow);
         }
-        rows.stream().
-                filter(row -> row.getIndex() > endIndex).
-                forEach(row -> row.moveIndex(endIndex - startIndex + 1));
+        rows.stream()
+                .filter(row -> row.getIndex() > endIndex)
+                .forEach(row -> row.moveIndex(endIndex - startIndex + 1));
         updatePolyline();
         addSavedState();
     }

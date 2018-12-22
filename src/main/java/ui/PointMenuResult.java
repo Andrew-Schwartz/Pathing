@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Arrays;
+
 public enum PointMenuResult {
     MENU("Display Menu"),
     DELETE_POINT("Delete This Point"),
@@ -14,12 +16,15 @@ public enum PointMenuResult {
     }
 
     public static String[] valueStrings() {
-        PointMenuResult[] vals = PointMenuResult.values();
-        String[] stringVals = new String[vals.length];
-        for (int i = 0; i < vals.length; i++) {
-            stringVals[i] = vals[i].toString();
-        }
-        return stringVals;
+        return (String[]) Arrays.stream(values())
+                .map(PointMenuResult::toString)
+                .toArray();
+//        var vals = PointMenuResult.values();
+//        var stringVals = new String[vals.length];
+//        for (int i = 0; i < vals.length; i++) {
+//            stringVals[i] = vals[i].toString();
+//        }
+//        return stringVals;
     }
 
     @Override

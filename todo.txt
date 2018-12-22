@@ -19,7 +19,7 @@ features
 [ ] css for pretification
 [ ] offset by length feature
 [ ] make it work with different screen sizes
-[ ]
+[ ] java 11
 
 bugs
 [ ] if a point save dir is closed, java.lang.IllegalArgumentException: Folder parameter must be a valid folder
