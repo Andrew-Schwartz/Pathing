@@ -26,9 +26,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.function.Function;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
 import static utils.Config.*;
 import static utils.UnitConverter.*;
@@ -82,7 +82,7 @@ public class UIController {
 
     @FXML
     private void initialize() {
-        config = new Config("src/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
+        config = new Config("saves/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
                 cfgRadius, cfgWidth, cfgTimeStep, cfgPathName);
 
 //        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
@@ -119,9 +119,8 @@ public class UIController {
     }
 
     private void addSavedState() {
-        if (currentState != previousStates.size() - 1) {
+        if (currentState != previousStates.size() - 1)
             previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
-        }
         previousStates.add(new ArrayList<>());
         rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row.getIndex(), row.getPoint())));
         previousStates.get(previousStates.size() - 1).forEach(row -> row.getAllNodes().forEach(node -> pointRowListeners(node, row)));
@@ -217,11 +216,8 @@ public class UIController {
     }
 
     private void updatePolyline() {
-//        controlPoints.clear();
-//        rows.forEach(row -> controlPoints.add(row.getPoint()));
-//        rows.forEach(row -> controlPoints.set(row.getIndex(), row.getPoint()));
         controlPoints = (ArrayList<Point>) rows.stream()
-                .sorted(Comparator.comparingInt(PointRow::getIndex))
+                .sorted(comparingInt(PointRow::getIndex))
                 .map(PointRow::getPoint)
                 .collect(toList());
 
@@ -478,12 +474,12 @@ public class UIController {
     @FXML
     private void mnuExport() {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter leftWriter = new CSVWriter(url + "_left.csv");
-             CSVWriter rightWriter = new CSVWriter(url + "_right.csv")) {
-            leftWriter.writePoints("Dist,Vel", path,
+        try (CSVWriter<Point> leftWriter = new CSVWriter<>(url + "_left.csv");
+             CSVWriter<Point> rightWriter = new CSVWriter<>(url + "_right.csv")) {
+            leftWriter.writeObjects("Dist,Vel", path,
                     Point::getLeftPos,
                     Point::getLeftVel);
-            rightWriter.writePoints("Dist,Vel", path,
+            rightWriter.writeObjects("Dist,Vel", path,
                     Point::getRightPos,
                     Point::getRightVel);
         } catch (IOException e) {
@@ -494,8 +490,8 @@ public class UIController {
     @FXML
     private void mnuSavePoints() {
         String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter writer = new CSVWriter(url + "_save.csv")) {
-            writer.writePoints("X,Y,Intercept,Velocity,Override,Reverse", controlPoints,
+        try (CSVWriter<Point> writer = new CSVWriter<>(url + "_save.csv")) {
+            writer.writeObjects("X,Y,Intercept,Velocity,Override,Reverse", controlPoints,
                     Point::getX,
                     Point::getY,
                     Point::isIntercept,
@@ -517,15 +513,14 @@ public class UIController {
                 deleteAllPoints();
                 reader.lines()
                         .skip(1)
-                        .map(line -> {
-                            String[] val = line.split(",");
-                            return new Point(Double.parseDouble(val[0]),
-                                    Double.parseDouble(val[1]),
-                                    Boolean.parseBoolean(val[2]),
-                                    Double.parseDouble(val[3]),
-                                    Boolean.parseBoolean(val[4]),
-                                    Boolean.parseBoolean(val[5]));
-                        })
+                        .map(line -> line.split(","))
+                        .map(vals ->
+                            new Point(Double.parseDouble(vals[0]),
+                                    Double.parseDouble(vals[1]),
+                                    Boolean.parseBoolean(vals[2]),
+                                    Double.parseDouble(vals[3]),
+                                    Boolean.parseBoolean(vals[4]),
+                                    Boolean.parseBoolean(vals[5])))
                         .forEach(point -> addNewPointRow(point, false));
                 addSavedState();
             } catch (IOException e) {

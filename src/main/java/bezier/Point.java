@@ -10,7 +10,7 @@ public class Point implements Cloneable {
     private boolean intercept;
     private double targetVelocity, time, distance;
 
-    private double leftPos, leftVel, rightPos, rightVel, heading;
+    private double leftPos , leftVel, rightPos, rightVel, heading;
     private boolean overrideMaxVel, reverse;
 
     public Point(double x, double y, boolean intercept, double targetVelocity, boolean overrideMaxVel, boolean reverse) {

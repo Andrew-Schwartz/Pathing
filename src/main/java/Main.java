@@ -4,7 +4,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.Objects;
 
 public class Main extends Application {

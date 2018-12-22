@@ -18,10 +18,13 @@ features
 [ ] Path class, take some of the dumb parts of Point and put them where they make sense
 [ ] css for pretification
 [ ] offset by length feature
+[ ] make it work with different screen sizes
+[ ]
 
 bugs
 [ ] if a point save dir is closed, java.lang.IllegalArgumentException: Folder parameter must be a valid folder
 [ ] Exception in thread "JavaFX Application Thread" java.lang.IndexOutOfBoundsException
+[ ] can't save config file
 
 ------------------------------------------------------------------------------------------------------------------------
 

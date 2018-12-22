@@ -111,7 +111,7 @@ public class Bezier {
             double timeConst = (lengthOfCurve - ((timeAccel * (velInitialAndFinal + velMaxReachable) / 2) + (timeDeccel * (velInitialAndFinal + velMaxReachable) / 2))) / velMaxReachable;
             times.add(timeAccelInitToFinal + timeAccel + timeConst + timeDeccel);
 
-//            //if triangle, quadratic; if trapezoid vel. the smaller is the always the right one //TODO "ALWAYS"?
+//            //if triangle, quadratic; if trapezoid vel. the smaller is the always the right one
 //            double timeAccelTrapezoid = (velMax - velInitial) / maxAccel(); //t = deltaV / a
 //            if (timeAccelTrapezoid < timeAccelTriangle) { //is a trapezoid
 //                double timeConst = (lengthOfCurve - 2 * timeAccelTrapezoid * (velInitial + velMax)) / maxAccel();
