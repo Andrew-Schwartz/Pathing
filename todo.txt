@@ -7,7 +7,7 @@ features
 [ ] organize this by importance and difficulty for having other people work on it
 [ ] units classes (feet, inches, also degrees, rads, angular velocity, etc)
 [ ] Path class, take some of the dumb parts of Point and put them where they make sense
-[.] wheel paths based on vel and heading
+[.] wheel paths based on more stuff
 [ ] point dragging mode
 [ ] pointmenuresult that sets a points vel to its max (has to account for max vel reachable)
 [ ] CSVWriter makes backups
@@ -23,7 +23,6 @@ features
 bugs
 [ ] if a point save dir is closed, java.lang.IllegalArgumentException: Folder parameter must be a valid folder
 [ ] Exception in thread "JavaFX Application Thread" java.lang.IndexOutOfBoundsException
-[x] can't save config file
 
 ------------------------------------------------------------------------------------------------------------------------
 
