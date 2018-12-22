@@ -34,6 +34,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Function;
 
 import static java.util.Comparator.comparingInt;
@@ -93,6 +94,31 @@ public class UIController {
             currentState;
     private PointRow draggedRow;
     private static Config config;
+
+    public enum PointMenuResult {
+        MENU("Display Menu"),
+        DELETE_POINT("Delete This Point"),
+        POINT_EDIT_MODE("Point Moving Mode"),
+        TOGGLE_OVERRIDE_VEL("Toggle Overriding Max Vel"),
+        TOGGLE_BACKWARDS("Toggle Backwards Mode");
+
+        String result;
+
+        PointMenuResult(String result) {
+            this.result = result;
+        }
+
+        public static String[] valueStrings() {
+            return Arrays.stream(values())
+                    .map(PointMenuResult::toString)
+                    .toArray(String[]::new);
+        }
+
+        @Override
+        public String toString() {
+            return result;
+        }
+    }
 
     @FXML
     private void initialize() {

@@ -85,8 +85,8 @@ public class PointRow { //Make this a node?
 
     private void makeComboBox() {
         ObservableList<String> results = FXCollections.observableArrayList();
-        results.addAll(PointMenuResult.valueStrings());
-        comboBox = new ComboBox<>(results); //had second call of FXCollection.observableArrayList()
+        results.addAll(UIController.PointMenuResult.valueStrings());
+        comboBox = new ComboBox<>(results);
         comboBox.setMaxWidth(100);
         GridPane.setColumnIndex(comboBox, 4);
         GridPane.setRowIndex(comboBox, index);
