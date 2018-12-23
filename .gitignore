@@ -3,6 +3,5 @@
 *.iml
 *.ipr
 out/*
-*.properties
 *.csv
 src/main/resources/saves/*
