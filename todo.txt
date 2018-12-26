@@ -5,9 +5,9 @@ legend:
 
 features
 [ ] organize this by importance and difficulty for having other people work on it
-[ ] units classes (feet, inches, also degrees, rads, angular velocity, etc)
-[ ] Path class, take some of the dumb parts of Point and put them where they make sense
-[.] wheel paths based on more stuff
+[.] units classes (feet, inches, also degrees, rads, angular velocity, etc)
+[.] Path class, take some of the dumb parts of Point and put them where they make sense
+[x] wheel paths based on more stuff
 [ ] point dragging mode
 [ ] pointmenuresult that sets a points vel to its max (has to account for max vel reachable)
 [ ] CSVWriter makes backups

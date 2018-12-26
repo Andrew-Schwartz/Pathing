@@ -24,10 +24,10 @@ public class MenuFactory {
 
     public static Dialog<Point> menu(Point p) {
         point = p.clone();
-        Dialog<Point> menu = new Dialog<>();
+        var menu = new Dialog<Point>();
         menu.setTitle("Point Menu");
 
-        ButtonType confirmType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        var confirmType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
         menu.getDialogPane().getButtonTypes().addAll(confirmType, ButtonType.CANCEL);
 
         try {
@@ -60,12 +60,17 @@ public class MenuFactory {
     }
 
     private static Node findByID(GridPane grid, String id) {
-        for (Node child : grid.getChildren()) {
-            if (child instanceof Label)
-                continue;
-            if (child.getId().equals(id))
-                return child;
-        }
-        return null;
+        return grid.getChildren().stream()
+                .filter(node -> !(node instanceof Label))
+                .filter(node -> node.getId().equals(id))
+                .findFirst()
+                .orElseThrow();
+//        for (Node child : grid.getChildren()) {
+//            if (child instanceof Label)
+//                continue;
+//            if (child.getId().equals(id))
+//                return child;
+//        }
+//        return null;
     }
 }

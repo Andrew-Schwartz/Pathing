@@ -2,7 +2,6 @@ package ui;
 
 import bezier.Point;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -12,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -84,9 +84,14 @@ public class PointRow { //Make this a node?
     }
 
     private void makeComboBox() {
-        ObservableList<String> results = FXCollections.observableArrayList();
-        results.addAll(UIController.PointMenuResult.valueStrings());
-        comboBox = new ComboBox<>(results);
+//        ObservableList<String> results = FXCollections.observableArrayList();
+//        results.addAll(Arrays.stream(PointMenuResult.values())
+//                             .map(PointMenuResult::toString)
+//                             .toArray(String[]::new));
+        comboBox = new ComboBox<>(FXCollections.observableArrayList(
+                Arrays.stream(PointMenuResult.values())
+                        .map(PointMenuResult::toString)
+                        .toArray(String[]::new)));
         comboBox.setMaxWidth(100);
         GridPane.setColumnIndex(comboBox, 4);
         GridPane.setRowIndex(comboBox, index);

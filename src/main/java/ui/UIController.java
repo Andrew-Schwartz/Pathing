@@ -1,11 +1,10 @@
 package ui;
 
-import bezier.Bezier;
 import bezier.Point;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
@@ -26,7 +25,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import utils.CSVWriter;
 import utils.Config;
-import utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,18 +33,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Function;
 
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toList;
-import static utils.Config.maxAccel;
-import static utils.Config.timeStep;
-import static utils.Config.width;
-import static utils.UnitConverter.feetToPixels;
-import static utils.UnitConverter.inchesToFeet;
-import static utils.UnitConverter.inchesToPixels;
 import static utils.UnitConverter.pixelsToInches;
-import static utils.UnitConverter.rotateRobotToCartesian;
 
 public class UIController {
     @FXML
@@ -82,7 +70,7 @@ public class UIController {
             cfgTimeStep,
             cfgPathName;
     @FXML
-    private CheckBox cfgDrawWheels;
+    private ComboBox<String> cfgDrawWheelType;
 
     private static Image backgroundImage = new Image("images/FRC2018.png");
     private ArrayList<Point> controlPoints, path;
@@ -94,35 +82,16 @@ public class UIController {
             currentState;
     private PointRow draggedRow;
     private static Config config;
-
-    public enum PointMenuResult {
-        MENU("Display Menu"),
-        DELETE_POINT("Delete This Point"),
-        POINT_EDIT_MODE("Point Moving Mode"),
-        TOGGLE_OVERRIDE_VEL("Toggle Overriding Max Vel"),
-        TOGGLE_BACKWARDS("Toggle Backwards Mode");
-
-        String result;
-
-        PointMenuResult(String result) {
-            this.result = result;
-        }
-
-        public static String[] valueStrings() {
-            return Arrays.stream(values())
-                    .map(PointMenuResult::toString)
-                    .toArray(String[]::new);
-        }
-
-        @Override
-        public String toString() {
-            return result;
-        }
-    }
+    GraphingUtil graph;
 
     @FXML
     private void initialize() {
-        config = new Config("saves/config.properties", cfgDrawWheels, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
+        cfgDrawWheelType.setItems(FXCollections.observableArrayList(
+                Arrays.stream(WheelPathType.values())
+                        .map(WheelPathType::toString)
+                        .toArray(String[]::new)
+        ));
+        config = new Config("saves/config.properties", cfgDrawWheelType, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
                 cfgRadius, cfgWidth, cfgTimeStep, cfgPathName);
 
 //        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
@@ -140,9 +109,13 @@ public class UIController {
                     rowHeight = grdPoints.getVgap() + rows.get(0).getComboBox().getHeight();
             gridDnDIndex = (int) Math.floor(y / rowHeight);
             dndHandling(draggedRow, false);
-            updatePolyline();
+            graph.updatePolyline();
         });
-        tabVel.setOnSelectionChanged(event -> graphMotion());
+        tabVel.setOnSelectionChanged(event -> graph.graphMotion());
+        graph = new GraphingUtil(controlPoints, path, rows,
+                polyPos, polyLeft, polyRight,
+                chtLeft, chtRight, chtCenter,
+                tabVel);
     }
 
     @FXML
@@ -163,7 +136,9 @@ public class UIController {
             previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
         previousStates.add(new ArrayList<>());
         rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row.getIndex(), row.getPoint())));
-        previousStates.get(previousStates.size() - 1).forEach(row -> row.getAllNodes().forEach(node -> pointRowListeners(node, row)));
+        previousStates.get(previousStates.size() - 1)
+                .forEach(row -> row.getAllNodes()
+                        .forEach(node -> pointRowListeners(node, row)));
         currentState = previousStates.size() - 1;
     }
 
@@ -172,13 +147,13 @@ public class UIController {
             node.setOnKeyReleased(event -> {
                 row.updatePoint();
                 addSavedState();
-                updatePolyline();
+                graph.updatePolyline();
             });
         if (node instanceof CheckBox)
             ((CheckBox) node).setOnAction(event -> {
                 row.updatePoint();
                 addSavedState();
-                updatePolyline();
+                graph.updatePolyline();
             });
         if (node instanceof ComboBox)
             ((ComboBox) node).setOnAction(event -> {
@@ -199,24 +174,24 @@ public class UIController {
         });
         node.setOnDragDone(event -> {
             dndHandling(row, draggedRow.getIndex() != dragStartIndex);
-            updatePolyline();
+            graph.updatePolyline();
         });
     }
 
     private void handleComboResults(String res, int index) {
         if (nextIndex != -1)
             return;
-        PointMenuResult result = null;
-        for (PointMenuResult r : PointMenuResult.values()) {
-            if (r.toString().equals(res)) result = r;
-        }
-        if (result == null) return;
+        PointMenuResult result = Arrays.stream(PointMenuResult.values())
+                .filter(pmr -> pmr.toString().equals(res))
+                .findFirst()
+                .orElseThrow();
+
         switch (result) {
             case MENU:
                 var menu = MenuFactory.menu(rows.get(index).getPoint());
                 menu.showAndWait().ifPresent(rows.get(index)::setPoint);
                 addSavedState();
-                updatePolyline();
+                graph.updatePolyline();
                 break;
             case DELETE_POINT:
                 deletePoints(index, index);
@@ -229,13 +204,14 @@ public class UIController {
             case TOGGLE_OVERRIDE_VEL:
                 rows.get(index).getPoint().setOverrideMaxVel(!rows.get(index).getPoint().isOverrideMaxVel());
                 addSavedState();
-                updatePolyline();
+                graph.updatePolyline();
                 break;
             case TOGGLE_BACKWARDS:
                 rows.get(index).getPoint().setReverse(!rows.get(index).getPoint().isReverse());
                 addSavedState();
-                updatePolyline();
+                graph.updatePolyline();
                 break;
+            default:
         }
     }
 
@@ -253,116 +229,6 @@ public class UIController {
         }
         draggedRow.setIndex(gridDnDIndex);
         if (save) addSavedState();
-    }
-
-    private void updatePolyline() {
-        controlPoints = (ArrayList<Point>) rows.stream()
-                .sorted(comparingInt(PointRow::getIndex))
-                .map(PointRow::getPoint)
-                .collect(toList());
-
-        path = Bezier.generateAll(controlPoints);
-
-        polyPos.getPoints().clear();
-        path.forEach(point -> polyPos.getPoints().addAll(point.getXPixels(), imageHeight() - point.getYPixels()));
-
-        graphMotion();
-
-        polyLeft.getPoints().clear();
-        polyRight.getPoints().clear();
-
-
-        if (path.isEmpty()) {
-            polyPos.getPoints().addAll(0.0, 0.0);  //polyline with no points doesn't redraw
-            polyLeft.getPoints().addAll(0.0, 0.0); //so this does
-            polyRight.getPoints().addAll(0.0, 0.0);
-            return;
-        }
-
-        if (Config.getBooleanProperty("draw_wheels")) {
-            final double dist = width() / 2;
-
-            double angle = rotateRobotToCartesian(Math.toRadians(path.get(0).getHeading()));
-            double offsetX = inchesToPixels(dist * Math.sin(angle)),
-                    offsetY = inchesToPixels(dist * Math.cos(angle));
-
-            double xl = path.get(0).getXPixels() - offsetX,
-                    yl = imageHeight() - (path.get(0).getYPixels() + offsetY),
-                    xr = path.get(0).getXPixels() + offsetX,
-                    yr = imageHeight() - (path.get(0).getYPixels() - offsetY);
-            polyLeft.getPoints().addAll(xl, yl);
-            polyRight.getPoints().addAll(xr, yr);
-
-            for (Point point : path) {
-                double angBetween = rotateRobotToCartesian(Math.toRadians((new Point(xl, yl)).angleTo(new Point(xr, yr))));
-                xl += pointDistFromVel(point, point.getLeftVelLinearFeet(), angBetween, Math::sin);
-                yl -= pointDistFromVel(point, point.getLeftVelLinearFeet(), angBetween, Math::cos); //TODO make the angle be perp to angle between prev left and right
-                polyLeft.getPoints().addAll(xl, yl);
-                xr += pointDistFromVel(point, point.getRightVelLinearFeet(), angBetween, Math::sin);
-                yr -= pointDistFromVel(point, point.getRightVelLinearFeet(), angBetween, Math::cos);
-                polyRight.getPoints().addAll(xr, yr);
-            }
-//            for (Point point : path) {
-//                double angle = rotateRobotToCartesian(Math.toRadians(point.getHeading()));
-//                double offsetX = inchesToPixels(dist * Math.sin(angle)),
-//                        offsetY = inchesToPixels(dist * Math.cos(angle));
-//                polyLeft.getPoints().addAll(point.getXPixels() - offsetX,
-//                        imageHeight() - (point.getYPixels() + offsetY));
-//                polyRight.getPoints().addAll(point.getXPixels() + offsetX,
-//                        imageHeight() - (point.getYPixels() - offsetY));
-//            }
-        }
-    }
-
-    private double pointDistFromVel(Point point, double linearVelFeet, double angleBetween, Function<Double, Double> cosOrSin) {
-//        double angle = rotateRobotToCartesian(Math.toRadians(point.getHeading()));
-        double distTraveled = feetToPixels(linearVelFeet * timeStep());
-        return cosOrSin.apply(angleBetween) * distTraveled;
-    }
-
-    private void graphMotion() {
-        if (!tabVel.isSelected()) return;
-        chtLeft.getData().clear();
-        chtRight.getData().clear();
-        chtCenter.getData().clear();
-        XYChart.Series<Double, Double> leftPos = new XYChart.Series<>(),
-                leftVel = new XYChart.Series<>(),
-                leftAccel = new XYChart.Series<>(),
-                rightPos = new XYChart.Series<>(),
-                rightVel = new XYChart.Series<>(),
-                rightAccel = new XYChart.Series<>(),
-                centerPos = new XYChart.Series<>(),
-                centerVel = new XYChart.Series<>(),
-                centerAccel = new XYChart.Series<>();
-        leftPos.setName("pos");
-        leftVel.setName("vel");
-        leftAccel.setName("accel");
-        rightPos.setName("pos");
-        rightVel.setName("vel");
-        rightAccel.setName("accel");
-        centerPos.setName("pos");
-        centerVel.setName("vel");
-        centerAccel.setName("accel");
-        double totalDist = 0;
-        for (int i = 0; i < path.size(); i++) {
-            double curTime = path.get(path.size() - 1).getTime() * i / path.size();
-            double curLeftAccel = i == 0 ? 0 : path.get(i).getLeftVelLinearFeet() - path.get(i - 1).getLeftVelLinearFeet();
-            double curRightAccel = i == 0 ? 0 : path.get(i).getRightVelLinearFeet() - path.get(i - 1).getRightVelLinearFeet();
-            double curCenterAccel = i == 0 ? 0 : path.get(i).getTargetVelocity() - path.get(i - 1).getTargetVelocity();
-            totalDist += path.get(i).getTargetVelocity() * timeStep();
-            leftPos.getData().add(new XYChart.Data<>(curTime, inchesToFeet(path.get(i).getLeftPos())));
-            leftVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getLeftVelLinearFeet()));
-            leftAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curLeftAccel / timeStep(), 0, maxAccel())));
-            rightPos.getData().add(new XYChart.Data<>(curTime, inchesToFeet(path.get(i).getRightPos())));
-            rightVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getRightVelLinearFeet()));
-            rightAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curRightAccel / timeStep(), 0, maxAccel())));
-            centerPos.getData().add(new XYChart.Data<>(curTime, totalDist));
-            centerVel.getData().add(new XYChart.Data<>(curTime, path.get(i).getTargetVelocity()));
-            centerAccel.getData().add(new XYChart.Data<>(curTime, Utils.absRange(curCenterAccel / timeStep(), 0, maxAccel())));
-        }
-        chtLeft.getData().addAll(leftPos, leftVel, leftAccel);
-        chtRight.getData().addAll(rightPos, rightVel, rightAccel);
-        chtCenter.getData().addAll(centerPos, centerVel, centerAccel);
     }
 
     @FXML
@@ -389,7 +255,7 @@ public class UIController {
         rows.stream()
                 .filter(row -> row.getIndex() > endIndex)
                 .forEach(row -> row.moveIndex(endIndex - startIndex + 1));
-        updatePolyline();
+        graph.updatePolyline();
         addSavedState();
     }
 
@@ -418,7 +284,7 @@ public class UIController {
             addSavedState();
             setNextIndex(-1);
         }
-        updatePolyline();
+        graph.updatePolyline();
     }
 
     @FXML
@@ -459,7 +325,7 @@ public class UIController {
                     break;
             }
             row.setPoint(new Point(x, y, row.getPoint().isIntercept()));
-            updatePolyline();
+            graph.updatePolyline();
         } else {
             boolean pointsFocused = false;
             int focusedIndex = 0, focusedColumn = 0;
@@ -555,18 +421,18 @@ public class UIController {
                         .skip(1)
                         .map(line -> line.split(","))
                         .map(vals ->
-                            new Point(Double.parseDouble(vals[0]),
-                                    Double.parseDouble(vals[1]),
-                                    Boolean.parseBoolean(vals[2]),
-                                    Double.parseDouble(vals[3]),
-                                    Boolean.parseBoolean(vals[4]),
-                                    Boolean.parseBoolean(vals[5])))
+                                new Point(Double.parseDouble(vals[0]),
+                                        Double.parseDouble(vals[1]),
+                                        Boolean.parseBoolean(vals[2]),
+                                        Double.parseDouble(vals[3]),
+                                        Boolean.parseBoolean(vals[4]),
+                                        Boolean.parseBoolean(vals[5])))
                         .forEach(point -> addNewPointRow(point, false));
                 addSavedState();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            updatePolyline();
+            graph.updatePolyline();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -593,7 +459,7 @@ public class UIController {
             grdPoints.getChildren().addAll(row.getAllNodes());
             row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
         }
-        updatePolyline();
+        graph.updatePolyline();
     }
 
     @FXML
@@ -609,7 +475,7 @@ public class UIController {
             grdPoints.getChildren().addAll(row.getAllNodes());
             row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
         }
-        updatePolyline();
+        graph.updatePolyline();
     }
 
     @FXML
@@ -635,5 +501,10 @@ public class UIController {
         dirChooser.setInitialDirectory(new File(Config.getStringProperty("points_save_dir", "src")));
         File dir = dirChooser.showDialog(root.getScene().getWindow());
         config.setProperty("points_save_dir", dir.getAbsolutePath());
+    }
+
+    @FXML
+    private void redraw() {
+        graph.updatePolyline();
     }
 }

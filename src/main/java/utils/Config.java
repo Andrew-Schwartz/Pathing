@@ -2,6 +2,7 @@ package utils;
 
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 import java.io.File;
@@ -54,6 +55,8 @@ public class Config {
                 ((TextField) node).setText(config.getProperty(key));
             } else if (node instanceof CheckBox) {
                 ((CheckBox) node).setSelected(Boolean.valueOf(config.getProperty(key)));
+            } else if (node instanceof ComboBox) {
+                ((ComboBox) node).setValue(config.getProperty(key));
             }
         }
     }
@@ -65,6 +68,8 @@ public class Config {
                 value = ((TextField) node).getText();
             } else if (node instanceof CheckBox) {
                 value = String.valueOf(((CheckBox) node).isSelected());
+            } else if (node instanceof ComboBox) {
+                value = ((ComboBox) node).getValue().toString();
             }
             setProperty(key, value != null ? value : "");
         }
@@ -79,27 +84,10 @@ public class Config {
     }
 
     //short methods for getting doubles
-    public static double wheelRadius() {
-        return getDoubleProperty("wheel_radius");
-    }
-
-    public static double width() {
-        return getDoubleProperty("width");
-    }
-
-    public static double length() {
-        return getDoubleProperty("length");
-    }
-
-    public static double maxAccel() {
-        return getDoubleProperty("max_accel");
-    }
-
-    public static double maxVel() {
-        return getDoubleProperty("max_vel");
-    }
-
-    public static double timeStep() {
-        return getDoubleProperty("time_step");
-    }
+    public static double wheelRadius() { return getDoubleProperty("wheel_radius"); }
+    public static double width() { return getDoubleProperty("width"); }
+    public static double length() { return getDoubleProperty("length"); }
+    public static double maxAccel() {return getDoubleProperty("max_accel"); }
+    public static double maxVel() {return getDoubleProperty("max_vel"); }
+    public static double timeStep() {return getDoubleProperty("time_step"); }
 }
