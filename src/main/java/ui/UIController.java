@@ -1,5 +1,7 @@
 package ui;
 
+import bezier.Inches;
+import bezier.Pixels;
 import bezier.Point;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -17,6 +19,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -33,10 +36,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
-import static utils.UnitConverter.pixelsToInches;
+import static utils.Utils.aboutEquals;
 
 public class UIController {
+    @FXML
+    private AnchorPane paneImg;
+
     @FXML
     private Tab tabVel;
 
@@ -63,6 +70,7 @@ public class UIController {
     @FXML
     private TextField cfgRadius,
             cfgWidth,
+            cfgTicksPerRev,
             cfgLength,
             cfgMaxVel,
             cfgMaxAccel,
@@ -72,8 +80,7 @@ public class UIController {
     @FXML
     private ComboBox<String> cfgDrawWheelType;
 
-    private static Image backgroundImage = new Image("images/FRC2018.png");
-    private ArrayList<Point> controlPoints, path;
+    private static Image backgroundImage = new Image("images/2019ColorFromManual.JPG");
     private ArrayList<ArrayList<PointRow>> previousStates; //for undo/redo
     private ArrayList<PointRow> rows;
     private int nextIndex,
@@ -83,6 +90,8 @@ public class UIController {
     private PointRow draggedRow;
     private static Config config;
     GraphingUtil graph;
+    private boolean pointDrag = false;
+    private boolean isClicking;
 
     @FXML
     private void initialize() {
@@ -92,14 +101,21 @@ public class UIController {
                         .toArray(String[]::new)
         ));
         config = new Config("saves/config.properties", cfgDrawWheelType, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
-                cfgRadius, cfgWidth, cfgTimeStep, cfgPathName);
+                cfgRadius, cfgWidth, cfgTimeStep, cfgPathName, cfgTicksPerRev);
 
 //        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
         imgField.setImage(backgroundImage);
-//        imgField.setFitWidth(imageWidth());
-//        imgField.setFitHeight(imageHeight());
-        controlPoints = new ArrayList<>();
-        path = new ArrayList<>();
+//        imgField.setPreserveRatio(true);
+//        double heightWidthRatio = imageHeight() / imageWidth();
+
+        imgField.setPreserveRatio(true);
+        System.out.println(tabVel.getTabPane().getHeight());
+        imgField.setFitHeight(tabVel.getTabPane().heightProperty().doubleValue() - 500);
+//        imgField.setFitHeight(tabVel.getTabPane().getHeight());
+//        imgField.setFitWidth(tabVel.getTabPane().getHeight() / heightWidthRatio);
+//        imgField.fitHeightProperty().setValue(tabVel.getTabPane().getHeight());
+
+        //        imgField.setFitWidth(imageWidth());
         rows = new ArrayList<>();
         previousStates = new ArrayList<>();
         setNextIndex(-1);
@@ -109,13 +125,13 @@ public class UIController {
                     rowHeight = grdPoints.getVgap() + rows.get(0).getComboBox().getHeight();
             gridDnDIndex = (int) Math.floor(y / rowHeight);
             dndHandling(draggedRow, false);
-            graph.updatePolyline();
+            graph.updatePolyline(pointDrag);
         });
         tabVel.setOnSelectionChanged(event -> graph.graphMotion());
-        graph = new GraphingUtil(controlPoints, path, rows,
+        graph = new GraphingUtil(new ArrayList<>(), new ArrayList<>(), rows,
                 polyPos, polyLeft, polyRight,
                 chtLeft, chtRight, chtCenter,
-                tabVel);
+                tabVel, paneImg);
     }
 
     @FXML
@@ -147,13 +163,13 @@ public class UIController {
             node.setOnKeyReleased(event -> {
                 row.updatePoint();
                 addSavedState();
-                graph.updatePolyline();
+                graph.updatePolyline(pointDrag);
             });
         if (node instanceof CheckBox)
             ((CheckBox) node).setOnAction(event -> {
                 row.updatePoint();
                 addSavedState();
-                graph.updatePolyline();
+                graph.updatePolyline(pointDrag);
             });
         if (node instanceof ComboBox)
             ((ComboBox) node).setOnAction(event -> {
@@ -174,7 +190,7 @@ public class UIController {
         });
         node.setOnDragDone(event -> {
             dndHandling(row, draggedRow.getIndex() != dragStartIndex);
-            graph.updatePolyline();
+            graph.updatePolyline(pointDrag);
         });
     }
 
@@ -191,25 +207,28 @@ public class UIController {
                 var menu = MenuFactory.menu(rows.get(index).getPoint());
                 menu.showAndWait().ifPresent(rows.get(index)::setPoint);
                 addSavedState();
-                graph.updatePolyline();
+                graph.updatePolyline(pointDrag);
                 break;
             case DELETE_POINT:
                 deletePoints(index, index);
                 break;
             case POINT_EDIT_MODE:
                 setNextIndex(index);
-                pointHighlight.setCenterX(rows.get(index).getPoint().getXPixels());
-                pointHighlight.setCenterY(imageHeight() - rows.get(index).getPoint().getYPixels());
+                pointHighlight.setCenterX(rows.get(index).getPoint().getX().pixels().getValue());
+                pointHighlight.setCenterY(imageHeight() - rows.get(index).getPoint().getY().pixels().getValue());
                 break;
             case TOGGLE_OVERRIDE_VEL:
                 rows.get(index).getPoint().setOverrideMaxVel(!rows.get(index).getPoint().isOverrideMaxVel());
                 addSavedState();
-                graph.updatePolyline();
+                graph.updatePolyline(pointDrag);
                 break;
             case TOGGLE_BACKWARDS:
                 rows.get(index).getPoint().setReverse(!rows.get(index).getPoint().isReverse());
                 addSavedState();
-                graph.updatePolyline();
+                graph.updatePolyline(pointDrag);
+                break;
+            case MAX_VEL:
+                //TODO implement. Should use physics to determine max vel reachable on way up AND down
                 break;
             default:
         }
@@ -248,49 +267,80 @@ public class UIController {
     private void deletePoints(int startIndex, int endIndex) {
         if (nextIndex >= startIndex && nextIndex <= endIndex) setNextIndex(-1);
         for (int i = endIndex; i >= startIndex; i--) {
-            PointRow currentRow = rowAtIndex(i);
+            PointRow currentRow = rowAtIndex(i).orElseThrow();
             grdPoints.getChildren().removeAll(currentRow.getAllNodes());
             rows.remove(currentRow);
         }
         rows.stream()
                 .filter(row -> row.getIndex() > endIndex)
                 .forEach(row -> row.moveIndex(endIndex - startIndex + 1));
-        graph.updatePolyline();
+        graph.updatePolyline(pointDrag);
         addSavedState();
     }
 
-    private PointRow rowAtIndex(int index) {
-        for (PointRow row : rows) {
-            if (row.getIndex() == index)
-                return row;
-        }
-        throw new RuntimeException();
+    private Optional<PointRow> rowAtIndex(int index) {
+        return rows.stream()
+                .filter(row -> row.getIndex() == index)
+                .findFirst();
     }
 
     @FXML
-    private void clickEvent(MouseEvent mouseEvent) {
+    private void releaseEvent(MouseEvent mouseEvent) {
+        isClicking = false;
+        if (pointDrag) {
+            dragPoint(mouseEvent);
+        } else {
+            addPoint(mouseEvent);
+        }
+    }
+
+    private void dragPoint(MouseEvent mouseEvent) {
         double x = mouseEvent.getX(),
                 y = mouseEvent.getY();
-        boolean intercept = mouseEvent.getButton() == MouseButton.PRIMARY && !mouseEvent.isControlDown();
         if (x < 0 || y < 0 || x > imageWidth() || y > imageHeight())
             return;
         y = imageHeight() - y;
-        x = pixelsToInches(x);
-        y = pixelsToInches(y);
+//
+//        System.out.println("x = " + x);
+//        System.out.println("y = " + y);
+    }
+
+    private void addPoint(MouseEvent mouseEvent) {
+        Pixels x = new Pixels(mouseEvent.getX());
+        Pixels y = new Pixels(mouseEvent.getY());
+        boolean intercept = mouseEvent.getButton() == MouseButton.PRIMARY && !mouseEvent.isControlDown();
+        if (x.getValue() < 0 || y.getValue() < 0 || x.getValue() > imageWidth() || y.getValue() > imageHeight())
+            return;
+        y = new Pixels(imageHeight() - y.getValue());
         if (nextIndex == -1) {
-            addNewPointRow(new Point(x, y, intercept), true);
+            addNewPointRow(new Point(x.inches(), y.inches(), intercept), true);
         } else {
-            rows.get(nextIndex).setPoint(new Point(x, y, rows.get(nextIndex).getPoint().isIntercept()));
+            rows.get(nextIndex).setPoint(new Point(x.inches(), y.inches(), rows.get(nextIndex).getPoint().isIntercept()));
             addSavedState();
             setNextIndex(-1);
         }
-        graph.updatePolyline();
+        graph.updatePolyline(pointDrag);
     }
 
     @FXML
     private void mouseMoveEvent(MouseEvent event) {
+        //highlight only appears if circles are visible
         cursorHighlight.setCenterX(Math.max(0, Math.min(imageWidth(), event.getX())));
         cursorHighlight.setCenterY(Math.max(0, Math.min(imageHeight(), event.getY())));
+
+        //drag point if in pointDragMode
+        if (pointDrag) { //todo detect if it is clicked
+            graph.getRows().stream()
+                    .map(PointRow::getPoint)
+                    .filter(p -> aboutEquals(p.getX().pixels().getValue(), event.getX(), 9))
+                    .filter(p -> aboutEquals(imageHeight() - p.getY().pixels().getValue(), event.getY(), 9))
+                    .limit(1)
+                    .forEach(p -> {
+                        p.setX(new Pixels(event.getX()).inches());
+                        p.setY(new Pixels(imageHeight() - event.getY()).inches());
+                    });
+            graph.updatePolyline(true);
+        }
     }
 
     @FXML
@@ -301,20 +351,20 @@ public class UIController {
             boolean ctrl = keyEvent.isControlDown(),
                     shift = keyEvent.isShiftDown();
             int change = shift ? ctrl ? 24 : 1 : ctrl ? 12 : 6; //key = in -> shift=1, none=6, ctrl=12, both=24
-            double x = row.getPoint().getX();
-            double y = row.getPoint().getY();
+            Inches x = row.getPoint().getX();
+            Inches y = row.getPoint().getY();
             switch (keyEvent.getCode()) {
                 case UP:
-                    y += change;
+                    y = new Inches(y.getValue() + change);
                     break;
                 case DOWN:
-                    y -= change;
+                    y = new Inches(y.getValue() - change);
                     break;
                 case LEFT:
-                    x -= change;
+                    x = new Inches(x.getValue() - change);
                     break;
                 case RIGHT:
-                    x += change;
+                    x = new Inches(x.getValue() + change);
                     break;
                 case ENTER:
                     setNextIndex(-1);
@@ -325,7 +375,7 @@ public class UIController {
                     break;
             }
             row.setPoint(new Point(x, y, row.getPoint().isIntercept()));
-            graph.updatePolyline();
+            graph.updatePolyline(pointDrag);
         } else {
             boolean pointsFocused = false;
             int focusedIndex = 0, focusedColumn = 0;
@@ -341,10 +391,10 @@ public class UIController {
             if (!pointsFocused) return;
             switch (keyEvent.getCode()) {
                 case UP:
-                    rowAtIndex(Math.max(0, focusedIndex - 1)).getAllNodes().get(focusedColumn).requestFocus();
+                    rowAtIndex(Math.max(0, focusedIndex - 1)).orElseThrow().getAllNodes().get(focusedColumn).requestFocus();
                     break;
                 case DOWN:
-                    rowAtIndex(Math.min(rows.size() - 1, focusedIndex + 1)).getAllNodes().get(focusedColumn).requestFocus();
+                    rowAtIndex(Math.min(rows.size() - 1, focusedIndex + 1)).orElseThrow().getAllNodes().get(focusedColumn).requestFocus();
                     break;
             }
         }
@@ -380,14 +430,14 @@ public class UIController {
     @FXML
     private void mnuExport() {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter<Point> leftWriter = new CSVWriter<>(url + "_left.csv");
-             CSVWriter<Point> rightWriter = new CSVWriter<>(url + "_right.csv")) {
-            leftWriter.writeObjects("Dist,Vel", path,
-                    Point::getLeftPos,
-                    Point::getLeftVel);
-            rightWriter.writeObjects("Dist,Vel", path,
-                    Point::getRightPos,
-                    Point::getRightVel);
+        try (var leftWriter = new CSVWriter<Point>(url + "_left.csv");
+             var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
+            leftWriter.writeObjects("Dist,Vel", graph.getPath(),
+                    p -> p.leftPos.ticks(),
+                    p -> p.leftVel.ticksPer100Millis());
+            rightWriter.writeObjects("Dist,Vel", graph.getPath(),
+                    p -> p.leftPos.ticks(),
+                    p -> p.leftVel.ticksPer100Millis());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -396,8 +446,8 @@ public class UIController {
     @FXML
     private void mnuSavePoints() {
         String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
-        try (CSVWriter<Point> writer = new CSVWriter<>(url + "_save.csv")) {
-            writer.writeObjects("X,Y,Intercept,Velocity,Override,Reverse", controlPoints,
+        try (var writer = new CSVWriter<Point>(url + "_save.csv")) {
+            writer.writeObjects("X,Y,Intercept,Velocity,Override,Reverse", graph.getControlPoints(),
                     Point::getX,
                     Point::getY,
                     Point::isIntercept,
@@ -415,24 +465,23 @@ public class UIController {
         saveFile.setTitle("Choose save");
         try {
             saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
-            try (BufferedReader reader = new BufferedReader(new FileReader(saveFile.showOpenDialog(root.getScene().getWindow())))) {
+            try (var reader = new BufferedReader(new FileReader(saveFile.showOpenDialog(root.getScene().getWindow())))) {
                 deleteAllPoints();
                 reader.lines()
                         .skip(1)
                         .map(line -> line.split(","))
-                        .map(vals ->
-                                new Point(Double.parseDouble(vals[0]),
-                                        Double.parseDouble(vals[1]),
-                                        Boolean.parseBoolean(vals[2]),
-                                        Double.parseDouble(vals[3]),
-                                        Boolean.parseBoolean(vals[4]),
-                                        Boolean.parseBoolean(vals[5])))
+                        .map(vals -> new Point(new Inches(Double.parseDouble(vals[0])),
+                                     new Inches(Double.parseDouble(vals[1])),
+                                     Boolean.parseBoolean(vals[2]),
+                                     Double.parseDouble(vals[3]),
+                                     Boolean.parseBoolean(vals[4]),
+                                     Boolean.parseBoolean(vals[5])))
                         .forEach(point -> addNewPointRow(point, false));
                 addSavedState();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            graph.updatePolyline();
+            graph.updatePolyline(pointDrag);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -459,7 +508,7 @@ public class UIController {
             grdPoints.getChildren().addAll(row.getAllNodes());
             row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
         }
-        graph.updatePolyline();
+        graph.updatePolyline(pointDrag);
     }
 
     @FXML
@@ -475,7 +524,7 @@ public class UIController {
             grdPoints.getChildren().addAll(row.getAllNodes());
             row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
         }
-        graph.updatePolyline();
+        graph.updatePolyline(pointDrag);
     }
 
     @FXML
@@ -505,6 +554,15 @@ public class UIController {
 
     @FXML
     private void redraw() {
-        graph.updatePolyline();
+        graph.updatePolyline(pointDrag);
+    }
+
+    @FXML
+    private void mnuPointDrag() {
+        pointDrag = !pointDrag;
+        graph.updatePolyline(pointDrag);
+        if (!pointDrag) {
+            graph.clearCircles();
+        }
     }
 }

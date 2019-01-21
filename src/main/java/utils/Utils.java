@@ -39,4 +39,8 @@ public class Utils {
         d = Math.abs(d);
         return sign * Math.max(Math.min(d, max), min);
     }
+
+    public static boolean aboutEquals(double a, double b, double epsilon) {
+        return a + epsilon >= b && a - epsilon <= b;
+    }
 }

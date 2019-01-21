@@ -5,6 +5,9 @@ import bezier.Point;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 import utils.Config;
 import utils.Utils;
@@ -13,7 +16,7 @@ import java.util.ArrayList;
 import java.util.function.Function;
 
 import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toCollection;
 import static ui.UIController.imageHeight;
 import static utils.Config.maxAccel;
 import static utils.Config.timeStep;
@@ -26,7 +29,6 @@ import static utils.UnitConverter.rotateRobotToCartesian;
 public class GraphingUtil {
     private ArrayList<Point> controlPoints, path;
     private ArrayList<PointRow> rows;
-
     private final Polyline polyPos;
     private final Polyline polyLeft;
     private final Polyline polyRight;
@@ -34,11 +36,13 @@ public class GraphingUtil {
     private final LineChart<Double, Double> chtRight;
     private final LineChart<Double, Double> chtCenter;
     private final Tab tabVel;
+    private AnchorPane imgPane;
+    private final ArrayList<Circle> circles;
 
     public GraphingUtil(ArrayList<Point> controlPoints, ArrayList<Point> path, ArrayList<PointRow> rows,
                         Polyline polyPos, Polyline polyLeft, Polyline polyRight,
                         LineChart<Double, Double> chtLeft, LineChart<Double, Double> chtRight, LineChart<Double, Double> chtCenter,
-                        Tab tabVel) {
+                        Tab tabVel, AnchorPane imgPane) {
         this.controlPoints = controlPoints;
         this.path = path;
         this.rows = rows;
@@ -49,15 +53,19 @@ public class GraphingUtil {
         this.chtRight = chtRight;
         this.chtCenter = chtCenter;
         this.tabVel = tabVel;
+        this.imgPane = imgPane;
+        circles = new ArrayList<>();
     }
 
-    public void updatePolyline() {
-        controlPoints = (ArrayList<Point>) rows.stream()
+    public void updatePolyline(boolean highlightPoints) {
+        if (highlightPoints) highlightPoints();
+
+        controlPoints = rows.stream()
                 .sorted(comparingInt(PointRow::getIndex))
                 .map(PointRow::getPoint)
-                .collect(toList());
+                .collect(toCollection(ArrayList::new));
 
-        path = Bezier.generateAll(controlPoints);
+        path = Bezier.INSTANCE.generateAll(controlPoints);
 
         polyPos.getPoints().clear();
         path.forEach(point -> polyPos.getPoints().addAll(point.getXPixels(), imageHeight() - point.getYPixels()));
@@ -86,6 +94,27 @@ public class GraphingUtil {
                 polyLeft.getPoints().addAll(0.0, 0.0);
                 polyRight.getPoints().addAll(0.0, 0.0);
         }
+    }
+
+    public void highlightPoints() {
+        clearCircles();
+        rows.stream()
+                .sorted(comparingInt(PointRow::getIndex))
+                .map(PointRow::getPoint)
+                .forEach(this::addCircle);
+        imgPane.getChildren().addAll(circles);
+    }
+
+    private void addCircle(Point point) {
+        circles.add(new Circle(point.getXPixels(),
+                UIController.imageHeight() - point.getYPixels(),
+                3,
+                Color.ORANGE));
+    }
+
+    public void clearCircles() {
+        imgPane.getChildren().removeIf(circles::contains);
+        circles.clear();
     }
 
     private void pathFromPath() {
@@ -127,7 +156,7 @@ public class GraphingUtil {
     }
 
     private double pointDistFromVel(double linearVelFeet, double angleBetween, Function<Double, Double> cosOrSin) {
-//        double angle = rotateRobotToCartesian(Math.toRadians(point.getHeading()));
+//        double angle = rotateRobotToCartesian(Math.radians(point.getHeading()));
         double distTraveled = feetToPixels(linearVelFeet * timeStep());
         return cosOrSin.apply(angleBetween) * distTraveled;
     }
@@ -178,4 +207,16 @@ public class GraphingUtil {
         chtCenter.getData().addAll(centerPos, centerVel, centerAccel);
     }
 
+
+    public ArrayList<Point> getControlPoints() {
+        return controlPoints;
+    }
+
+    public ArrayList<Point> getPath() {
+        return path;
+    }
+
+    public ArrayList<PointRow> getRows() {
+        return rows;
+    }
 }

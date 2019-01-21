@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -15,13 +14,6 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Polyline?>
 <VBox fx:id="root" onKeyReleased="#keyReleasedEvent" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.UIController">
     <MenuBar>
         <menus>
@@ -38,6 +30,7 @@
                 <MenuItem accelerator="Shortcut+Y" onAction="#redo" text="Redo" />
                 <MenuItem accelerator="Shortcut+INSERT" onAction="#btnNewPointEvent" text="Add a point"/>
                 <MenuItem accelerator="Shortcut+DELETE" onAction="#deleteAllPoints" text="Delete all points"/>
+                <MenuItem accelerator="Shortcut+R" onAction="#mnuPointDrag" text="Toggle point dragging"/>
             </Menu>
         </menus>
     </MenuBar>
@@ -54,18 +47,20 @@
                 <TextField fx:id="cfgRadius" accessibleRoleDescription="wheel_radius" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Label text="Robot Width (in)" GridPane.rowIndex="2" />
                 <TextField fx:id="cfgWidth" accessibleRoleDescription="width" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Robot Length (in)" GridPane.rowIndex="3" />
-                <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Label text="Max Velocity" GridPane.rowIndex="4" />
-                <TextField fx:id="cfgMaxVel" accessibleRoleDescription="max_vel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label text="Max Acceleration" GridPane.rowIndex="5" />
-                <TextField fx:id="cfgMaxAccel" accessibleRoleDescription="max_accel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <Label text="Max Jerk" GridPane.rowIndex="6" />
-                <TextField fx:id="cfgJerk" accessibleRoleDescription="max_jerk" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                <Label text="Time step" GridPane.rowIndex="7" />
-                <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                <Label text="Draw wheel paths?" GridPane.rowIndex="8" />
-                <ComboBox fx:id="cfgDrawWheelType" accessibleRoleDescription="draw_wheels_type" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="8" >
+                <Label text="Encoder Ticks/Rev" GridPane.rowIndex="3" />
+                <TextField fx:id="cfgTicksPerRev" accessibleRoleDescription="ticks_per_rev" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label text="Robot Length (in)" GridPane.rowIndex="4" />
+                <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label text="Max Velocity" GridPane.rowIndex="5" />
+                <TextField fx:id="cfgMaxVel" accessibleRoleDescription="max_vel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Label text="Max Acceleration" GridPane.rowIndex="6" />
+                <TextField fx:id="cfgMaxAccel" accessibleRoleDescription="max_accel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Label text="Max Jerk" GridPane.rowIndex="7" />
+                <TextField fx:id="cfgJerk" accessibleRoleDescription="max_jerk" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <Label text="Time step" GridPane.rowIndex="8" />
+                <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <Label text="Draw wheel paths?" GridPane.rowIndex="9" />
+                <ComboBox fx:id="cfgDrawWheelType" accessibleRoleDescription="draw_wheels_type" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="9" >
                     <items>
                         <FXCollections fx:factory="emptyObservableList" />
                     </items>
@@ -101,9 +96,9 @@
 
         <TabPane GridPane.columnIndex="1" GridPane.rowSpan="2">
             <Tab closable="false" text="Position">
-                <AnchorPane onMouseMoved="#mouseMoveEvent" onMouseReleased="#clickEvent">
+                <AnchorPane fx:id="paneImg" onMouseMoved="#mouseMoveEvent" onMouseReleased="#releaseEvent" >
                     <ImageView fx:id="imgField" />
-                    <Polyline fx:id="polyPos" stroke="BLUE" strokeWidth="2" />
+                    <Polyline fx:id="polyPos" stroke="RED" strokeWidth="2" />
                     <Polyline fx:id="polyLeft" stroke="DARKGREEN" />
                     <Polyline fx:id="polyRight" stroke="DARKGREEN" />
                     <Circle fx:id="cursorHighlight" fill="#ff650080" radius="3" />

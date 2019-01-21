@@ -1,0 +1,74 @@
+package bezier
+
+import utils.Config.timeStep
+
+data class Point
+@JvmOverloads constructor(var x: Inches,
+                          var y: Inches,
+                          var isIntercept: Boolean = false,
+                          var targetVelocity: InchesPerSecond = InchesPerSecond(Inches(0.0)),
+                          var isOverrideMaxVel: Boolean = false,
+                          var isReverse: Boolean = false
+) {
+    var time = Seconds(0.0)      //TODO move to separate Path class
+    var distance = Inches(0.0)      //TODO move to separate Path class
+
+    lateinit var leftPos: Inches
+    lateinit var rightPos: Inches
+
+    lateinit var leftVel: InchesPerSecond
+    lateinit var rightVel: InchesPerSecond
+
+    lateinit var heading: Degrees
+
+//    init {
+//        if (isIntercept) {
+//            this.x = Inches(Math.max(Math.min(x, UIController.imageWidth()), 0.0))
+//            this.y = Inches(Math.max(Math.min(y, UIController.imageHeight()), 0.0))
+//        } else {
+//            this.x = Inches(x)
+//            this.y = Inches(y)
+//        }
+//    }
+
+    fun distanceTo(p: Point): Inches {
+        val a = p.x.value - x.value
+        val b = p.y.value - y.value
+        return Inches(Math.sqrt(a * a + b * b))
+    }
+
+    fun angleTo(p: Point): Degrees {
+        val x = p.x.value - x.value
+        val y = p.y.value - y.value
+        return Radians(Math.atan2(x, y)).degrees()
+    }
+
+    fun setHeadingTo(p: Point) {
+        heading = angleTo(p)
+    }
+
+    fun reverse() {
+        targetVelocity = -targetVelocity
+        setVels(-leftVel, -rightVel)
+    }
+
+    fun setVels(leftVel: InchesPerSecond, rightVel: InchesPerSecond) {
+        this.leftVel = leftVel
+        this.rightVel = rightVel
+    }
+
+    fun setPos(leftPos: Inches, rightPos: Inches) {
+        this.leftPos = leftPos
+        this.rightPos = rightPos
+    }
+
+    /**
+     * sets the target positions for this point based on this point's velocity
+     *
+     * @param prevLeftPos  left position of previous point
+     * @param prevRightPos left position of previous point
+     */
+    fun advancePos(prevLeftPos: Inches, prevRightPos: Inches) {
+        setPos(prevLeftPos + leftVel * timeStep(), prevRightPos + rightVel * timeStep())
+    }
+}

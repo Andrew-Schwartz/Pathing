@@ -1,5 +1,10 @@
 package utils;
 
+import bezier.Feet;
+import bezier.FeetPerSecond;
+import bezier.FeetPerSecondSquared;
+import bezier.Inches;
+import bezier.Seconds;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -84,10 +89,32 @@ public class Config {
     }
 
     //short methods for getting doubles
-    public static double wheelRadius() { return getDoubleProperty("wheel_radius"); }
-    public static double width() { return getDoubleProperty("width"); }
-    public static double length() { return getDoubleProperty("length"); }
-    public static double maxAccel() {return getDoubleProperty("max_accel"); }
-    public static double maxVel() {return getDoubleProperty("max_vel"); }
-    public static double timeStep() {return getDoubleProperty("time_step"); }
+    public static Inches wheelRadius() {
+        return new Inches(getDoubleProperty("wheel_radius"));
+    }
+
+    public static Inches width() {
+        return new Inches(getDoubleProperty("width"));
+    }
+
+    public static Inches length() {
+        return new Inches(getDoubleProperty("length"));
+    }
+
+    public static FeetPerSecondSquared maxAccel() {
+        return new FeetPerSecondSquared(new Feet(getDoubleProperty("max_accel")));
+    }
+
+    public static FeetPerSecond maxVel() {
+        return new FeetPerSecond(new Feet(getDoubleProperty("max_vel")));
+    }
+
+    public static Seconds timeStep() {
+        return new Seconds(getDoubleProperty("time_step"));
+    }
+
+    public static double ticksPerRev() {
+        return getDoubleProperty("ticks_per_rev");
+    }
+
 }

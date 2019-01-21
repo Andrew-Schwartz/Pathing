@@ -29,12 +29,12 @@ public class CSVWriter<T> extends OutputStreamWriter {
         if (header.split(commaDelimiter).length != funcs.length)
             throw new IllegalArgumentException("num columns in header != num of functions to write with");
         write(header);
-        append("/n");
+        append("\n");
         for (T obj : obs) {
             for (Function<T, Object> f : funcs) {
                 append(f.apply(obj).toString()).append(commaDelimiter);
             }
-            append("/n");
+            append("\n");
         }
     }
 }
