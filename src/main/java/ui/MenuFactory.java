@@ -1,6 +1,9 @@
 package ui;
 
 import bezier.Point;
+import bezier.units.Inches;
+import bezier.units.Seconds;
+import bezier.units.derived.LinearVelocity;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
@@ -33,10 +36,10 @@ public class MenuFactory {
         try {
             GridPane gridPane = FXMLLoader.load(Objects.requireNonNull(MenuFactory.class.getClassLoader().getResource("ui/MenuPopup.fxml")));
             menu.getDialogPane().setContent(gridPane);
-            ((TextField) findByID(gridPane, "txtX")).setText(String.valueOf(point.getX()));
-            ((TextField) findByID(gridPane, "txtY")).setText(String.valueOf(point.getY()));
+            ((TextField) findByID(gridPane, "txtX")).setText(String.valueOf(point.getX().getValue()));
+            ((TextField) findByID(gridPane, "txtY")).setText(String.valueOf(point.getY().getValue()));
             ((CheckBox) findByID(gridPane, "chkIntercept")).setSelected(point.isIntercept());
-            ((TextField) findByID(gridPane, "txtVel")).setText(String.valueOf(point.getTargetVelocity()));
+            ((TextField) findByID(gridPane, "txtVel")).setText(String.valueOf(point.getTargetVelocity().getValue()));
             ((CheckBox) findByID(gridPane, "chkOverrideMaxVel")).setSelected(point.isOverrideMaxVel());
             ((CheckBox) findByID(gridPane, "chkReverse")).setSelected(point.isReverse());
 
@@ -46,7 +49,7 @@ public class MenuFactory {
                             parseDouble(((TextField) findByID(gridPane, "txtX")).getText().trim()),
                             parseDouble(((TextField) findByID(gridPane, "txtY")).getText().trim()),
                             ((CheckBox) findByID(gridPane, "chkIntercept")).isSelected(),
-                            parseDouble(((TextField) findByID(gridPane, "txtVel")).getText().trim()),
+                            new LinearVelocity<>(new Inches(parseDouble(((TextField) findByID(gridPane, "txtVel")).getText().trim())), new Seconds(1.0)),
                             ((CheckBox) findByID(gridPane, "chkOverrideMaxVel")).isSelected(),
                             ((CheckBox) findByID(gridPane, "chkReverse")).isSelected());
                 }

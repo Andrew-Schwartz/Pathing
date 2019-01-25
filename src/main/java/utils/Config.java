@@ -1,10 +1,10 @@
 package utils;
 
-import bezier.Feet;
-import bezier.FeetPerSecond;
-import bezier.FeetPerSecondSquared;
-import bezier.Inches;
-import bezier.Seconds;
+import bezier.units.Feet;
+import bezier.units.Inches;
+import bezier.units.Seconds;
+import bezier.units.derived.Acceleration;
+import bezier.units.derived.LinearVelocity;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -88,7 +88,7 @@ public class Config {
         }
     }
 
-    //short methods for getting doubles
+    //short methods for getting "doubles"
     public static Inches wheelRadius() {
         return new Inches(getDoubleProperty("wheel_radius"));
     }
@@ -101,12 +101,12 @@ public class Config {
         return new Inches(getDoubleProperty("length"));
     }
 
-    public static FeetPerSecondSquared maxAccel() {
-        return new FeetPerSecondSquared(new Feet(getDoubleProperty("max_accel")));
+    public static Acceleration<Feet, Seconds> maxAccel() {
+        return new Acceleration<>(new Feet(getDoubleProperty("max_accel")), new Seconds(1.0));
     }
 
-    public static FeetPerSecond maxVel() {
-        return new FeetPerSecond(new Feet(getDoubleProperty("max_vel")));
+    public static LinearVelocity<Feet, Seconds> maxVel() {
+        return new LinearVelocity<>(new Feet(getDoubleProperty("max_vel")), new Seconds(1.0));
     }
 
     public static Seconds timeStep() {

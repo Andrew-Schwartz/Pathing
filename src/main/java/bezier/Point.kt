@@ -1,15 +1,26 @@
 package bezier
 
+import bezier.units.*
+import bezier.units.derived.InchesPerSecond
 import utils.Config.timeStep
 
 data class Point
 @JvmOverloads constructor(var x: Inches,
                           var y: Inches,
                           var isIntercept: Boolean = false,
-                          var targetVelocity: InchesPerSecond = InchesPerSecond(Inches(0.0)),
+                          var targetVelocity: InchesPerSecond = InchesPerSecond(Inches(0.0), Seconds(1.0)),
                           var isOverrideMaxVel: Boolean = false,
                           var isReverse: Boolean = false
 ) {
+    @JvmOverloads
+    constructor(x: Double,
+                y: Double,
+                isIntercept: Boolean = false,
+                targetVelocity: InchesPerSecond = InchesPerSecond(Inches(0.0), Seconds(1.0)),
+                isOverrideMaxVel: Boolean = false,
+                isReverse: Boolean = false
+    ) : this(x.inches(), y.inches(), isIntercept,targetVelocity, isOverrideMaxVel, isReverse)
+
     var time = Seconds(0.0)      //TODO move to separate Path class
     var distance = Inches(0.0)      //TODO move to separate Path class
 
@@ -52,7 +63,7 @@ data class Point
         setVels(-leftVel, -rightVel)
     }
 
-    fun setVels(leftVel: InchesPerSecond, rightVel: InchesPerSecond) {
+    fun setVels(leftVel: InchesPerSecond, rightVel: InchesPerSecond) { // TODO: maybe this should be angular or in encodeticks?
         this.leftVel = leftVel
         this.rightVel = rightVel
     }
@@ -71,4 +82,9 @@ data class Point
     fun advancePos(prevLeftPos: Inches, prevRightPos: Inches) {
         setPos(prevLeftPos + leftVel * timeStep(), prevRightPos + rightVel * timeStep())
     }
+
+    /**
+     * exists for java support
+     */
+    fun clone() = this.copy()
 }

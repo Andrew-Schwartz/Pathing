@@ -1,8 +1,10 @@
 package ui;
 
-import bezier.Inches;
-import bezier.Pixels;
 import bezier.Point;
+import bezier.units.Inches;
+import bezier.units.Pixels;
+import bezier.units.Seconds;
+import bezier.units.derived.LinearVelocity;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -109,7 +111,7 @@ public class UIController {
 //        double heightWidthRatio = imageHeight() / imageWidth();
 
         imgField.setPreserveRatio(true);
-        System.out.println(tabVel.getTabPane().getHeight());
+//        System.out.println(tabVel.getTabPane().getHeight());
         imgField.setFitHeight(tabVel.getTabPane().heightProperty().doubleValue() - 500);
 //        imgField.setFitHeight(tabVel.getTabPane().getHeight());
 //        imgField.setFitWidth(tabVel.getTabPane().getHeight() / heightWidthRatio);
@@ -215,7 +217,7 @@ public class UIController {
             case POINT_EDIT_MODE:
                 setNextIndex(index);
                 pointHighlight.setCenterX(rows.get(index).getPoint().getX().pixels().getValue());
-                pointHighlight.setCenterY(imageHeight() - rows.get(index).getPoint().getY().pixels().getValue());
+                pointHighlight.setCenterY(imageHeight().minus(rows.get(index).getPoint().getY().pixels()).getValue());
                 break;
             case TOGGLE_OVERRIDE_VEL:
                 rows.get(index).getPoint().setOverrideMaxVel(!rows.get(index).getPoint().isOverrideMaxVel());
@@ -295,11 +297,11 @@ public class UIController {
     }
 
     private void dragPoint(MouseEvent mouseEvent) {
-        double x = mouseEvent.getX(),
-                y = mouseEvent.getY();
-        if (x < 0 || y < 0 || x > imageWidth() || y > imageHeight())
+        Pixels x = new Pixels(mouseEvent.getX());
+        Pixels y = new Pixels(mouseEvent.getY());
+        if (x.getValue() < 0 || y.getValue() < 0 || x.getValue() > imageWidth().getValue() || y.getValue() > imageHeight().getValue())
             return;
-        y = imageHeight() - y;
+        y = imageHeight().minus(y);
 //
 //        System.out.println("x = " + x);
 //        System.out.println("y = " + y);
@@ -309,9 +311,9 @@ public class UIController {
         Pixels x = new Pixels(mouseEvent.getX());
         Pixels y = new Pixels(mouseEvent.getY());
         boolean intercept = mouseEvent.getButton() == MouseButton.PRIMARY && !mouseEvent.isControlDown();
-        if (x.getValue() < 0 || y.getValue() < 0 || x.getValue() > imageWidth() || y.getValue() > imageHeight())
+        if (x.getValue() < 0 || y.getValue() < 0 || x.getValue() > imageWidth().getValue() || y.getValue() > imageHeight().getValue())
             return;
-        y = new Pixels(imageHeight() - y.getValue());
+        y = imageHeight().minus(y.getValue());
         if (nextIndex == -1) {
             addNewPointRow(new Point(x.inches(), y.inches(), intercept), true);
         } else {
@@ -325,19 +327,19 @@ public class UIController {
     @FXML
     private void mouseMoveEvent(MouseEvent event) {
         //highlight only appears if circles are visible
-        cursorHighlight.setCenterX(Math.max(0, Math.min(imageWidth(), event.getX())));
-        cursorHighlight.setCenterY(Math.max(0, Math.min(imageHeight(), event.getY())));
+        cursorHighlight.setCenterX(Math.max(0, Math.min(imageWidth().getValue(), event.getX())));
+        cursorHighlight.setCenterY(Math.max(0, Math.min(imageHeight().getValue(), event.getY())));
 
         //drag point if in pointDragMode
         if (pointDrag) { //todo detect if it is clicked
             graph.getRows().stream()
                     .map(PointRow::getPoint)
                     .filter(p -> aboutEquals(p.getX().pixels().getValue(), event.getX(), 9))
-                    .filter(p -> aboutEquals(imageHeight() - p.getY().pixels().getValue(), event.getY(), 9))
-                    .limit(1)
-                    .forEach(p -> {
+                    .filter(p -> aboutEquals(imageHeight().minus(p.getY().pixels()).getValue(), event.getY(), 9))
+                    .findFirst()
+                    .ifPresent(p -> {
                         p.setX(new Pixels(event.getX()).inches());
-                        p.setY(new Pixels(imageHeight() - event.getY()).inches());
+                        p.setY(imageHeight().minus(new Pixels(event.getY())).inches());
                     });
             graph.updatePolyline(true);
         }
@@ -423,21 +425,21 @@ public class UIController {
 //        config.setProperty("img_path", chosenImage.getAbsolutePath());
         backgroundImage = new Image(chosenImage.toURI().toURL().toString());
         imgField.setImage(backgroundImage);
-        imgField.setFitWidth(imageWidth());
-        imgField.setFitHeight(imageHeight());
+        imgField.setFitWidth(imageWidth().getValue());
+        imgField.setFitHeight(imageHeight().getValue());
     }
 
     @FXML
-    private void mnuExport() {
+    private void mnuExport() { // TODO make units in ticks
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
         try (var leftWriter = new CSVWriter<Point>(url + "_left.csv");
              var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
             leftWriter.writeObjects("Dist,Vel", graph.getPath(),
-                    p -> p.leftPos.ticks(),
-                    p -> p.leftVel.ticksPer100Millis());
+                    p -> p.leftPos.ticks().getValue(),
+                    p -> p.leftVel.getValue());
             rightWriter.writeObjects("Dist,Vel", graph.getPath(),
                     p -> p.leftPos.ticks(),
-                    p -> p.leftVel.ticksPer100Millis());
+                    p -> p.leftVel.getValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -470,12 +472,12 @@ public class UIController {
                 reader.lines()
                         .skip(1)
                         .map(line -> line.split(","))
-                        .map(vals -> new Point(new Inches(Double.parseDouble(vals[0])),
-                                     new Inches(Double.parseDouble(vals[1])),
-                                     Boolean.parseBoolean(vals[2]),
-                                     Double.parseDouble(vals[3]),
-                                     Boolean.parseBoolean(vals[4]),
-                                     Boolean.parseBoolean(vals[5])))
+                        .map(vals -> new Point(Double.parseDouble(vals[0]),
+                                Double.parseDouble(vals[1]),
+                                Boolean.parseBoolean(vals[2]),
+                                new LinearVelocity<>(new Inches(Double.parseDouble(vals[3])), new Seconds(1.0)),
+                                Boolean.parseBoolean(vals[4]),
+                                Boolean.parseBoolean(vals[5])))
                         .forEach(point -> addNewPointRow(point, false));
                 addSavedState();
             } catch (IOException e) {
@@ -487,12 +489,12 @@ public class UIController {
         }
     }
 
-    public static double imageHeight() {
-        return backgroundImage.getHeight();
+    public static Pixels imageHeight() {
+        return new Pixels(backgroundImage.getHeight());
     }
 
-    public static double imageWidth() {
-        return backgroundImage.getWidth();
+    public static Pixels imageWidth() {
+        return new Pixels(backgroundImage.getWidth());
     }
 
     @FXML

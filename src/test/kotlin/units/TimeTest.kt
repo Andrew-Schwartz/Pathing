@@ -1,0 +1,19 @@
+package units
+
+import bezier.units.*
+import org.junit.jupiter.api.Test
+
+class TimeTest {
+    @Test
+    fun typesTest() {
+        val one: Seconds = 30.seconds()
+
+        val two: Minutes = 1.minutes()
+
+        val three: HundredMillis = 10.hundredMillis()
+
+        assert(one + two.seconds() + three.seconds() == 91.seconds()) { "Type Conversion Failed" }
+    }
+
+
+}

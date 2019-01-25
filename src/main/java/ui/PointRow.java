@@ -1,6 +1,9 @@
 package ui;
 
 import bezier.Point;
+import bezier.units.Inches;
+import bezier.units.Seconds;
+import bezier.units.derived.LinearVelocity;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -34,10 +37,10 @@ public class PointRow { //Make this a node?
     public void setPoint(Point p) {
         Function<Double, String> round2Str = x -> String.valueOf(Math.round(x * 100) / 100.);
         point = p;
-        xText.setText(round2Str.apply(p.getX()));
-        yText.setText(round2Str.apply(p.getY()));
+        xText.setText(round2Str.apply(p.getX().getValue()));
+        yText.setText(round2Str.apply(p.getY().getValue()));
         interceptBox.setSelected(p.isIntercept());
-        velText.setText(String.valueOf(p.getTargetVelocity()));
+        velText.setText(String.valueOf(p.getTargetVelocity().getValue()));
     }
 
     public int getIndex() {
@@ -84,10 +87,6 @@ public class PointRow { //Make this a node?
     }
 
     private void makeComboBox() {
-//        ObservableList<String> results = FXCollections.observableArrayList();
-//        results.addAll(Arrays.stream(PointMenuResult.values())
-//                             .map(PointMenuResult::toString)
-//                             .toArray(String[]::new));
         comboBox = new ComboBox<>(FXCollections.observableArrayList(
                 Arrays.stream(PointMenuResult.values())
                         .map(PointMenuResult::toString)
@@ -137,10 +136,10 @@ public class PointRow { //Make this a node?
     }
 
     public void updatePoint() {
-        point.setX(getXValue());
-        point.setY(getYValue());
+        point.setX(new Inches(getXValue()));
+        point.setY(new Inches(getYValue()));
         point.setIntercept(getInterceptValue());
-        point.setTargetVelocity(getVelValue());
+        point.setTargetVelocity(new LinearVelocity<>(new Inches(getVelValue()), new Seconds(1.0)));
     }
 
 }
