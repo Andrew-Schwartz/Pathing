@@ -8,6 +8,5 @@ infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
     return sequence.asIterable()
 }
 
-fun <T : Comparable<T>> T.maxVs(other: T): T = if (this > other) this else other
-
-fun <T : Comparable<T>> T.minVs(other: T): T = if (this < other) this else other
+fun <T : Comparable<T>> min(a: T, b: T) = if (a < b) a else b
+fun <T : Comparable<T>> max(a: T, b: T) = if (a > b) a else b

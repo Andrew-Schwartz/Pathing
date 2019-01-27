@@ -91,7 +91,7 @@ public class UIController {
             currentState;
     private PointRow draggedRow;
     private static Config config;
-    GraphingUtil graph;
+    private GraphingUtil graph;
     private boolean pointDrag = false;
     private boolean isClicking;
 
@@ -106,18 +106,22 @@ public class UIController {
                 cfgRadius, cfgWidth, cfgTimeStep, cfgPathName, cfgTicksPerRev);
 
 //        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
+
+//        double width = backgroundImage.getWidth(), height = backgroundImage.getHeight();
+//        final double maxHeight = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getHeight() * .5; //Percent of screen to take up, is an estimate
+//        final double proportion = maxHeight / height;
+//        width *= proportion;
+//        height *= proportion;
+
+//        imgField.setFitWidth(width);
+//        imgField.setFitHeight(height);
+
+//        root.applyCss();
+//        root.layout();
+//        root.getHeight();
+
         imgField.setImage(backgroundImage);
-//        imgField.setPreserveRatio(true);
-//        double heightWidthRatio = imageHeight() / imageWidth();
 
-        imgField.setPreserveRatio(true);
-//        System.out.println(tabVel.getTabPane().getHeight());
-        imgField.setFitHeight(tabVel.getTabPane().heightProperty().doubleValue() - 500);
-//        imgField.setFitHeight(tabVel.getTabPane().getHeight());
-//        imgField.setFitWidth(tabVel.getTabPane().getHeight() / heightWidthRatio);
-//        imgField.fitHeightProperty().setValue(tabVel.getTabPane().getHeight());
-
-        //        imgField.setFitWidth(imageWidth());
         rows = new ArrayList<>();
         previousStates = new ArrayList<>();
         setNextIndex(-1);
@@ -177,7 +181,7 @@ public class UIController {
             ((ComboBox) node).setOnAction(event -> {
                 handleComboResults(row.getComboBox().getValue(), row.getIndex());
                 ((ComboBox) node).getSelectionModel().clearSelection();
-                imgField.requestFocus(); //to prevent double selection
+                root.requestFocus(); //to prevent double selection
             });
 
         //Drag and Drop listeners
@@ -186,7 +190,7 @@ public class UIController {
             draggedRow = row;
             dragStartIndex = row.getIndex();
             Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
-            ClipboardContent content = new ClipboardContent();
+            var content = new ClipboardContent();
             content.putString("this has to exist or nothing works! :( "); //<---- self documenting code
             db.setContent(content);
         });
@@ -214,7 +218,7 @@ public class UIController {
             case DELETE_POINT:
                 deletePoints(index, index);
                 break;
-            case POINT_EDIT_MODE:
+            case POINT_MOVE_MODE:
                 setNextIndex(index);
                 pointHighlight.setCenterX(rows.get(index).getPoint().getX().pixels().getValue());
                 pointHighlight.setCenterY(imageHeight().minus(rows.get(index).getPoint().getY().pixels()).getValue());
@@ -349,7 +353,7 @@ public class UIController {
     private void keyReleasedEvent(KeyEvent keyEvent) {
         if (nextIndex != -1) {
             PointRow row = rows.get(nextIndex);
-            imgField.requestFocus();
+            root.requestFocus();
             boolean ctrl = keyEvent.isControlDown(),
                     shift = keyEvent.isShiftDown();
             int change = shift ? ctrl ? 24 : 1 : ctrl ? 12 : 6; //key = in -> shift=1, none=6, ctrl=12, both=24
@@ -377,6 +381,8 @@ public class UIController {
                     break;
             }
             row.setPoint(new Point(x, y, row.getPoint().isIntercept()));
+            pointHighlight.setCenterX(x.pixels().getValue());
+            pointHighlight.setCenterY(imageHeight().minus(y.pixels()).getValue());
             graph.updatePolyline(pointDrag);
         } else {
             boolean pointsFocused = false;
@@ -393,19 +399,27 @@ public class UIController {
             if (!pointsFocused) return;
             switch (keyEvent.getCode()) {
                 case UP:
-                    rowAtIndex(Math.max(0, focusedIndex - 1)).orElseThrow().getAllNodes().get(focusedColumn).requestFocus();
+                    rowAtIndex(Math.max(0, focusedIndex - 1))
+                            .orElseThrow()
+                            .getAllNodes()
+                            .get(focusedColumn)
+                            .requestFocus();
                     break;
                 case DOWN:
-                    rowAtIndex(Math.min(rows.size() - 1, focusedIndex + 1)).orElseThrow().getAllNodes().get(focusedColumn).requestFocus();
+                    rowAtIndex(Math.min(rows.size() - 1, focusedIndex + 1))
+                            .orElseThrow()
+                            .getAllNodes()
+                            .get(focusedColumn)
+                            .requestFocus();
                     break;
             }
         }
     }
 
     private void setNextIndex(int nextIndex) {
-        this.nextIndex = nextIndex;
         pointHighlight.setVisible(nextIndex != -1);
         cursorHighlight.setVisible(nextIndex != -1);
+        this.nextIndex = nextIndex;
     }
 
     @FXML
@@ -436,10 +450,10 @@ public class UIController {
              var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
             leftWriter.writeObjects("Dist,Vel", graph.getPath(),
                     p -> p.leftPos.ticks().getValue(),
-                    p -> p.leftVel.getValue());
+                    p -> p.leftVel.ticksPerHundredMillis().getValue());
             rightWriter.writeObjects("Dist,Vel", graph.getPath(),
-                    p -> p.leftPos.ticks(),
-                    p -> p.leftVel.getValue());
+                    p -> p.rightPos.ticks().getValue(),
+                    p -> p.rightVel.ticksPerHundredMillis().getValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -450,10 +464,10 @@ public class UIController {
         String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
         try (var writer = new CSVWriter<Point>(url + "_save.csv")) {
             writer.writeObjects("X,Y,Intercept,Velocity,Override,Reverse", graph.getControlPoints(),
-                    Point::getX,
-                    Point::getY,
+                    p -> p.getX().getValue(),
+                    p -> p.getY().getValue(),
                     Point::isIntercept,
-                    Point::getTargetVelocity,
+                    p -> p.getTargetVelocity().getValue(),
                     Point::isOverrideMaxVel,
                     Point::isReverse);
         } catch (IOException e) {

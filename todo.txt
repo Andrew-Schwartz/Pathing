@@ -4,25 +4,22 @@ legend:
 [ ] = not started
 
 features
-[ ] organize this by importance and difficulty for having other people work on it
-[.] units classes (feet, inches, also degrees, rads, angular velocity, etc) !!!!!!
+[.] point dragging mode
 [.] Path class, take some of the dumb parts of Point and put them where they make sense
-[ ] predetermined start positions
-[ ] point dragging mode
-[ ] config handle for when file is empty (all return optionals)
-[ ] pointmenuresult that sets a points vel to its max (has to account for max vel reachable)
-[ ] CSVWriter makes backups
-[ ] image location in config file
-[ ] add jerk config
 [ ] more special cases for velocity if center point is inside of robot
+[ ] CSVWriter makes backups
+[ ] predetermined start positions / offset by length feature
+[ ] config handle for when file is empty (all return optionals)
+[ ] image location in config file
+[ ] pointmenuresult that sets a points vel to its max (has to account for max vel reachable)
+[ ] add jerk config
 [ ] thread drawing paths
-[ ] rotations to linear and vice versa not automatically do inches
 [ ] css for pretification
-[ ] offset by length feature
 [ ] make it work with different screen sizes
 
 bugs
-[ ] time messed up. (draw multiple paths, makes first path shorter in time)
+[.] fix things that broke in java 11 (tab switching, image size)
+[.] angles for path drawing are wrong
 [ ] if a point save dir is closed, java.lang.IllegalArgumentException: Folder parameter must be a valid folder
 [ ] Exception in thread "JavaFX Application Thread" java.lang.IndexOutOfBoundsException
 
@@ -31,7 +28,7 @@ bugs
 prior implemented features:
 [x] calculate velocity
 [x] config file
-[x] vel chart, one per wheelva
+[x] vel chart, one per wheel
 [x] generate curve according to time and time interval
 [x] make Config static
 [x] saves.csv output dir in config file
@@ -42,3 +39,4 @@ prior implemented features:
 [x] backwards path
 [x] new PointMenuResult - Menu, show lots of details in popup for one box (x,y,vel,overrides)
 [x] wheel paths based on more stuff
+[x] units classes

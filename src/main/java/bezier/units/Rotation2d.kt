@@ -13,6 +13,9 @@ sealed class Rotation2d<T : Rotation2d<T>>(value: Double) : SIUnit<T>(value) {
     abstract fun degrees(): Degrees
     abstract fun radians(): Radians
     abstract fun revolutions(): Revolutions
+
+    fun sin(): Double = Math.sin(radians().value)
+    fun cos(): Double = Math.cos(radians().value)
 }
 
 data class Degrees(override val value: Double) : Rotation2d<Degrees>(value) {

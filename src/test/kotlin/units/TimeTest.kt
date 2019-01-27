@@ -3,7 +3,7 @@ package units
 import bezier.units.*
 import org.junit.jupiter.api.Test
 
-class TimeTest {
+object TimeTest {
     @Test
     fun typesTest() {
         val one: Seconds = 30.seconds()

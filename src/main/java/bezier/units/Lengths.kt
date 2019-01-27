@@ -2,15 +2,14 @@ package bezier.units
 
 import bezier.units.derived.LinearVelocity
 import ui.UIController
-import utils.Config.ticksPerRev
-import utils.Config.wheelRadius
 
 val FIELD_HEIGHT_INCHES = Inches(322.25) //ish
 
 sealed class Length<T : Length<T>>(value: Double) : SIUnit<T>(value) {
     companion object {
         const val kFeetToInches: Double = 12.0
-        val kTicksToInches: Double get() = ((wheelRadius() * 2.0 * Math.PI) / ticksPerRev()).value
+//        val kTicksToInches: Double get() = ((wheelRadius() * 2.0 * Math.PI) / ticksPerRev()).value
+        val kTicksToInches: Double get() = 1 / 450.0
         val kPixelsToInches: Double get() = FIELD_HEIGHT_INCHES.value / UIController.imageHeight().value
     }
 
@@ -25,6 +24,7 @@ sealed class Length<T : Length<T>>(value: Double) : SIUnit<T>(value) {
     operator fun <D : Time<D>> div(velocity: LinearVelocity<T, D>): D = velocity.createNewTime(value / velocity.value)
 }
 
+fun Number.feet() = Feet(toDouble())
 data class Feet(override val value: Double) : Length<Feet>(value) {
     override fun createNew(value: Double): Feet = Feet(value)
 
@@ -54,6 +54,7 @@ data class Pixels(override val value: Double) : Length<Pixels>(value) {
     override fun ticks() = Ticks(value * kPixelsToInches / kTicksToInches)
 }
 
+fun Number.ticks() = Ticks(toDouble())
 data class Ticks(override val value: Double) : Length<Ticks>(value) {
     override fun createNew(value: Double) = Ticks(value)
 

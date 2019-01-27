@@ -1,11 +1,9 @@
 package bezier
 
-import bezier.units.Inches
-import bezier.units.Seconds
+import bezier.units.*
+import bezier.units.derived.Acceleration
 import bezier.units.derived.InchesPerSecond
 import bezier.units.derived.LinearVelocity
-import bezier.units.inches
-import bezier.units.seconds
 import javafx.scene.control.Alert
 import utils.Config.*
 import java.util.*
@@ -16,7 +14,7 @@ object Bezier {
     fun generateAll(controlPoints: ArrayList<Point>): ArrayList<Point> {
         val pathJustXY = generatePureXY(controlPoints)
         val times = trapezoidalTimes(pathJustXY, controlPoints)
-        val path = generateWithVel(controlPoints, times) // never returns
+        val path = generateWithVel(controlPoints, times)
         motion(path)
         return path
     }
@@ -71,8 +69,9 @@ object Bezier {
 
             val velInitial: InchesPerSecond = oldThroughPoints[j].targetVelocity
             val velFinal: InchesPerSecond = oldThroughPoints[j + 1].targetVelocity
-            val velMax: InchesPerSecond = if (oldThroughPoints[j + 1].isOverrideMaxVel) oldThroughPoints[j + 1].targetVelocity
-            else maxVel().inchesPerSecond()
+            val velMax: InchesPerSecond =
+                    if (oldThroughPoints[j + 1].isOverrideMaxVel) oldThroughPoints[j + 1].targetVelocity
+                    else maxVel().inchesPerSecond()
 
             if (velMax.value == 0.0) {
                 val errorMsg = "with a max speed of 0, you'll never get anywhere!"
@@ -80,16 +79,16 @@ object Bezier {
                 alert.headerText = "Impossible Physics"
                 alert.contentText = errorMsg
                 alert.showAndWait()
-                throw IllegalStateException(errorMsg) // TODO make a function for this and other error
+                throw IllegalStateException(errorMsg) // TODO make a function for this and other errors
             }
 
-            //if accel and deccel take same denominator, calculations are much easier ??what did I mean??
+            //if accel and deccel take same time, calculations are much easier
             var velInitialAndFinal: InchesPerSecond = velInitial
             var timeAccelInitToFinal = Seconds(0.0)
             if (velInitial != velFinal) {
-                timeAccelInitToFinal = (velInitial - velFinal).feetPerSecond() / maxAccel()
+                timeAccelInitToFinal = (velInitial - velFinal) / maxAccel().inchesPerSecondSquared()
                 val distToEqualizeVels: Inches = (velInitial + velFinal) * timeAccelInitToFinal / 2.0
-                velInitialAndFinal = velInitial.maxVs(velFinal) + (velInitial - velFinal).abs()
+                velInitialAndFinal = max(velInitial, velFinal) + (velInitial - velFinal).abs()
 
                 if (distToEqualizeVels > lengthOfCurve) {
                     val errorMsg = ("""distance traveled while accelerating from initial to final velocity (${distToEqualizeVels.value})
@@ -104,15 +103,16 @@ object Bezier {
             }
 
             //calculate max vel that is reachable physically
-            val timeAccelTriangle: Seconds = quadratic((maxAccel() * 0.5).value, velInitial.value, (-lengthOfCurve / 2).value).seconds() //x = v0t + 1/2at^2
-            val velMaxReachable: InchesPerSecond = velMax.minVs(velInitialAndFinal + (maxAccel() * timeAccelTriangle).inchesPerSecond().value)
+//            val timeAccelTriangle: Seconds = quadratic((maxAccel() * 0.5).inchesPerSecondSquared().value, velInitial.value, (-lengthOfCurve).value / 2).seconds() //x = v0t + 1/2at^2
+            val timeAccelTriangle: Seconds = quadratic(maxAccel().inchesPerSecondSquared() * 0.5, velInitial, -lengthOfCurve / 2)
+            val velMaxReachable: InchesPerSecond = min(velMax, velInitialAndFinal + (maxAccel() * timeAccelTriangle).inchesPerSecond())
 
             val timeAccel = (velMaxReachable - velInitialAndFinal) / maxAccel().inchesPerSecondSquared()
             val timeDeccel = (velInitialAndFinal - velMaxReachable) / -maxAccel().inchesPerSecondSquared()
             val timeConst = (lengthOfCurve - ((velInitialAndFinal + velMaxReachable) * timeAccel / 2 + (velInitialAndFinal + velMaxReachable) * timeDeccel / 2)) / velMaxReachable
             times += timeAccelInitToFinal + timeAccel + timeConst + timeDeccel
         }
-        return times // is infinity
+        return times
     }
 
     @JvmStatic
@@ -124,12 +124,15 @@ object Bezier {
         for (j in 0 until throughPoints.size - 1) {
             val startVel: InchesPerSecond = throughPoints[j].targetVelocity
             val endVel: InchesPerSecond = throughPoints[j + 1].targetVelocity
-            val curMaxVel: LinearVelocity<Inches, Seconds> = if (controlPoints[j + 1].isOverrideMaxVel) startVel.maxVs(endVel) else maxVel().inchesPerSecond()
+//            val curMaxVel: LinearVelocity<Inches, Seconds> = if (controlPoints[j + 1].isOverrideMaxVel) startVel.maxVs(endVel) else maxVel().inchesPerSecond()
+            val curMaxVel: InchesPerSecond =
+                    if (controlPoints[j + 1].isOverrideMaxVel) max(startVel, endVel)
+                    else maxVel().inchesPerSecond()
 
             val time: Seconds = times[j]
             val precision = Math.ceil(time / timeStep()) + 1
             var fakeT = 0 // TODO make this less terrible
-            while (fakeT <= precision) {
+            while (fakeT <= precision) { // essentially a for loop 0 to 1 with precision iters
                 val t = fakeT / precision
                 var sumX = Inches(0.0)
                 var sumY = Inches(0.0)
@@ -144,11 +147,11 @@ object Bezier {
                 path += Point(sumX, sumY)
 
                 //trapezoidal velocities
-//                val up = Math.min(maxAccel().toDouble() * t * time + startVel, curMaxVel)
+//                val up = Math.min(maxAccel() * t * time + startVel, curMaxVel)
 //                val down = Math.min(-maxAccel() * (t * time - time) + endVel, curMaxVel)
-                val up: InchesPerSecond = curMaxVel.minVs((maxAccel() * t * time).inchesPerSecond())
-                val down: InchesPerSecond = curMaxVel.minVs((-maxAccel() * (time * t - time)).inchesPerSecond())
-                path[path.size - 1].targetVelocity = up.minVs(down)
+                val up: InchesPerSecond = min(curMaxVel, (maxAccel() * t * time).inchesPerSecond())
+                val down: InchesPerSecond = min(curMaxVel, (-maxAccel() * (time * t - time)).inchesPerSecond())
+                path[path.size - 1].targetVelocity = min(up, down)
                 path[path.size - 1].time = time * t + path[prevEnd].time
                 fakeT++
                 //                if (j != 0) path.get(path.size() - 1).setTime(denominator*t + path.get(prevEnd).getDenominator());            //TODO where did this come from? should it be here?
@@ -221,6 +224,7 @@ object Bezier {
 //            rightWheelVel = linearToRotational(rightWheelVel)
 
             path[i].setVels(leftWheelVel, rightWheelVel)
+//            path[i].distance = 0.inches()
             if (i == 0)
                 path[i].setPos(0.inches(), 0.inches())
             else
@@ -245,9 +249,9 @@ object Bezier {
         var b = circlePoints[1].distanceTo(circlePoints[2])
         var c = circlePoints[2].distanceTo(circlePoints[0])
         val s = (a + b + c) / 2
-        a = s.minVs(a)     //fix rounding error
-        b = s.minVs(b)     //if any were > s, NaN results
-        c = s.minVs(c)
+        a = min(s, a)     //fix rounding error
+        b = min(s, b)     //if any were > s, NaN results
+        c = min(s, c)
         val area = Math.sqrt(s.value * (s - a).value * (s - b).value * (s - c).value)
         return a * b.value * c.value / (4 * area)
     }
@@ -260,6 +264,13 @@ object Bezier {
         return Math.max(
                 (-b + Math.sqrt(b * b - 4.0 * a * c)) / (2 * a),
                 (-b - Math.sqrt(b * b - 4.0 * a * c)) / (2 * a))
+    }
+
+    /**
+     * type safe quadratic formula
+     */
+    private fun <L : Length<L>, T : Time<T>> quadratic(a: Acceleration<L, T>, b: LinearVelocity<L, T>, c: L): T {
+        return b.createNewTime(quadratic(a.value, b.value, c.value))
     }
 
     /**

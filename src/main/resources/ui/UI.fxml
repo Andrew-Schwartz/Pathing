@@ -27,7 +27,7 @@
         <menus>
             <Menu mnemonicParsing="false" text="Files">
                 <MenuItem accelerator="Shortcut+E" onAction="#mnuExport" text="Export" />
-                <MenuItem accelerator="Shortcut+S" onAction="#mnuSavePoints" text="Save Points"/>
+                <MenuItem accelerator="Shortcut+S" onAction="#mnuSavePoints" text="Save Points" />
                 <MenuItem accelerator="Shortcut+O" onAction="#mnuOpenPoints" text="Open from Point" />
                 <MenuItem accelerator="Shortcut+I" onAction="#mnuOpenImage" text="Set Image" />
                 <MenuItem onAction="#mnuChangeCSVOut" text="Change CSV Location" />
@@ -36,9 +36,9 @@
             <Menu mnemonicParsing="false" text="Ease">
                 <MenuItem accelerator="Shortcut+Z" onAction="#undo" text="Undo" />
                 <MenuItem accelerator="Shortcut+Y" onAction="#redo" text="Redo" />
-                <MenuItem accelerator="Shortcut+INSERT" onAction="#btnNewPointEvent" text="Add a point"/>
-                <MenuItem accelerator="Shortcut+DELETE" onAction="#deleteAllPoints" text="Delete all points"/>
-                <MenuItem accelerator="Shortcut+R" onAction="#mnuPointDrag" text="Toggle point dragging"/>
+                <MenuItem accelerator="Shortcut+INSERT" onAction="#btnNewPointEvent" text="Add a point" />
+                <MenuItem accelerator="Shortcut+DELETE" onAction="#deleteAllPoints" text="Delete all points" />
+                <MenuItem accelerator="Shortcut+R" onAction="#mnuPointDrag" text="Toggle point dragging" />
             </Menu>
         </menus>
     </MenuBar>
@@ -68,7 +68,7 @@
                 <Label text="Time step" GridPane.rowIndex="8" />
                 <TextField fx:id="cfgTimeStep" accessibleRoleDescription="time_step" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                 <Label text="Draw wheel paths?" GridPane.rowIndex="9" />
-                <ComboBox fx:id="cfgDrawWheelType" accessibleRoleDescription="draw_wheels_type" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="9" >
+                <ComboBox fx:id="cfgDrawWheelType" accessibleRoleDescription="draw_wheels_type" onAction="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="9">
                     <items>
                         <FXCollections fx:factory="emptyObservableList" />
                     </items>
@@ -102,15 +102,15 @@
             </GridPane>
         </TitledPane>
 
-        <TabPane GridPane.columnIndex="1" GridPane.rowSpan="2">
+        <TabPane tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.rowSpan="2">
             <Tab closable="false" text="Position">
-                <AnchorPane fx:id="paneImg" onMouseMoved="#mouseMoveEvent" onMouseReleased="#releaseEvent" >
+                <AnchorPane fx:id="paneImg" onMouseMoved="#mouseMoveEvent" onMouseReleased="#releaseEvent">
                     <ImageView fx:id="imgField" />
-                    <Polyline fx:id="polyPos" stroke="RED" strokeWidth="2" />
+                    <Polyline fx:id="polyPos" stroke="RED" strokeWidth="3" />
                     <Polyline fx:id="polyLeft" stroke="DARKGREEN" />
                     <Polyline fx:id="polyRight" stroke="DARKGREEN" />
-                    <Circle fx:id="cursorHighlight" fill="#ff650080" radius="3" />
-                    <Circle fx:id="pointHighlight" fill="#00970380" radius="3" />
+                    <Circle fx:id="cursorHighlight" fill="#ff650080" radius="4" />
+                    <Circle fx:id="pointHighlight" fill="#00970380" radius="4" />
                 </AnchorPane>
             </Tab>
             <Tab fx:id="tabVel" closable="false" text="Velocity">
