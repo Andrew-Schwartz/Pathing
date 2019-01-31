@@ -1,4 +1,3 @@
-import bezier.Bezier;
 import bezier.Point;
 import org.junit.jupiter.api.Test;
 
@@ -11,14 +10,14 @@ public class BezierTest {
         controlPoints.add(new Point(0, 0, true));
         controlPoints.add(new Point(60, 0, true));
 
-        var path = Bezier.generateAll(controlPoints); // todo
-
-        for (Point point : path) {
-            System.out.println(point.getTargetVelocity() + "\n"
-                    + point.getLeftVel() + "\n"
-                    + point.getLeftVelLinear() + "\n"
-                    + point.getLeftPos() + "\n"
-            );
-        }
+//        var path = Bezier.generateAll(controlPoints); // todo
+//
+//        for (Point point : path) {
+//            System.out.println(point.getTargetVelocity() + "\n"
+//                    + point.getLeftVel() + "\n"
+//                    + point.getLeftVelLinear() + "\n"
+//                    + point.getLeftPos() + "\n"
+//            );
+//        }
     }
 }

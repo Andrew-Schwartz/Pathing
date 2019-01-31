@@ -81,7 +81,7 @@ public class UIController {
     @FXML
     private ComboBox<String> cfgDrawWheelType;
 
-    private static Image backgroundImage = new Image("images/2019ColorFromManual.JPG");
+    private static Image backgroundImage = new Image("images/2019BWFromFeildDrawing.JPG");
     private ArrayList<ArrayList<PointRow>> previousStates; //for undo/redo
     private ArrayList<PointRow> rows;
     private int nextIndex,
