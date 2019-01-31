@@ -1,9 +1,7 @@
 package bezier
 
 import bezier.units.*
-import bezier.units.derived.Acceleration
-import bezier.units.derived.InchesPerSecond
-import bezier.units.derived.LinearVelocity
+import bezier.units.derived.*
 import javafx.scene.control.Alert
 import utils.Config.*
 import java.util.*
@@ -195,29 +193,31 @@ object Bezier {
             val iAdjusted = if (i + 2 > path.size - 1) path.size - 3 else i
             val circleRadius = radiusOfCircle(path[iAdjusted], path[iAdjusted + 1], path[iAdjusted + 2])
 
-//            val leftWheelVel: AngularVelocity<Inches, Seconds>
-//            val rightWheelVel: AngularVelocity<Inches, Seconds>
+//            val leftWheelVel: RadiansPerSecond
+//            val rightWheelVel: RadiansPerSecond
             var leftWheelVel: InchesPerSecond
             var rightWheelVel: InchesPerSecond
 
 
-            if (circleRadius.value.isInfinite()) { //straight line path
+            if (circleRadius > 9_000_000) { //straight line path (some are not infinite)
+//                leftWheelVel = RadiansPerSecond(path[i].targetVelocity, wheelRadius())
+//                rightWheelVel = RadiansPerSecond(path[i].targetVelocity, wheelRadius())
                 leftWheelVel = path[i].targetVelocity
                 rightWheelVel = path[i].targetVelocity
             } else {
-//                val angularVel = AngularVelocity(path[i].targetVelocity), circleRadius)
-                val angularVel = path[i].targetVelocity
+                val angularVel = RadiansPerSecond(path[i].targetVelocity, circleRadius)
+//                val angularVel = path[i].targetVelocity
 
-                if (path[iAdjusted + 2].heading < path[iAdjusted].heading) { // turning left
-//                    leftWheelVel = angularVel * (circleRadius - halfWidth)
-//                    rightWheelVel = angularVel * (circleRadius + halfWidth)
-                    leftWheelVel = angularVel * (circleRadius - halfWidth).value
-                    rightWheelVel = angularVel * (circleRadius + halfWidth).value
+                if (path[iAdjusted].heading isLeftTowards path[iAdjusted + 2].heading) { // turning left
+//                    leftWheelVel = angularVel * (circleRadius - halfWidth).value
+//                    rightWheelVel = angularVel * (circleRadius + halfWidth).value
+                    leftWheelVel = angularVel * (circleRadius - halfWidth)
+                    rightWheelVel = angularVel * (circleRadius + halfWidth)
                 } else { //turning right
-//                    leftWheelVel = angularVel * (circleRadius + halfWidth)
-//                    rightWheelVel = angularVel * (circleRadius - halfWidth)
-                    leftWheelVel = angularVel * (circleRadius + halfWidth).value
-                    rightWheelVel = angularVel * (circleRadius - halfWidth).value
+//                    leftWheelVel = angularVel * (circleRadius + halfWidth).value
+//                    rightWheelVel = angularVel * (circleRadius - halfWidth).value
+                    leftWheelVel = angularVel * (circleRadius + halfWidth)
+                    rightWheelVel = angularVel * (circleRadius - halfWidth)
                 }
             }
 //            leftWheelVel = linearToRotational(leftWheelVel)
@@ -253,7 +253,7 @@ object Bezier {
         b = min(s, b)     //if any were > s, NaN results
         c = min(s, c)
         val area = Math.sqrt(s.value * (s - a).value * (s - b).value * (s - c).value)
-        return a * b.value * c.value / (4 * area)
+        return (a * b.value * c.value) / (4 * area)
     }
 
     /**

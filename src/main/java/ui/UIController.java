@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 
 import static utils.Utils.aboutEquals;
 
@@ -210,8 +209,8 @@ public class UIController {
 
         switch (result) {
             case MENU:
-                var menu = MenuFactory.menu(rows.get(index).getPoint());
-                menu.showAndWait().ifPresent(rows.get(index)::setPoint);
+                var menu = PopupFactory.menu(rowAtIndex(index).getPoint());
+                menu.showAndWait().ifPresent(rowAtIndex(index)::setPoint);
                 addSavedState();
                 graph.updatePolyline(pointDrag);
                 break;
@@ -220,16 +219,16 @@ public class UIController {
                 break;
             case POINT_MOVE_MODE:
                 setNextIndex(index);
-                pointHighlight.setCenterX(rows.get(index).getPoint().getX().pixels().getValue());
-                pointHighlight.setCenterY(imageHeight().minus(rows.get(index).getPoint().getY().pixels()).getValue());
+                pointHighlight.setCenterX(rowAtIndex(index).getPoint().getX().pixels().getValue());
+                pointHighlight.setCenterY(imageHeight().minus(rowAtIndex(index).getPoint().getY().pixels()).getValue());
                 break;
             case TOGGLE_OVERRIDE_VEL:
-                rows.get(index).getPoint().setOverrideMaxVel(!rows.get(index).getPoint().isOverrideMaxVel());
+                rowAtIndex(index).getPoint().setOverrideMaxVel(!rowAtIndex(index).getPoint().isOverrideMaxVel());
                 addSavedState();
                 graph.updatePolyline(pointDrag);
                 break;
             case TOGGLE_BACKWARDS:
-                rows.get(index).getPoint().setReverse(!rows.get(index).getPoint().isReverse());
+                rowAtIndex(index).getPoint().setReverse(!rowAtIndex(index).getPoint().isReverse());
                 addSavedState();
                 graph.updatePolyline(pointDrag);
                 break;
@@ -273,7 +272,7 @@ public class UIController {
     private void deletePoints(int startIndex, int endIndex) {
         if (nextIndex >= startIndex && nextIndex <= endIndex) setNextIndex(-1);
         for (int i = endIndex; i >= startIndex; i--) {
-            PointRow currentRow = rowAtIndex(i).orElseThrow();
+            PointRow currentRow = rowAtIndex(i);
             grdPoints.getChildren().removeAll(currentRow.getAllNodes());
             rows.remove(currentRow);
         }
@@ -284,10 +283,11 @@ public class UIController {
         addSavedState();
     }
 
-    private Optional<PointRow> rowAtIndex(int index) {
-        return rows.stream()
+    private PointRow rowAtIndex(int index) {
+        return rows.parallelStream()
                 .filter(row -> row.getIndex() == index)
-                .findFirst();
+                .findFirst()
+                .orElseThrow();
     }
 
     @FXML
@@ -321,7 +321,7 @@ public class UIController {
         if (nextIndex == -1) {
             addNewPointRow(new Point(x.inches(), y.inches(), intercept), true);
         } else {
-            rows.get(nextIndex).setPoint(new Point(x.inches(), y.inches(), rows.get(nextIndex).getPoint().isIntercept()));
+            rowAtIndex(nextIndex).setPoint(new Point(x.inches(), y.inches(), rowAtIndex(nextIndex).getPoint().isIntercept()));
             addSavedState();
             setNextIndex(-1);
         }
@@ -352,11 +352,11 @@ public class UIController {
     @FXML
     private void keyReleasedEvent(KeyEvent keyEvent) {
         if (nextIndex != -1) {
-            PointRow row = rows.get(nextIndex);
+            PointRow row = rowAtIndex(nextIndex);
             root.requestFocus();
             boolean ctrl = keyEvent.isControlDown(),
                     shift = keyEvent.isShiftDown();
-            int change = shift ? ctrl ? 24 : 1 : ctrl ? 12 : 6; //key = in -> shift=1, none=6, ctrl=12, both=24
+            int change = shift ? ctrl ? 20 : 1 : ctrl ? 10 : 5; //key = in -> shift=1, none=6, ctrl=12, both=24
             Inches x = row.getPoint().getX();
             Inches y = row.getPoint().getY();
             switch (keyEvent.getCode()) {
@@ -400,14 +400,12 @@ public class UIController {
             switch (keyEvent.getCode()) {
                 case UP:
                     rowAtIndex(Math.max(0, focusedIndex - 1))
-                            .orElseThrow()
                             .getAllNodes()
                             .get(focusedColumn)
                             .requestFocus();
                     break;
                 case DOWN:
                     rowAtIndex(Math.min(rows.size() - 1, focusedIndex + 1))
-                            .orElseThrow()
                             .getAllNodes()
                             .get(focusedColumn)
                             .requestFocus();
@@ -450,10 +448,10 @@ public class UIController {
              var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
             leftWriter.writeObjects("Dist,Vel", graph.getPath(),
                     p -> p.leftPos.ticks().getValue(),
-                    p -> p.leftVel.ticksPerHundredMillis().getValue());
+                    p -> p.getLeftVel().ticksPerHundredMillis().getValue());
             rightWriter.writeObjects("Dist,Vel", graph.getPath(),
                     p -> p.rightPos.ticks().getValue(),
-                    p -> p.rightVel.ticksPerHundredMillis().getValue());
+                    p -> p.getRightVel().ticksPerHundredMillis().getValue());
         } catch (IOException e) {
             e.printStackTrace();
         }

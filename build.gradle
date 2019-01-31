@@ -28,6 +28,10 @@ wrapper {
     gradleVersion = "5.1.1"
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.1.0"

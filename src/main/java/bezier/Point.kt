@@ -20,7 +20,7 @@ data class Point
                         0.0), Seconds(1.0)),
                 isOverrideMaxVel: Boolean = false,
                 isReverse: Boolean = false
-    ) : this(x.inches(), y.inches(), isIntercept,targetVelocity, isOverrideMaxVel, isReverse)
+    ) : this(x.inches(), y.inches(), isIntercept, targetVelocity, isOverrideMaxVel, isReverse)
 
     var time = Seconds(0.0)      //TODO move to separate Path class
     var distance = Inches(0.0)      //TODO move to separate Path class
@@ -28,8 +28,13 @@ data class Point
     lateinit var leftPos: Inches
     lateinit var rightPos: Inches
 
-    lateinit var leftVel: InchesPerSecond
+    lateinit var leftVel: InchesPerSecond // was NaN
+        private set
     lateinit var rightVel: InchesPerSecond
+        private set
+
+//    val leftVelLinear get() = InchesPerSecond(leftVel.numerator.withRadius(wheelRadius()), 1.seconds())
+//    val rightVelLinear get() = InchesPerSecond(rightVel.numerator.withRadius(wheelRadius()), 1.seconds())
 
     lateinit var heading: Degrees
 
@@ -64,7 +69,7 @@ data class Point
         setVels(-leftVel, -rightVel)
     }
 
-    fun setVels(leftVel: InchesPerSecond, rightVel: InchesPerSecond) { // TODO: maybe this should be angular or in encodeticks?
+    fun setVels(leftVel: InchesPerSecond, rightVel: InchesPerSecond) {
         this.leftVel = leftVel
         this.rightVel = rightVel
     }

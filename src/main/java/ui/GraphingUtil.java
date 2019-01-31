@@ -126,8 +126,8 @@ public class GraphingUtil {
         final Inches dist = width().div(2);
         for (Point point : path) {
             Degrees angle = point.getHeading();
-            Pixels offsetX = dist.times(angle.radians().cos()).pixels();
-            Pixels offsetY = dist.times(angle.radians().sin()).pixels();
+            Pixels offsetX = dist.times(angle.radians().getCos()).pixels();
+            Pixels offsetY = dist.times(angle.radians().getSin()).pixels();
 
             polyLeft.getPoints().addAll((point.getX().pixels().minus(offsetX)).getValue(),
                     imageHeight().minus(point.getY().pixels().plus(offsetY)).getValue());
@@ -141,8 +141,8 @@ public class GraphingUtil {
         final Inches dist = width().div(2);
 
         Degrees angle = path.get(0).getHeading();
-        Inches offsetX = dist.times(angle.radians().cos());
-        Inches offsetY = dist.times(angle.radians().sin());
+        Inches offsetX = dist.times(angle.radians().getCos());
+        Inches offsetY = dist.times(angle.radians().getSin());
 
         Inches xl = path.get(0).getX().minus(offsetX);
         Inches yl = imageHeight().inches().minus(path.get(0).getY()).plus(offsetY);
@@ -154,12 +154,12 @@ public class GraphingUtil {
 
         for (Point point : path) {
             Degrees between = (new Point(xl, yl).angleTo(new Point(xr, yr)));
-            xl = xl.plus(pointDistFromVel(point.getLeftVel(), between, Rotation2d::cos));
-            yl = yl.minus(pointDistFromVel(point.getLeftVel(), between, Rotation2d::sin));
+            xl = xl.plus(pointDistFromVel(point.getLeftVel(), between, Rotation2d::getCos));
+            yl = yl.minus(pointDistFromVel(point.getRightVel(), between, Rotation2d::getSin));
             polyLeft.getPoints().addAll(xl.pixels().getValue(), yl.pixels().getValue());
 
-            xr = xr.plus(pointDistFromVel(point.getRightVel(), between, Rotation2d::cos));
-            yr = yr.minus(pointDistFromVel(point.getRightVel(), between, Rotation2d::sin));
+            xr = xr.plus(pointDistFromVel(point.getLeftVel(), between, Rotation2d::getCos));
+            yr = yr.minus(pointDistFromVel(point.getRightVel(), between, Rotation2d::getSin));
             polyRight.getPoints().addAll(xr.pixels().getValue(), yr.pixels().getValue());
         }
     }
@@ -202,7 +202,7 @@ public class GraphingUtil {
                     : path.get(i).getLeftVel().minus(path.get(i - 1).getLeftVel()).feetPerSecond();
             var deltaRightVel = i == 0
                     ? new LinearVelocity<>(new Feet(0.0), new Seconds(1.0))
-                    : path.get(i).getLeftVel().minus(path.get(i - 1).getRightVel()).feetPerSecond();
+                    : path.get(i).getRightVel().minus(path.get(i - 1).getRightVel()).feetPerSecond();
             var deltaCenterVel = i == 0
                     ? new LinearVelocity<>(new Feet(0.0), new Seconds(1.0))
                     : path.get(i).getTargetVelocity().minus(path.get(i - 1).getTargetVelocity()).feetPerSecond();
@@ -219,7 +219,7 @@ public class GraphingUtil {
             leftAccel.getData().add(new XYChart.Data<>(curTime.getValue(), boundedAccel.apply(deltaLeftVel)));
 
             rightPos.getData().add(new XYChart.Data<>(curTime.getValue(), path.get(i).getRightPos().feet().getValue()));
-            rightVel.getData().add(new XYChart.Data<>(curTime.getValue(), path.get(i).getLeftVel().feetPerSecond().getValue()));
+            rightVel.getData().add(new XYChart.Data<>(curTime.getValue(), path.get(i).getRightVel().feetPerSecond().getValue()));
             rightAccel.getData().add(new XYChart.Data<>(curTime.getValue(), boundedAccel.apply(deltaRightVel)));
 
             centerPos.getData().add(new XYChart.Data<>(curTime.getValue(), totalDist.feet().getValue()));

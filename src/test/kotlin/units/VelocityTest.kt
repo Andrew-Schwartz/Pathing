@@ -1,9 +1,11 @@
 package units
 
+import bezier.units.derived.AngularVelocity
 import bezier.units.derived.feetPerSecond
 import bezier.units.derived.feetPerSecondSquared
 import bezier.units.derived.inchesPerSecond
 import bezier.units.feet
+import bezier.units.radians
 import bezier.units.seconds
 import org.junit.jupiter.api.Test
 
@@ -23,8 +25,7 @@ object VelocityTest {
 
         val two = 3.seconds()
 
-        println("Vel multiplication: ${one * two}")
-        assert(one * two == 12.feet())
+        assert(one * two == 12.feet()) { "$one, $two" }
     }
 
     @Test
@@ -33,8 +34,7 @@ object VelocityTest {
 
         val two = 3.seconds()
 
-        println("Vel division: ${one / two}")
-        assert(one / two == 2.feetPerSecondSquared())
+        assert(one / two == 2.feetPerSecondSquared()) { "$one, $two" }
     }
 
     @Test
@@ -43,7 +43,23 @@ object VelocityTest {
 
         val two = 3.feetPerSecondSquared()
 
-        println("Vel division: ${one / two}")
-        assert(one / two == 2.seconds())
+        assert(one / two == 2.seconds()) { "$one, $two" }
     }
+
+    @Test
+    fun `to and from angular velocity`() {
+        val linear = 6.feetPerSecond()
+
+        val radius = 3.feet()
+
+        val expected = AngularVelocity(2.radians(), 1.seconds())
+
+        assert(linear / radius == expected) { "$linear, $radius,\n${linear / radius},\n$expected\n" }
+
+        assert(expected * radius == linear) { "$linear, $radius,\n${linear / radius},\n$expected\n" }
+    }
+//    @Test
+//    fun `from angular velocity`() {
+//        val one = AngularVelocity<Seconds>()
+//    }
 }

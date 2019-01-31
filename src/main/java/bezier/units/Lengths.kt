@@ -3,10 +3,15 @@ package bezier.units
 import bezier.units.derived.LinearVelocity
 import ui.UIController
 
-val FIELD_HEIGHT_INCHES = Inches(322.25) //ish
+fun Number.feet() = Feet(toDouble())
+fun Number.inches() = Inches(toDouble())
+fun Number.pixels() = Pixels(this.toDouble())
+fun Number.ticks() = Ticks(toDouble())
 
 sealed class Length<T : Length<T>>(value: Double) : SIUnit<T>(value) {
     companion object {
+        @JvmStatic
+        val FIELD_HEIGHT_INCHES = Inches(322.25) //ish
         const val kFeetToInches: Double = 12.0
 //        val kTicksToInches: Double get() = ((wheelRadius() * 2.0 * Math.PI) / ticksPerRev()).value
         val kTicksToInches: Double get() = 1 / 450.0
@@ -24,7 +29,6 @@ sealed class Length<T : Length<T>>(value: Double) : SIUnit<T>(value) {
     operator fun <D : Time<D>> div(velocity: LinearVelocity<T, D>): D = velocity.createNewTime(value / velocity.value)
 }
 
-fun Number.feet() = Feet(toDouble())
 data class Feet(override val value: Double) : Length<Feet>(value) {
     override fun createNew(value: Double): Feet = Feet(value)
 
@@ -34,7 +38,6 @@ data class Feet(override val value: Double) : Length<Feet>(value) {
     override fun ticks() = Ticks(value * kFeetToInches / kTicksToInches)
 }
 
-fun Number.inches() = Inches(toDouble())
 data class Inches(override val value: Double) : Length<Inches>(value) {
     override fun createNew(value: Double) = Inches(value)
 
@@ -44,7 +47,6 @@ data class Inches(override val value: Double) : Length<Inches>(value) {
     override fun pixels() = Pixels(value / kPixelsToInches)
 }
 
-fun Number.pixels() = Pixels(this.toDouble())
 data class Pixels(override val value: Double) : Length<Pixels>(value) {
     override fun createNew(value: Double) = Pixels(value)
 
@@ -54,7 +56,6 @@ data class Pixels(override val value: Double) : Length<Pixels>(value) {
     override fun ticks() = Ticks(value * kPixelsToInches / kTicksToInches)
 }
 
-fun Number.ticks() = Ticks(toDouble())
 data class Ticks(override val value: Double) : Length<Ticks>(value) {
     override fun createNew(value: Double) = Ticks(value)
 

@@ -19,14 +19,12 @@ import java.util.Objects;
 
 import static utils.Utils.parseDouble;
 
-public class MenuFactory {
-    private MenuFactory() {
+public class PopupFactory {
+    private PopupFactory() {
     }
 
-    private static Point point;
-
     public static Dialog<Point> menu(Point p) {
-        point = p.clone();
+        var point = p.clone();
         var menu = new Dialog<Point>();
         menu.setTitle("Point Menu");
 
@@ -34,7 +32,7 @@ public class MenuFactory {
         menu.getDialogPane().getButtonTypes().addAll(confirmType, ButtonType.CANCEL);
 
         try {
-            GridPane gridPane = FXMLLoader.load(Objects.requireNonNull(MenuFactory.class.getClassLoader().getResource("ui/MenuPopup.fxml")));
+            GridPane gridPane = FXMLLoader.load(Objects.requireNonNull(PopupFactory.class.getClassLoader().getResource("ui/MenuPopup.fxml")));
             menu.getDialogPane().setContent(gridPane);
             ((TextField) findByID(gridPane, "txtX")).setText(String.valueOf(point.getX().getValue()));
             ((TextField) findByID(gridPane, "txtY")).setText(String.valueOf(point.getY().getValue()));
@@ -68,12 +66,5 @@ public class MenuFactory {
                 .filter(node -> node.getId().equals(id))
                 .findFirst()
                 .orElseThrow();
-//        for (Node child : grid.getChildren()) {
-//            if (child instanceof Label)
-//                continue;
-//            if (child.getId().equals(id))
-//                return child;
-//        }
-//        return null;
     }
 }
