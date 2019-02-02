@@ -3,6 +3,8 @@ package bezier.units
 import kotlin.math.abs
 
 abstract class SIUnit<T : SIUnit<T>>(open val value: Double) : Comparable<SIUnit<T>> {
+    constructor(value: Number) : this(value.toDouble())
+
     abstract fun createNew(value: Double): T
     val one: T get() = createNew(1.0)
 
@@ -21,8 +23,8 @@ abstract class SIUnit<T : SIUnit<T>>(open val value: Double) : Comparable<SIUnit
 
     infix fun aboutEquals(other: T) = this.value + 1e-6 > other.value && this.value - 1e-6 < other.value
 
-    override fun compareTo(other: SIUnit<T>): Int = (value - other.value).toInt()
-    operator fun compareTo(other: Number): Int = (value - other.toDouble()).toInt()
+    override fun compareTo(other: SIUnit<T>): Int = value.compareTo(other.value)
+    operator fun compareTo(other: Number): Int = value.compareTo(other.toDouble())
 }
 
 //operator fun <T: SIUnit<T>> Number.times(unit: T) = unit.createNew(unit.value * this.toDouble()) // TODO figure out why this doesn't work and make it work

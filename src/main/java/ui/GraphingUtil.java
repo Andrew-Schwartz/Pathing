@@ -1,6 +1,6 @@
 package ui;
 
-import bezier.Bezier;
+import bezier.GraphicalBezier;
 import bezier.Point;
 import bezier.units.Degrees;
 import bezier.units.Feet;
@@ -67,7 +67,7 @@ public class GraphingUtil {
                 .map(PointRow::getPoint)
                 .collect(toCollection(ArrayList::new));
 
-        path = Bezier.generateAll(controlPoints);
+        path = GraphicalBezier.generateSpline(controlPoints);
 
         polyPos.getPoints().clear();
         path.forEach(point -> polyPos.getPoints().addAll(point.getX().pixels().getValue(),

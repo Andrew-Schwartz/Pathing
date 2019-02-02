@@ -90,6 +90,7 @@ public class PointRow { //Make this a node?
         comboBox = new ComboBox<>(FXCollections.observableArrayList(
                 Arrays.stream(PointMenuResult.values())
                         .map(PointMenuResult::toString)
+                        .filter(s -> !s.equals(PointMenuResult.NONE.toString()))
                         .toArray(String[]::new)));
         comboBox.setMaxWidth(100);
         GridPane.setColumnIndex(comboBox, 4);

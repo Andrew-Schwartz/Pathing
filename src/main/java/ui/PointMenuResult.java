@@ -1,6 +1,7 @@
 package ui;
 
 public enum PointMenuResult {
+    NONE("none"),
     MENU("Display Menu"),
     DELETE_POINT("Delete This Point"),
     POINT_MOVE_MODE("Point Moving Mode"),

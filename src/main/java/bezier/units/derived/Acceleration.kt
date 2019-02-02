@@ -6,7 +6,7 @@ import kotlin.math.pow
 data class Acceleration<N : Length<N>, D : Time<D>>(
         private var numerator: N,
         private var denominator: D
-) : SIUnit<Acceleration<N, D>>(numerator.value /(denominator.value.pow(2))) {
+) : SIUnit<Acceleration<N, D>>(numerator.value / (denominator.value.pow(2))) {
     init {
         numerator = numerator.createNew(this.value)
         denominator = denominator.one

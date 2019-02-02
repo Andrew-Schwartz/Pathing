@@ -20,7 +20,7 @@ public class CSVWriter<T> extends OutputStreamWriter {
         super(new FileOutputStream(new File(filePath)));
     }
 
-    public void configCommaDelimiter(String delimiter) {
+    public void setCommaDelimiter(String delimiter) {
         commaDelimiter = delimiter;
     }
 
@@ -30,11 +30,15 @@ public class CSVWriter<T> extends OutputStreamWriter {
             throw new IllegalArgumentException("num columns in header != num of functions to write with");
         write(header);
         append("\n");
-        for (T obj : obs) {
-            for (Function<T, Object> f : funcs) {
-                append(f.apply(obj).toString()).append(commaDelimiter);
+//        for (T obj : obs) {
+        for (int i = 0; i < obs.size(); i++) {
+            for (int j = 0; j < funcs.length; j++) {
+                append(funcs[j].apply(obs.get(i)).toString());
+                if (j != funcs.length - 1)
+                    append(commaDelimiter);
             }
-            append("\n");
+            if (i != obs.size() - 1)
+                append("\n");
         }
     }
 }

@@ -1,5 +1,9 @@
 package bezier.units
 
+fun Number.minutes() = Minutes(toDouble())
+fun Number.seconds() = Seconds(toDouble())
+fun Number.hundredMillis() = HundredMillis(toDouble())
+
 sealed class Time<T : Time<T>>(value: Double) : SIUnit<T>(value) {
     companion object {
         const val kMinToSec: Double = 60.0
@@ -13,7 +17,6 @@ sealed class Time<T : Time<T>>(value: Double) : SIUnit<T>(value) {
     abstract fun hundredMillis(): HundredMillis
 }
 
-fun Number.minutes() = Minutes(toDouble())
 data class Minutes(override val value: Double) : Time<Minutes>(value) {
     override fun createNew(value: Double) = Minutes(value)
 
@@ -22,7 +25,6 @@ data class Minutes(override val value: Double) : Time<Minutes>(value) {
     override fun hundredMillis() = HundredMillis(value * kMinToSec * kSecToHundredMillis)
 }
 
-fun Number.seconds() = Seconds(toDouble())
 data class Seconds(override val value: Double) : Time<Seconds>(value) {
     override fun createNew(value: Double) = Seconds(value)
 
@@ -31,7 +33,6 @@ data class Seconds(override val value: Double) : Time<Seconds>(value) {
     override fun hundredMillis() = HundredMillis(value * kSecToHundredMillis)
 }
 
-fun Number.hundredMillis() = HundredMillis(toDouble())
 data class HundredMillis(override val value: Double) : Time<HundredMillis>(value) {
     override fun createNew(value: Double) = HundredMillis(value)
 

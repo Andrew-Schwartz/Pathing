@@ -205,7 +205,7 @@ public class UIController {
         PointMenuResult result = Arrays.stream(PointMenuResult.values())
                 .filter(pmr -> pmr.toString().equals(res))
                 .findFirst()
-                .orElseThrow();
+                .orElse(PointMenuResult.NONE);
 
         switch (result) {
             case MENU:
@@ -442,15 +442,15 @@ public class UIController {
     }
 
     @FXML
-    private void mnuExport() { // TODO make units in ticks
+    private void mnuExport() {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
         try (var leftWriter = new CSVWriter<Point>(url + "_left.csv");
              var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
             leftWriter.writeObjects("Dist,Vel", graph.getPath(),
-                    p -> p.leftPos.ticks().getValue(),
+                    p -> p.getLeftPos().ticks().getValue(),
                     p -> p.getLeftVel().ticksPerHundredMillis().getValue());
             rightWriter.writeObjects("Dist,Vel", graph.getPath(),
-                    p -> p.rightPos.ticks().getValue(),
+                    p -> p.getRightPos().ticks().getValue(),
                     p -> p.getRightVel().ticksPerHundredMillis().getValue());
         } catch (IOException e) {
             e.printStackTrace();
@@ -578,5 +578,11 @@ public class UIController {
         if (!pointDrag) {
             graph.clearCircles();
         }
+    }
+
+    @FXML
+    private void mnuSaveAll() {
+        mnuSavePoints();
+        mnuExport();
     }
 }

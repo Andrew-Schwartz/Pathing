@@ -10,7 +10,7 @@ object LengthTest {
     fun `conversion test inches and ticks`() {
         val one = 1.inches()
 
-        val two = 450.ticks()
+        val two = 650.ticks()
 
         assert(one.ticks() == two) { "conversion failed: ${one.ticks()} and $two" }
     }

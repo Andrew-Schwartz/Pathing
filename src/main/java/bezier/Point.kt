@@ -2,6 +2,7 @@ package bezier
 
 import bezier.units.*
 import bezier.units.derived.InchesPerSecond
+import bezier.units.derived.inchesPerSecond
 import utils.Config.timeStep
 
 data class Point
@@ -25,16 +26,13 @@ data class Point
     var time = Seconds(0.0)      //TODO move to separate Path class
     var distance = Inches(0.0)      //TODO move to separate Path class
 
-    lateinit var leftPos: Inches
-    lateinit var rightPos: Inches
+    var leftPos: Inches = 0.inches()
+    var rightPos: Inches = 0.inches()
 
-    lateinit var leftVel: InchesPerSecond // was NaN
+    var leftVel: InchesPerSecond = 0.inchesPerSecond()
         private set
-    lateinit var rightVel: InchesPerSecond
+    var rightVel: InchesPerSecond = 0.inchesPerSecond()
         private set
-
-//    val leftVelLinear get() = InchesPerSecond(leftVel.numerator.withRadius(wheelRadius()), 1.seconds())
-//    val rightVelLinear get() = InchesPerSecond(rightVel.numerator.withRadius(wheelRadius()), 1.seconds())
 
     lateinit var heading: Degrees
 

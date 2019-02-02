@@ -5,7 +5,7 @@ legend:
 
 features
 [.] point dragging mode
-[.] Path class, take some of the dumb parts of Point and put them where they make sense
+[ ] Path class, take some of the dumb parts of Point and put them where they make sense
 [ ] more special cases for velocity if center point is inside of robot
 [ ] CSVWriter makes backups
 [ ] predetermined start positions / offset by length feature
@@ -18,8 +18,6 @@ features
 [ ] make it work with different screen sizes
 
 bugs
-[.] fix things that broke in java 11 (tab switching, image size, menu after dragging points
-)
 [.] angles for path drawing are wrong
 [ ] if a point save dir is closed, java.lang.IllegalArgumentException: Folder parameter must be a valid folder
 [ ] Exception in thread "JavaFX Application Thread" java.lang.IndexOutOfBoundsException

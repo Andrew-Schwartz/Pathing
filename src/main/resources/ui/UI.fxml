@@ -27,7 +27,8 @@
         <menus>
             <Menu mnemonicParsing="false" text="Files">
                 <MenuItem accelerator="Shortcut+E" onAction="#mnuExport" text="Export" />
-                <MenuItem accelerator="Shortcut+S" onAction="#mnuSavePoints" text="Save Points" />
+                <MenuItem accelerator="Shortcut+ALT+P" onAction="#mnuSavePoints" text="Save Points" />
+                <MenuItem accelerator="Shortcut+S" onAction="#mnuSaveAll" text="Save points and csv" />
                 <MenuItem accelerator="Shortcut+O" onAction="#mnuOpenPoints" text="Open from Point" />
                 <MenuItem accelerator="Shortcut+I" onAction="#mnuOpenImage" text="Set Image" />
                 <MenuItem onAction="#mnuChangeCSVOut" text="Change CSV Location" />
@@ -55,10 +56,10 @@
                 <TextField fx:id="cfgRadius" accessibleRoleDescription="wheel_radius" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <Label text="Robot Width (in)" GridPane.rowIndex="2" />
                 <TextField fx:id="cfgWidth" accessibleRoleDescription="width" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Encoder Ticks/Rev" GridPane.rowIndex="3" />
-                <TextField fx:id="cfgTicksPerRev" accessibleRoleDescription="ticks_per_rev" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Label text="Robot Length (in)" GridPane.rowIndex="4" />
-                <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label text="Robot Length (in)" GridPane.rowIndex="3" />
+                <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label text="Encoder Ticks/Rev" GridPane.rowIndex="4" />
+                <TextField fx:id="cfgTicksPerRev" accessibleRoleDescription="ticks_per_rev" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="Max Velocity" GridPane.rowIndex="5" />
                 <TextField fx:id="cfgMaxVel" accessibleRoleDescription="max_vel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <Label text="Max Acceleration" GridPane.rowIndex="6" />
