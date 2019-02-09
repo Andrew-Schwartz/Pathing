@@ -137,6 +137,8 @@ public class UIController {
                 polyPos, polyLeft, polyRight,
                 chtLeft, chtRight, chtCenter,
                 tabVel, paneImg);
+
+//        mnuOpenPoints(); // TODO make a "init" thread that does initializing stuff once everything isn't null
     }
 
     @FXML
@@ -447,8 +449,8 @@ public class UIController {
         try (var leftWriter = new CSVWriter<Point>(url + "_left.csv");
              var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
             leftWriter.writeObjects("Dist,Vel", graph.getPath(),
-                    p -> p.getLeftPos().ticks().getValue(),
-                    p -> p.getLeftVel().ticksPerHundredMillis().getValue());
+                    p -> -p.getLeftPos().ticks().getValue(),
+                    p -> -p.getLeftVel().ticksPerHundredMillis().getValue());
             rightWriter.writeObjects("Dist,Vel", graph.getPath(),
                     p -> p.getRightPos().ticks().getValue(),
                     p -> p.getRightVel().ticksPerHundredMillis().getValue());

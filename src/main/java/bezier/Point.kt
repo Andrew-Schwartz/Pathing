@@ -3,6 +3,7 @@ package bezier
 import bezier.units.*
 import bezier.units.derived.InchesPerSecond
 import bezier.units.derived.inchesPerSecond
+import utils.Config
 import utils.Config.timeStep
 
 data class Point
@@ -22,12 +23,14 @@ data class Point
                 isOverrideMaxVel: Boolean = false,
                 isReverse: Boolean = false
     ) : this(x.inches(), y.inches(), isIntercept, targetVelocity, isOverrideMaxVel, isReverse)
-
-    var time = Seconds(0.0)      //TODO move to separate Path class
-    var distance = Inches(0.0)      //TODO move to separate Path class
+    var time = Seconds(0.0)
+    var distance = Inches(0.0)
 
     var leftPos: Inches = 0.inches()
     var rightPos: Inches = 0.inches()
+
+    var leftPoint: Point? = null
+    var rightPoint: Point? = null
 
     var leftVel: InchesPerSecond = 0.inchesPerSecond()
         private set
@@ -35,16 +38,6 @@ data class Point
         private set
 
     lateinit var heading: Degrees
-
-//    init {
-//        if (isIntercept) {
-//            this.x = Inches(Math.max(Math.min(x, UIController.imageWidth()), 0.0))
-//            this.y = Inches(Math.max(Math.min(y, UIController.imageHeight()), 0.0))
-//        } else {
-//            this.x = Inches(x)
-//            this.y = Inches(y)
-//        }
-//    }
 
     fun distanceTo(p: Point): Inches {
         val a = p.x.value - x.value
@@ -75,6 +68,14 @@ data class Point
     fun setPos(leftPos: Inches, rightPos: Inches) {
         this.leftPos = leftPos
         this.rightPos = rightPos
+    }
+
+    fun setLeftAndRightPositions() {
+        val halfWidth = Config.width() / 2
+        val offsetX = halfWidth * heading.radians().cos
+        val offsetY = halfWidth * heading.radians().sin
+        leftPoint = Point(x + offsetX, y - offsetY)
+        rightPoint = Point(x - offsetX, y + offsetY)
     }
 
     /**

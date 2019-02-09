@@ -12,7 +12,7 @@ object Bezier {
                        timeStep: Seconds,
                        width: Inches
     ): ArrayList<Point> {
-        val pathXYCoords = generatePureXY(controlPoints) // good
+        val pathXYCoords = generatePureXY(controlPoints)
         val times = trapezoidalTimes(pathXYCoords, controlPoints, maxVel, maxAccel)
         val path = generateWithVel(controlPoints, times, maxVel, maxAccel, timeStep)
         return motion(path, width)
@@ -35,24 +35,29 @@ object Bezier {
                     sumX += controlPoints[I + startPoint].x * polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I)
                     sumY += controlPoints[I + startPoint].y * polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I)
                 }
-                path += Point(sumX, sumY)
-                if (t == 0.0) path[path.size - 1].isIntercept = true //start and end of each segment is at same point as an intercept
+//                path += Point(sumX, sumY)
+                val currentPoint = Point(sumX, sumY)
+                if (t == 0.0) {
+                    currentPoint.isIntercept = true //start and end of each segment is at same point as an intercept
+                    currentPoint.distance = 0.inches()
+                } else {
+                    currentPoint.distance = path.last().distance + path.last().distanceTo(currentPoint)
+                    path.last().setHeadingTo(currentPoint)
+                    path.last().setLeftAndRightPositions()
+                }
+                path += currentPoint
             }
         }
-
         if (path.isEmpty()) return ArrayList()
-        path[0].distance = Inches(0.0)
-        path[path.size - 1].isIntercept = true
-        for (i in path.indices) {
-            val p = path[i]
-            if (i != path.size - 1) {
-                p.setHeadingTo(path[i + 1])
-            }
-            if (i != 0) {
-                p.distance = path[i - 1].distance + p.distanceTo(path[i - 1])
-            }
-        }
-        path[path.size - 1].heading = path[path.size - 2].heading
+
+        path.last().heading = path[path.size - 2].heading
+        path.last().setLeftAndRightPositions()
+        path.last().isIntercept = true
+
+//        for (point in path) {
+//            if (path.indexOf(point) == )
+//        }
+
         return path
     }
 
@@ -189,10 +194,13 @@ object Bezier {
                 p.distance = path[i - 1].distance + p.distanceTo(path[i - 1])
             }
         }
-        path[path.size - 1].heading = path[path.size - 2].heading
+        path.last().heading = path[path.size - 2].heading
         return path
     }
 
+    /**
+     * for linear motion of elevator
+     */
     @JvmStatic
     fun <L : Length<L>> generateVelProfile(time: Seconds,
                                            timeStep: Seconds,
@@ -229,11 +237,13 @@ object Bezier {
             var leftWheelVel: InchesPerSecond
             var rightWheelVel: InchesPerSecond
 
-
-            if (circleRadius > 9_000_000) { //straight line path (some are not infinite, just very big)
+            //TODO more cases for when turning radius is less that robot radius
+            if (circleRadius > 5_000) { //straight line path (some are not infinite, just very big)
                 leftWheelVel = path[i].targetVelocity
                 rightWheelVel = path[i].targetVelocity
-            } else {
+            } /*else if (circleRadius < width) { //maybe should be halfWidth
+                TODO("more math needed for turns that are inside frame perimeter")
+            } */ else {
                 val angularVel = RadiansPerSecond(path[i].targetVelocity, circleRadius)
 
                 if (path[iAdjusted].heading isLeftTowards path[iAdjusted + 2].heading) { // turning left

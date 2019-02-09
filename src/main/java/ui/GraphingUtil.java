@@ -5,7 +5,6 @@ import bezier.Point;
 import bezier.units.Degrees;
 import bezier.units.Feet;
 import bezier.units.Inches;
-import bezier.units.Pixels;
 import bezier.units.Rotation2d;
 import bezier.units.Seconds;
 import bezier.units.derived.LinearVelocity;
@@ -123,17 +122,24 @@ public class GraphingUtil {
     }
 
     private void pathFromPath() {
-        final Inches dist = width().div(2);
+//        final Inches dist = width().div(2);
         for (Point point : path) {
-            Degrees angle = point.getHeading();
-            Pixels offsetX = dist.times(angle.radians().getCos()).pixels();
-            Pixels offsetY = dist.times(angle.radians().getSin()).pixels();
+            point.setLeftAndRightPositions();
+            polyLeft.getPoints().addAll(point.getLeftPoint().getX().pixels().getValue(),
+                    (UIController.imageHeight().minus(point.getLeftPoint().getY().pixels())).getValue());
 
-            polyLeft.getPoints().addAll((point.getX().pixels().minus(offsetX)).getValue(),
-                    imageHeight().minus(point.getY().pixels().plus(offsetY)).getValue());
+            polyRight.getPoints().addAll(point.getRightPoint().getX().pixels().getValue(),
+                    (UIController.imageHeight().minus(point.getRightPoint().getY().pixels()).getValue()));
 
-            polyRight.getPoints().addAll((point.getX().pixels().plus(offsetX)).getValue(),
-                    imageHeight().minus(point.getY().pixels().minus(offsetY)).getValue());
+//            Degrees angle = point.getHeading();
+//            Pixels offsetX = dist.times(angle.radians().getCos()).pixels();
+//            Pixels offsetY = dist.times(angle.radians().getSin()).pixels();
+
+//            polyLeft.getPoints().addAll((point.getX().pixels().minus(offsetX)).getValue(),
+//                    imageHeight().minus(point.getY().pixels().plus(offsetY)).getValue());
+
+//            polyRight.getPoints().addAll((point.getX().pixels().plus(offsetX)).getValue(),
+//                    imageHeight().minus(point.getY().pixels().minus(offsetY)).getValue());
         }
     }
 

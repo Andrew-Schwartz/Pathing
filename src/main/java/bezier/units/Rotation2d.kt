@@ -21,14 +21,18 @@ sealed class Rotation2d<T : Rotation2d<T>>(value: Double) : SIUnit<T>(value) {
 
     fun <T : Length<T>> withRadius(radius: T): T = radius * value
 
-    infix fun isLeftTowards(other: T): Boolean {
+    fun angleTo(other: T): T {
         var angle = other.degrees().value - this.degrees().value
         angle += when {
             angle > 180 -> -360
             angle < -180 -> 360
             else -> 0
         }
-        return angle > 0
+        return createNew(angle)
+    }
+
+    infix fun isLeftTowards(other: T): Boolean {
+        return angleTo(other) < 0
     }
 
     infix fun isRightTowards(other: T) = !(this isLeftTowards other)
