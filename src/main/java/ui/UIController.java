@@ -481,7 +481,8 @@ public class UIController {
         saveFile.setTitle("Choose save");
         try {
             saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
-            try (var reader = new BufferedReader(new FileReader(saveFile.showOpenDialog(root.getScene().getWindow())))) {
+            File file = saveFile.showOpenDialog(root.getScene().getWindow());
+            try (var reader = new BufferedReader(new FileReader(file))) {
                 deleteAllPoints();
                 reader.lines()
                         .skip(1)
@@ -494,6 +495,7 @@ public class UIController {
                                 Boolean.parseBoolean(vals[5])))
                         .forEach(point -> addNewPointRow(point, false));
                 addSavedState();
+                cfgPathName.setText(file.getName().substring(0, file.getName().length() - "_save.csv".length()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
