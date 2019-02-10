@@ -6,6 +6,7 @@ import bezier.units.Pixels;
 import bezier.units.Seconds;
 import bezier.units.derived.LinearVelocity;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -34,10 +35,12 @@ import utils.Config;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static utils.Utils.aboutEquals;
 
@@ -101,7 +104,7 @@ public class UIController {
                         .map(WheelPathType::toString)
                         .toArray(String[]::new)
         ));
-        config = new Config("saves/config.properties", cfgDrawWheelType, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
+        config = new Config(cfgDrawWheelType, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
                 cfgRadius, cfgWidth, cfgTimeStep, cfgPathName, cfgTicksPerRev);
 
 //        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
@@ -138,7 +141,25 @@ public class UIController {
                 chtLeft, chtRight, chtCenter,
                 tabVel, paneImg);
 
-//        mnuOpenPoints(); // TODO make a "init" thread that does initializing stuff once everything isn't null
+        Task openPointsTask = new Task<Void>() {
+            @Override
+            protected Void call() {
+                boolean ran = false;
+                do {
+                    if (isCancelled()) break;
+                    if (root == null) continue;
+                    if (root.getChildren().stream().anyMatch(Objects::isNull)) continue;
+                    ran = true;
+
+                    File fullPath = new File(Config.getStringProperty("points_save_dir") + "/" + Config.getStringProperty("path_name") + "_save.csv");
+                    pointsFromFile(fullPath);
+                } while (!ran);
+
+                return null;
+            }
+        };
+
+        new Thread(openPointsTask).start();
     }
 
     @FXML
@@ -448,12 +469,14 @@ public class UIController {
         String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
         try (var leftWriter = new CSVWriter<Point>(url + "_left.csv");
              var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
-            leftWriter.writeObjects("Dist,Vel", graph.getPath(),
+            leftWriter.writeObjects("Dist,Vel,Heading", graph.getPath(),
                     p -> -p.getLeftPos().ticks().getValue(),
-                    p -> -p.getLeftVel().ticksPerHundredMillis().getValue());
-            rightWriter.writeObjects("Dist,Vel", graph.getPath(),
+                    p -> -p.getLeftVel().ticksPerHundredMillis().getValue(),
+                    p -> p.getHeading().getValue());
+            rightWriter.writeObjects("Dist,Vel,Heading", graph.getPath(),
                     p -> p.getRightPos().ticks().getValue(),
-                    p -> p.getRightVel().ticksPerHundredMillis().getValue());
+                    p -> p.getRightVel().ticksPerHundredMillis().getValue(),
+                    p -> p.getHeading().getValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -470,6 +493,14 @@ public class UIController {
                     p -> p.getTargetVelocity().getValue(),
                     Point::isOverrideMaxVel,
                     Point::isReverse);
+
+            try (var saveSavesReader = new BufferedReader(new FileReader("./src/main/resources/saves/AllSaves.txt"))) {
+                if (saveSavesReader.lines().noneMatch(line -> line.equals(url + "_save.csv"))) {
+                    try (var saveSavesWriter = new FileWriter("./src/main/resources/saves/AllSaves.txt", true)) {
+                        saveSavesWriter.append(url).append("_save.csv").append('\n');
+                    }
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -479,29 +510,33 @@ public class UIController {
     private void mnuOpenPoints() {
         FileChooser saveFile = new FileChooser();
         saveFile.setTitle("Choose save");
-        try {
-            saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
-            File file = saveFile.showOpenDialog(root.getScene().getWindow());
-            try (var reader = new BufferedReader(new FileReader(file))) {
-                deleteAllPoints();
-                reader.lines()
-                        .skip(1)
-                        .map(line -> line.split(","))
-                        .map(vals -> new Point(Double.parseDouble(vals[0]),
-                                Double.parseDouble(vals[1]),
-                                Boolean.parseBoolean(vals[2]),
-                                new LinearVelocity<>(new Inches(Double.parseDouble(vals[3])), new Seconds(1.0)),
-                                Boolean.parseBoolean(vals[4]),
-                                Boolean.parseBoolean(vals[5])))
-                        .forEach(point -> addNewPointRow(point, false));
-                addSavedState();
-                cfgPathName.setText(file.getName().substring(0, file.getName().length() - "_save.csv".length()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+        saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
+        File file = saveFile.showOpenDialog(root.getScene().getWindow());
+        if (file != null)
+            pointsFromFile(file);
+    }
+
+
+    private void pointsFromFile(File file) {
+        try (var reader = new BufferedReader(new FileReader(file))) {
+            deleteAllPoints();
+            reader.lines()
+                    .skip(1)
+                    .map(line -> line.split(","))
+                    .map(vals -> new Point(Double.parseDouble(vals[0]),
+                            Double.parseDouble(vals[1]),
+                            Boolean.parseBoolean(vals[2]),
+                            new LinearVelocity<>(new Inches(Double.parseDouble(vals[3])), new Seconds(1.0)),
+                            Boolean.parseBoolean(vals[4]),
+                            Boolean.parseBoolean(vals[5])))
+                    .forEach(point -> addNewPointRow(point, false));
+            addSavedState();
             graph.updatePolyline(pointDrag);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            cfgPathName.setText(file.getName().substring(0, file.getName().length() - "_save.csv".length()));
+            config.updateConfig();
+        } catch (IOException e) {
+            //fail silently, just means the selected file doesn't exist
         }
     }
 

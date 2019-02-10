@@ -21,9 +21,9 @@ public class Config {
     private File configFile;
     private Node[] nodes;
 
-    public Config(String path, Node... configNodes) {
+    public Config(Node... configNodes) {
         nodes = configNodes;
-        configFile = new File("./src/main/resources/" + path);
+        configFile = new File("./src/main/resources/saves/config.properties");
         try {
             config.load(new FileInputStream(configFile));
         } catch (IOException e) {

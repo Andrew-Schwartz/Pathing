@@ -30,7 +30,6 @@ public class CSVWriter<T> extends OutputStreamWriter {
             throw new IllegalArgumentException("num columns in header != num of functions to write with");
         write(header);
         append("\n");
-//        for (T obj : obs) {
         for (int i = 0; i < obs.size(); i++) {
             for (int j = 0; j < funcs.length; j++) {
                 append(funcs[j].apply(obs.get(i)).toString());
