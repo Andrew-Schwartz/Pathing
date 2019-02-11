@@ -22,12 +22,14 @@ object Bezier {
     fun generatePureXY(controlPoints: ArrayList<Point>): ArrayList<Point> {
         val path = ArrayList<Point>()
         val throughPoints = controlPoints.filter { it.isIntercept }
+        val precision = 299
 
         for (j in 0 until throughPoints.size - 1) {
-            for (t in 0.0..1.0 step 1.0 / 299.0) {
+            for (fakeT in 0..precision) {
+                val t = fakeT.toDouble() / precision
+                val T = 1.0 - t
                 var sumX = 0.inches()
                 var sumY = 0.inches()
-                val T = 1.0 - t
                 val startPoint = controlPoints.indexOf(throughPoints[j])
                 val endPoint = controlPoints.indexOf(throughPoints[j + 1])
                 for (i in 0..endPoint - startPoint) {
@@ -35,12 +37,13 @@ object Bezier {
                     sumX += controlPoints[I + startPoint].x * polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I)
                     sumY += controlPoints[I + startPoint].y * polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I)
                 }
-//                path += Point(sumX, sumY)
                 val currentPoint = Point(sumX, sumY)
                 if (t == 0.0) {
-                    currentPoint.isIntercept = true //start and end of each segment is at same point as an intercept
+                    if (j != 0) continue // don't add duplicate points, since start and end of consecutive paths are the same
+                    currentPoint.isIntercept = true // start and end of each segment is at same point as an intercept
                     currentPoint.distance = 0.inches()
                 } else {
+                    if (t == 1.0) currentPoint.isIntercept = true
                     currentPoint.distance = path.last().distance + path.last().distanceTo(currentPoint)
                     path.last().setHeadingTo(currentPoint)
                     path.last().setLeftAndRightPositions()

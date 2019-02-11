@@ -58,8 +58,9 @@
                 <TextField fx:id="cfgWidth" accessibleRoleDescription="width" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label text="Robot Length (in)" GridPane.rowIndex="3" />
                 <TextField fx:id="cfgLength" accessibleRoleDescription="length" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Label text="Encoder Ticks/Rev" GridPane.rowIndex="4" />
-                <TextField fx:id="cfgTicksPerRev" accessibleRoleDescription="ticks_per_rev" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label text="Encoder Ticks/Inch" GridPane.rowIndex="4"/>
+                <TextField fx:id="cfgTicksPerInch" accessibleRoleDescription="ticks_per_inch"
+                           onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
                 <Label text="Max Velocity" GridPane.rowIndex="5" />
                 <TextField fx:id="cfgMaxVel" accessibleRoleDescription="max_vel" onKeyReleased="#configUpdate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <Label text="Max Acceleration" GridPane.rowIndex="6" />

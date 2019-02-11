@@ -74,7 +74,7 @@ public class UIController {
     @FXML
     private TextField cfgRadius,
             cfgWidth,
-            cfgTicksPerRev,
+            cfgTicksPerInch,
             cfgLength,
             cfgMaxVel,
             cfgMaxAccel,
@@ -105,7 +105,7 @@ public class UIController {
                         .toArray(String[]::new)
         ));
         config = new Config(cfgDrawWheelType, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
-                cfgRadius, cfgWidth, cfgTimeStep, cfgPathName, cfgTicksPerRev);
+                cfgRadius, cfgWidth, cfgTimeStep, cfgPathName, cfgTicksPerInch);
 
 //        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
 

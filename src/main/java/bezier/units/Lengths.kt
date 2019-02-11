@@ -2,6 +2,7 @@ package bezier.units
 
 import bezier.units.derived.LinearVelocity
 import ui.UIController
+import utils.Config
 
 fun Number.feet() = Feet(toDouble())
 fun Number.inches() = Inches(toDouble())
@@ -14,7 +15,7 @@ sealed class Length<T : Length<T>>(value: Double) : SIUnit<T>(value) {
         val FIELD_HEIGHT_INCHES = Inches(322.25) //ish
         const val kFeetToInches: Double = 12.0
         //        val kTicksToInches: Double get() = ((wheelRadius() * 2.0 * Math.PI) / ticksPerRev()).value
-        const val kInchesToTicks: Double = 650.0
+        val kInchesToTicks: Double get() = Config.ticksPerInch()
         val kPixelsToInches: Double get() = FIELD_HEIGHT_INCHES.value / UIController.imageHeight().value
     }
 

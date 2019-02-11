@@ -113,8 +113,8 @@ public class Config {
         return new Seconds(getDoubleProperty("time_step"));
     }
 
-    public static double ticksPerRev() {
-        return getDoubleProperty("ticks_per_rev");
+    public static double ticksPerInch() {
+        return getDoubleProperty("ticks_per_inch");
     }
 
 }
