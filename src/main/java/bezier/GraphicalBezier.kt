@@ -14,7 +14,7 @@ object GraphicalBezier {
     }
 
     @JvmStatic
-    fun trapezoidalTimes(xyCoords: ArrayList<Point>, controlPoints: ArrayList<Point>): ArrayList<Seconds> {
+    private fun trapezoidalTimes(xyCoords: ArrayList<Point>, controlPoints: ArrayList<Point>): ArrayList<Seconds> {
         return try {
             Bezier.trapezoidalTimes(xyCoords, controlPoints, Config.maxVel().inchesPerSecond(), Config.maxAccel().inchesPerSecondSquared())
         } catch (e: IllegalArgumentException) {

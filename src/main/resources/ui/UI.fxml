@@ -40,6 +40,7 @@
                 <MenuItem accelerator="Shortcut+INSERT" onAction="#btnNewPointEvent" text="Add a point" />
                 <MenuItem accelerator="Shortcut+DELETE" onAction="#deleteAllPoints" text="Delete all points" />
                 <MenuItem accelerator="Shortcut+R" onAction="#mnuPointDrag" text="Toggle point dragging" />
+                <MenuItem accelerator="Shortcut+U" onAction="#updateAllPaths" text="Recalc. ALL saved paths"/>
             </Menu>
         </menus>
     </MenuBar>

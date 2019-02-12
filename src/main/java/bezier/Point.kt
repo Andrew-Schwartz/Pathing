@@ -74,8 +74,8 @@ data class Point
         val halfWidth = Config.width() / 2
         val offsetX = halfWidth * heading.radians().cos
         val offsetY = halfWidth * heading.radians().sin
-        leftPoint = Point(x + offsetX, y - offsetY)
-        rightPoint = Point(x - offsetX, y + offsetY)
+        leftPoint = Point(x - offsetX, y + offsetY)
+        rightPoint = Point(x + offsetX, y - offsetY)
     }
 
     /**

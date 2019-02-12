@@ -57,9 +57,13 @@ object Bezier {
         path.last().setLeftAndRightPositions()
         path.last().isIntercept = true
 
-//        for (point in path) {
-//            if (path.indexOf(point) == )
-//        }
+        for (point in path.withIndex()) {
+            if (point.index == 0) point.value.distance = 0.inches()
+            else {
+                point.value.leftPoint?.distance = path[point.index - 1].leftPoint?.distance!! + path[point.index - 1].leftPoint!!.distanceTo(point.value.leftPoint!!)
+                point.value.rightPoint?.distance = path[point.index - 1].rightPoint?.distance!! + path[point.index - 1].rightPoint!!.distanceTo(point.value.rightPoint!!)
+            }
+        }
 
         return path
     }
@@ -77,7 +81,7 @@ object Bezier {
         val oldThroughPoints = controlPoints.filter { it.isIntercept }
 
         for (j in 0 until throughPoints.size - 1) {
-            var lengthOfCurve = (throughPoints[j + 1].distance - throughPoints[j].distance)
+            var lengthOfCurve = throughPoints[j + 1].distance - throughPoints[j].distance
 
             val velInitial: InchesPerSecond = oldThroughPoints[j].targetVelocity
             val velFinal: InchesPerSecond = oldThroughPoints[j + 1].targetVelocity

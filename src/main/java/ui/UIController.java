@@ -1,5 +1,6 @@
 package ui;
 
+import bezier.GraphicalBezier;
 import bezier.Point;
 import bezier.units.Inches;
 import bezier.units.Pixels;
@@ -35,13 +36,13 @@ import utils.Config;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static java.util.stream.Collectors.toCollection;
 import static utils.Utils.aboutEquals;
 
 public class UIController {
@@ -133,7 +134,7 @@ public class UIController {
                     rowHeight = grdPoints.getVgap() + rows.get(0).getComboBox().getHeight();
             gridDnDIndex = (int) Math.floor(y / rowHeight);
             dndHandling(draggedRow, false);
-            graph.updatePolyline(pointDrag);
+            graph.updateAndGraph(pointDrag);
         });
         tabVel.setOnSelectionChanged(event -> graph.graphMotion());
         graph = new GraphingUtil(new ArrayList<>(), new ArrayList<>(), rows,
@@ -145,15 +146,17 @@ public class UIController {
             @Override
             protected Void call() {
                 boolean ran = false;
-                do {
+                while (!ran) {
                     if (isCancelled()) break;
                     if (root == null) continue;
                     if (root.getChildren().stream().anyMatch(Objects::isNull)) continue;
                     ran = true;
 
-                    File fullPath = new File(Config.getStringProperty("points_save_dir") + "/" + Config.getStringProperty("path_name") + "_save.csv");
-                    pointsFromFile(fullPath);
-                } while (!ran);
+                    File file = new File(Config.getStringProperty("points_save_dir") + "/" + Config.getStringProperty("path_name") + "_save.csv");
+
+                    Objects.requireNonNull(pointsFromFile(file)).forEach(p -> addNewPointRow(p, false));
+                    graph.updateAndGraph(pointDrag);
+                }
 
                 return null;
             }
@@ -191,13 +194,13 @@ public class UIController {
             node.setOnKeyReleased(event -> {
                 row.updatePoint();
                 addSavedState();
-                graph.updatePolyline(pointDrag);
+                graph.updateAndGraph(pointDrag);
             });
         if (node instanceof CheckBox)
             ((CheckBox) node).setOnAction(event -> {
                 row.updatePoint();
                 addSavedState();
-                graph.updatePolyline(pointDrag);
+                graph.updateAndGraph(pointDrag);
             });
         if (node instanceof ComboBox)
             ((ComboBox) node).setOnAction(event -> {
@@ -218,7 +221,7 @@ public class UIController {
         });
         node.setOnDragDone(event -> {
             dndHandling(row, draggedRow.getIndex() != dragStartIndex);
-            graph.updatePolyline(pointDrag);
+            graph.updateAndGraph(pointDrag);
         });
     }
 
@@ -235,7 +238,7 @@ public class UIController {
                 var menu = PopupFactory.menu(rowAtIndex(index).getPoint());
                 menu.showAndWait().ifPresent(rowAtIndex(index)::setPoint);
                 addSavedState();
-                graph.updatePolyline(pointDrag);
+                graph.updateAndGraph(pointDrag);
                 break;
             case DELETE_POINT:
                 deletePoints(index, index);
@@ -248,12 +251,12 @@ public class UIController {
             case TOGGLE_OVERRIDE_VEL:
                 rowAtIndex(index).getPoint().setOverrideMaxVel(!rowAtIndex(index).getPoint().isOverrideMaxVel());
                 addSavedState();
-                graph.updatePolyline(pointDrag);
+                graph.updateAndGraph(pointDrag);
                 break;
             case TOGGLE_BACKWARDS:
                 rowAtIndex(index).getPoint().setReverse(!rowAtIndex(index).getPoint().isReverse());
                 addSavedState();
-                graph.updatePolyline(pointDrag);
+                graph.updateAndGraph(pointDrag);
                 break;
             case MAX_VEL:
                 //TODO implement. Should use physics to determine max vel reachable on way up AND down
@@ -302,7 +305,7 @@ public class UIController {
         rows.stream()
                 .filter(row -> row.getIndex() > endIndex)
                 .forEach(row -> row.moveIndex(endIndex - startIndex + 1));
-        graph.updatePolyline(pointDrag);
+        graph.updateAndGraph(pointDrag);
         addSavedState();
     }
 
@@ -348,7 +351,7 @@ public class UIController {
             addSavedState();
             setNextIndex(-1);
         }
-        graph.updatePolyline(pointDrag);
+        graph.updateAndGraph(pointDrag);
     }
 
     @FXML
@@ -368,7 +371,7 @@ public class UIController {
                         p.setX(new Pixels(event.getX()).inches());
                         p.setY(imageHeight().minus(new Pixels(event.getY())).inches());
                     });
-            graph.updatePolyline(true);
+            graph.updateAndGraph(true);
         }
     }
 
@@ -406,7 +409,7 @@ public class UIController {
             row.setPoint(new Point(x, y, row.getPoint().isIntercept()));
             pointHighlight.setCenterX(x.pixels().getValue());
             pointHighlight.setCenterY(imageHeight().minus(y.pixels()).getValue());
-            graph.updatePolyline(pointDrag);
+            graph.updateAndGraph(pointDrag);
         } else {
             boolean pointsFocused = false;
             int focusedIndex = 0, focusedColumn = 0;
@@ -444,7 +447,7 @@ public class UIController {
     }
 
     @FXML
-    private void mnuOpenImage() throws MalformedURLException {
+    private void mnuOpenImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Field Image");
 //        String imgDir = Config.getStringProperty("img_path", "src\\images");
@@ -458,7 +461,11 @@ public class UIController {
         );
         File chosenImage = fileChooser.showOpenDialog(root.getScene().getWindow());
 //        config.setProperty("img_path", chosenImage.getAbsolutePath());
-        backgroundImage = new Image(chosenImage.toURI().toURL().toString());
+        try {
+            backgroundImage = new Image(chosenImage.toURI().toURL().toString());
+        } catch (MalformedURLException e) {
+            //fail silently, just means they clicked cancel or X on the popup
+        }
         imgField.setImage(backgroundImage);
         imgField.setFitWidth(imageWidth().getValue());
         imgField.setFitHeight(imageHeight().getValue());
@@ -466,17 +473,22 @@ public class UIController {
 
     @FXML
     private void mnuExport() {
-        String url = Config.getStringProperty("csv_out_dir") + "\\" + Config.getStringProperty("path_name");
+        export(graph.getPath(), Config.getStringProperty("path_name"));
+    }
+
+    private void export(ArrayList<Point> pathPoints, String pathName) {
+        String url = Config.getStringProperty("csv_out_dir") + "\\" + pathName;
         try (var leftWriter = new CSVWriter<Point>(url + "_left.csv");
              var rightWriter = new CSVWriter<Point>(url + "_right.csv")) {
-            leftWriter.writeObjects("Dist,Vel,Heading", graph.getPath(),
+            double firstHeading = pathPoints.get(0).getHeading().getValue();
+            leftWriter.writeObjects("Dist,Vel,Heading", pathPoints,
                     p -> -p.getLeftPos().ticks().getValue(),
                     p -> -p.getLeftVel().ticksPerHundredMillis().getValue(),
-                    p -> p.getHeading().getValue());
-            rightWriter.writeObjects("Dist,Vel,Heading", graph.getPath(),
+                    p -> p.getHeading().getValue() - firstHeading);
+            rightWriter.writeObjects("Dist,Vel,Heading", pathPoints,
                     p -> p.getRightPos().ticks().getValue(),
                     p -> p.getRightVel().ticksPerHundredMillis().getValue(),
-                    p -> p.getHeading().getValue());
+                    p -> p.getHeading().getValue() - firstHeading);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -484,25 +496,36 @@ public class UIController {
 
     @FXML
     private void mnuSavePoints() {
+        savePoints(graph.getControlPoints());
+        String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
+    }
+
+    private void savePoints(ArrayList<Point> controlPoints) {
         String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
         try (var writer = new CSVWriter<Point>(url + "_save.csv")) {
-            writer.writeObjects("X,Y,Intercept,Velocity,Override,Reverse", graph.getControlPoints(),
+            writer.writeObjects("X,Y,Intercept,Velocity,Override,Reverse", controlPoints,
                     p -> p.getX().getValue(),
                     p -> p.getY().getValue(),
                     Point::isIntercept,
                     p -> p.getTargetVelocity().getValue(),
                     Point::isOverrideMaxVel,
                     Point::isReverse);
-
-            try (var saveSavesReader = new BufferedReader(new FileReader("./src/main/resources/saves/AllSaves.txt"))) {
-                if (saveSavesReader.lines().noneMatch(line -> line.equals(url + "_save.csv"))) {
-                    try (var saveSavesWriter = new FileWriter("./src/main/resources/saves/AllSaves.txt", true)) {
-                        saveSavesWriter.append(url).append("_save.csv").append('\n');
-                    }
-                }
-            }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * recalculates all paths in current save directory, in case config values have changed or something
+     */
+    @FXML
+    private void updateAllPaths() {
+        File[] files = new File(Config.getStringProperty("points_save_dir")).listFiles(pathname -> pathname.getAbsolutePath().endsWith("_save.csv"));
+        for (File file : Objects.requireNonNull(files)) {
+            var points = pointsFromFile(file);
+            if (points != null) {
+                export(GraphicalBezier.generateSpline(points), pathNameFromFile(file));
+            }
         }
     }
 
@@ -513,31 +536,43 @@ public class UIController {
 
         saveFile.setInitialDirectory(new File(Config.getStringProperty("points_save_dir")));
         File file = saveFile.showOpenDialog(root.getScene().getWindow());
-        if (file != null)
-            pointsFromFile(file);
+        if (file != null) {
+            deleteAllPoints();
+            var newPoints = pointsFromFile(file);
+            if (newPoints != null) {
+                graph.getControlPoints().addAll(newPoints);
+                addSavedState();
+                graph.updateAndGraph(pointDrag);
+                cfgPathName.setText(pathNameFromFile(file));
+                config.updateConfig();
+            }
+        }
     }
 
 
-    private void pointsFromFile(File file) {
+    private ArrayList<Point> pointsFromFile(File file) {
         try (var reader = new BufferedReader(new FileReader(file))) {
-            deleteAllPoints();
-            reader.lines()
+            return reader.lines()
                     .skip(1)
                     .map(line -> line.split(","))
-                    .map(vals -> new Point(Double.parseDouble(vals[0]),
-                            Double.parseDouble(vals[1]),
-                            Boolean.parseBoolean(vals[2]),
-                            new LinearVelocity<>(new Inches(Double.parseDouble(vals[3])), new Seconds(1.0)),
-                            Boolean.parseBoolean(vals[4]),
-                            Boolean.parseBoolean(vals[5])))
-                    .forEach(point -> addNewPointRow(point, false));
-            addSavedState();
-            graph.updatePolyline(pointDrag);
-            cfgPathName.setText(file.getName().substring(0, file.getName().length() - "_save.csv".length()));
-            config.updateConfig();
+                    .map(vals -> new Point(
+                                    Double.parseDouble(vals[0]),
+                                    Double.parseDouble(vals[1]),
+                                    Boolean.parseBoolean(vals[2]),
+                                    new LinearVelocity<>(new Inches(Double.parseDouble(vals[3])), new Seconds(1.0)),
+                                    Boolean.parseBoolean(vals[4]),
+                                    Boolean.parseBoolean(vals[5])
+                            )
+                    )
+                    .collect(toCollection(ArrayList::new));
         } catch (IOException e) {
             //fail silently, just means the selected file doesn't exist
         }
+        return null;
+    }
+
+    public String pathNameFromFile(File file) {
+        return file.getName().substring(0, file.getName().length() - "_save.csv".length());
     }
 
     public static Pixels imageHeight() {
@@ -561,7 +596,7 @@ public class UIController {
             grdPoints.getChildren().addAll(row.getAllNodes());
             row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
         }
-        graph.updatePolyline(pointDrag);
+        graph.updateAndGraph(pointDrag);
     }
 
     @FXML
@@ -577,7 +612,7 @@ public class UIController {
             grdPoints.getChildren().addAll(row.getAllNodes());
             row.getAllNodes().forEach(node -> GridPane.setRowIndex(node, row.getIndex()));
         }
-        graph.updatePolyline(pointDrag);
+        graph.updateAndGraph(pointDrag);
     }
 
     @FXML
@@ -607,13 +642,13 @@ public class UIController {
 
     @FXML
     private void redraw() {
-        graph.updatePolyline(pointDrag);
+        graph.updateAndGraph(pointDrag);
     }
 
     @FXML
     private void mnuPointDrag() {
         pointDrag = !pointDrag;
-        graph.updatePolyline(pointDrag);
+        graph.updateAndGraph(pointDrag);
         if (!pointDrag) {
             graph.clearCircles();
         }
