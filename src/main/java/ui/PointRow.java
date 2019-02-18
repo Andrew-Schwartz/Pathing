@@ -1,6 +1,7 @@
 package ui;
 
 import bezier.Point;
+import bezier.units.Feet;
 import bezier.units.Inches;
 import bezier.units.Seconds;
 import bezier.units.derived.LinearVelocity;
@@ -16,7 +17,6 @@ import utils.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 public class PointRow { //Make this a node?
     private int index;
@@ -27,6 +27,9 @@ public class PointRow { //Make this a node?
 
     public PointRow(int index, Point p) {
         this.index = index;
+
+        point = p;
+
         makeAllNodes(p);
     }
 
@@ -35,12 +38,8 @@ public class PointRow { //Make this a node?
     }
 
     public void setPoint(Point p) {
-        Function<Double, String> round2Str = x -> String.valueOf(Math.round(x * 100) / 100.);
         point = p;
-        xText.setText(round2Str.apply(p.getX().getValue()));
-        yText.setText(round2Str.apply(p.getY().getValue()));
-        interceptBox.setSelected(p.isIntercept());
-        velText.setText(String.valueOf(p.getTargetVelocity().getValue()));
+        updateDisplay();
     }
 
     public int getIndex() {
@@ -140,7 +139,13 @@ public class PointRow { //Make this a node?
         point.setX(new Inches(getXValue()));
         point.setY(new Inches(getYValue()));
         point.setIntercept(getInterceptValue());
-        point.setTargetVelocity(new LinearVelocity<>(new Inches(getVelValue()), new Seconds(1.0)));
+        point.setTargetVelocity(new LinearVelocity<>(new Feet(getVelValue()), new Seconds(1.0)).inchesPerSecond());
     }
 
+    public void updateDisplay() {
+        xText.setText(String.valueOf(point.getX().round(2).getValue()));
+        yText.setText(String.valueOf(point.getY().round(2).getValue()));
+        interceptBox.setSelected(point.isIntercept());
+        velText.setText(String.valueOf(point.getTargetVelocity().feetPerSecond().round(2).getValue()));
+    }
 }

@@ -122,7 +122,6 @@ public class GraphingUtil {
     }
 
     private void pathFromPath() {
-//        final Inches dist = width().div(2);
         for (Point point : path) {
             point.setLeftAndRightPositions();
             polyLeft.getPoints().addAll(point.getLeftPoint().getX().pixels().getValue(),

@@ -2,6 +2,7 @@ package bezier
 
 import bezier.units.*
 import bezier.units.derived.*
+import java.util.*
 import kotlin.math.pow
 
 object Bezier {
@@ -18,6 +19,10 @@ object Bezier {
         return motion(path, width)
     }
 
+    /**
+     * generates the x and y coordinates and headings of each point on the Bezier curve defined by [controlPoints]
+     * marks points with the same x and y coordinates as in [controlPoints] as interceptPoints
+     */
     @JvmStatic
     fun generatePureXY(controlPoints: ArrayList<Point>): ArrayList<Point> {
         val path = ArrayList<Point>()
@@ -60,8 +65,8 @@ object Bezier {
         for (point in path.withIndex()) {
             if (point.index == 0) point.value.distance = 0.inches()
             else {
-                point.value.leftPoint?.distance = path[point.index - 1].leftPoint?.distance!! + path[point.index - 1].leftPoint!!.distanceTo(point.value.leftPoint!!)
-                point.value.rightPoint?.distance = path[point.index - 1].rightPoint?.distance!! + path[point.index - 1].rightPoint!!.distanceTo(point.value.rightPoint!!)
+                point.value.leftPoint?.distance = path[point.index - 1].leftPoint!!.distance + path[point.index - 1].leftPoint!!.distanceTo(point.value.leftPoint!!)
+                point.value.rightPoint?.distance = path[point.index - 1].rightPoint!!.distance + path[point.index - 1].rightPoint!!.distanceTo(point.value.rightPoint!!)
             }
         }
 
@@ -92,28 +97,28 @@ object Bezier {
             if (velMax.value == 0.0)
                 throw IllegalStateException("with a max speed of 0, you'll never get anywhere!")
 
-            //if accel and deccel take same time, calculations are much easier
-            var velInitialAndFinal: InchesPerSecond = velInitial
-            var timeAccelInitToFinal = Seconds(0.0)
+            //if accel and deccel take same amount of time, calculations are much easier
+            val velInitialAndFinal: InchesPerSecond = maxOf(velInitial, velFinal)
+            var timeAccelInitToFinal = 0.seconds()
+
             if (velInitial != velFinal) {
-                timeAccelInitToFinal = (velInitial - velFinal) / maxAccel.inchesPerSecondSquared()
-                val distToEqualizeVels: Inches = (velInitial + velFinal) * timeAccelInitToFinal / 2.0
-                velInitialAndFinal = max(velInitial, velFinal) + (velInitial - velFinal).abs()
+                timeAccelInitToFinal = (velInitial - velFinal).abs() / maxAccel.inchesPerSecondSquared()
+                val distToEqualizeVels: Inches = (velInitial + velFinal) / 2.0 * timeAccelInitToFinal
 
                 if (distToEqualizeVels > lengthOfCurve)
-                    throw IllegalStateException("""distance traveled while accelerating from initial to final velocity (${distToEqualizeVels.value})
-                                                  |is greater than total distance of path (${lengthOfCurve.value})""".trimMargin()
+                    throw IllegalStateException("distance traveled while accelerating from initial to final velocity (${distToEqualizeVels.value}) " +
+                            "is greater than total distance of path (${lengthOfCurve.value})"
                     )
                 lengthOfCurve -= distToEqualizeVels
             }
 
             //calculate max vel that is reachable physically
-            val timeAccelTriangle: Seconds = quadratic(maxAccel.inchesPerSecondSquared() * 0.5, velInitial, -lengthOfCurve / 2)
-            val maxVelReachable: InchesPerSecond = min(velMax, velInitialAndFinal + (maxAccel * timeAccelTriangle).inchesPerSecond())
+            val timeAccelHalfTriangle: Seconds = quadratic(maxAccel.inchesPerSecondSquared() * 0.5, velInitialAndFinal, -lengthOfCurve / 2)
+            val maxVelReachable: InchesPerSecond = minOf(velMax, velInitialAndFinal + (maxAccel * timeAccelHalfTriangle).inchesPerSecond())
 
             val timeAccel = (maxVelReachable - velInitialAndFinal) / maxAccel.inchesPerSecondSquared()
             val timeDeccel = (velInitialAndFinal - maxVelReachable) / -maxAccel.inchesPerSecondSquared()
-            val timeConst = (lengthOfCurve - ((velInitialAndFinal + maxVelReachable) * timeAccel / 2 + (velInitialAndFinal + maxVelReachable) * timeDeccel / 2)) / maxVelReachable
+            val timeConst = (lengthOfCurve - (((velInitialAndFinal + maxVelReachable) * timeAccel) / 2 + ((velInitialAndFinal + maxVelReachable)) * timeDeccel / 2)) / maxVelReachable
             times += timeAccelInitToFinal + timeAccel + timeConst + timeDeccel
         }
         return times
@@ -129,7 +134,7 @@ object Bezier {
         val initialVel = maxVel.createNew(0.0)
 
         val timeAccelTriangle: Seconds = quadratic(maxAccel / 2, maxVel.createNew(0.0), -length / 2)
-        val maxVelReachable: LinearVelocity<L, Seconds> = min(maxVel, initialVel + (maxAccel * timeAccelTriangle))
+        val maxVelReachable: LinearVelocity<L, Seconds> = minOf(maxVel, initialVel + (maxAccel * timeAccelTriangle))
 
         val timeAccel: Seconds = (maxVelReachable - initialVel) / maxAccel
         val timeDeccel: Seconds = (initialVel - maxVelReachable) / -maxAccel
@@ -145,6 +150,8 @@ object Bezier {
                         maxAccel: InchesPerSecondSquared,
                         timeStep: Seconds
     ): ArrayList<Point> {
+        if (times.isEmpty()) return ArrayList()
+
         val path = ArrayList<Point>()
         val throughPoints = controlPoints.filter { it.isIntercept }
 
@@ -153,14 +160,13 @@ object Bezier {
             val startVel: InchesPerSecond = throughPoints[j].targetVelocity
             val endVel: InchesPerSecond = throughPoints[j + 1].targetVelocity
             val curMaxVel: InchesPerSecond =
-                    if (controlPoints[j + 1].isOverrideMaxVel) max(startVel, endVel)
+                    if (controlPoints[j + 1].isOverrideMaxVel) maxOf(startVel, endVel)
                     else maxVel.inchesPerSecond()
 
             val time: Seconds = times[j]
-            val precision = Math.ceil(time / timeStep) + 1
-            var fakeT = 0 // TODO make this less terrible
-            while (fakeT <= precision) { // essentially a for loop 0 to 1 with precision iters
-                val t = fakeT / precision
+            val precision: Int = Math.floor(time / timeStep).toInt()
+            for (fakeT in 0..precision) {
+                val t = fakeT / precision.toDouble() // 0 to 1 with precision iterations
                 var sumX = Inches(0.0)
                 var sumY = Inches(0.0)
                 val T = 1 - t
@@ -174,23 +180,23 @@ object Bezier {
                 path += Point(sumX, sumY)
 
                 //trapezoidal velocities
-                val up: InchesPerSecond = min(curMaxVel, (maxAccel * t * time).inchesPerSecond())
-                val down: InchesPerSecond = min(curMaxVel, (-maxAccel * (time * t - time)).inchesPerSecond())
-                path.last().targetVelocity = min(up, down)
+                val up: InchesPerSecond = minOf(curMaxVel, startVel + (maxAccel * (time * t)).inchesPerSecond())
+                val down: InchesPerSecond = minOf(curMaxVel, endVel - (maxAccel * (time * t - time)).inchesPerSecond())
+                path.last().targetVelocity = minOf(up, down)
                 path.last().time = time * t + path[prevEnd].time
-                fakeT++
-                //                if (j != 0) path.get(path.size() - 1).setTime(denominator*t + path.get(prevEnd).getDenominator());            //TODO where did this come from? should it be here?
-                //                else path.get(path.size() - 1).setTime(denominator * t);          //TODO where did this come from? should it be here?
+                //                if (j != 0) path.get(path.size() - 1).setTime(denominOfator*t + path.get(prevEnd).getDenominOfator());            //TODO where did this come from? should it be here?
+                //                else path.get(path.size() - 1).setTime(denominOfator * t);          //TODO where did this come from? should it be here?
 //                if (j != 0)
 //                    path.last().time =
             }
             if (throughPoints[j + 1].isReverse)
-
                 path.stream().skip((path.size - precision).toLong()).forEach(Point::reverse)
+
             if (j != throughPoints.size - 2 && !path.isEmpty()) path.removeAt(path.size - 1)
             prevEnd = path.size - 1
         }
-        if (path.isEmpty()) return ArrayList()
+        if (path.size < 2) return ArrayList()
+
         path[0].distance = Inches(0.0)
         for (i in path.indices) {
             val p = path[i]
@@ -214,12 +220,12 @@ object Bezier {
                                            maxVel: LinearVelocity<L, Seconds>,
                                            maxAccel: Acceleration<L, Seconds>
     ): Array<LinearVelocity<L, Seconds>> {
-        val precision: Int = (Math.ceil(time / timeStep) + 1).toInt()
+        val precision: Int = Math.floor(time / timeStep).toInt()
         return Array(precision) { i ->
             val t = i / precision.toDouble()
-            val up: LinearVelocity<L, Seconds> = min(maxVel, (maxAccel * t * time))
-            val down: LinearVelocity<L, Seconds> = min(maxVel, (-maxAccel * (time * t - time)))
-            min(up, down)
+            val up: LinearVelocity<L, Seconds> = minOf(maxVel, (maxAccel * t * time))
+            val down: LinearVelocity<L, Seconds> = minOf(maxVel, (-maxAccel * (time * t - time)))
+            minOf(up, down)
         }
     }
 
@@ -235,7 +241,8 @@ object Bezier {
      */
     @JvmStatic
     fun motion(path: ArrayList<Point>, width: Inches): ArrayList<Point> {
-        if (path.size == 0) return arrayListOf()
+        if (path.isEmpty()) return arrayListOf()
+
         val halfWidth: Inches = (width / 2)
         for (i in path.indices) {
             val iAdjusted = if (i + 2 > path.size - 1) path.size - 3 else i
@@ -294,14 +301,15 @@ object Bezier {
      * @return radius of the circle in same unit as represented in the circlePoints in inches
      */
     private fun radiusOfCircle(vararg circlePoints: Point): Inches {
-        assert(circlePoints.size == 3)
+        if (circlePoints.size != 3) throw InputMismatchException("radiusOfCircle needs exactly THREE points")
+
         var a = circlePoints[0].distanceTo(circlePoints[1])
         var b = circlePoints[1].distanceTo(circlePoints[2])
         var c = circlePoints[2].distanceTo(circlePoints[0])
         val s = (a + b + c) / 2
-        a = min(s, a)     //fix rounding error
-        b = min(s, b)     //if any were > s, NaN results
-        c = min(s, c)
+        a = minOf(s, a)
+        b = minOf(s, b)
+        c = minOf(s, c)
         val area = Math.sqrt(s.value * (s - a).value * (s - b).value * (s - c).value)
         return (a * b.value * c.value) / (4 * area)
     }
@@ -324,7 +332,7 @@ object Bezier {
     }
 
     /**
-     * solves for number in Pascal's triangle on a line n indices over
+     * solves for number in Pascal's triangle on a [line] [n] indices over
      */
     private fun polynomialCoeff(line: Int, n: Int): Int {
         var result = 1

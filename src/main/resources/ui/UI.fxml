@@ -38,7 +38,7 @@
                 <MenuItem accelerator="Shortcut+Z" onAction="#undo" text="Undo" />
                 <MenuItem accelerator="Shortcut+Y" onAction="#redo" text="Redo" />
                 <MenuItem accelerator="Shortcut+INSERT" onAction="#btnNewPointEvent" text="Add a point" />
-                <MenuItem accelerator="Shortcut+DELETE" onAction="#deleteAllPoints" text="Delete all points" />
+                <MenuItem accelerator="Shortcut+DELETE" onAction="#mnuDeleteAll" text="Delete all points"/>
                 <MenuItem accelerator="Shortcut+R" onAction="#mnuPointDrag" text="Toggle point dragging" />
                 <MenuItem accelerator="Shortcut+U" onAction="#updateAllPaths" text="Recalc. ALL saved paths"/>
             </Menu>

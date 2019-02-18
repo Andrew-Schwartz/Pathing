@@ -11,6 +11,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
@@ -156,6 +157,7 @@ public class UIController {
 
                     Objects.requireNonNull(pointsFromFile(file)).forEach(p -> addNewPointRow(p, false));
                     graph.updateAndGraph(pointDrag);
+                    addSavedState();
                 }
 
                 return null;
@@ -181,6 +183,7 @@ public class UIController {
     private void addSavedState() {
         if (currentState != previousStates.size() - 1)
             previousStates.removeIf(pointRows -> previousStates.indexOf(pointRows) > currentState);
+
         previousStates.add(new ArrayList<>());
         rows.forEach(row -> previousStates.get(previousStates.size() - 1).add(new PointRow(row.getIndex(), row.getPoint())));
         previousStates.get(previousStates.size() - 1)
@@ -259,7 +262,12 @@ public class UIController {
                 graph.updateAndGraph(pointDrag);
                 break;
             case MAX_VEL:
-                //TODO implement. Should use physics to determine max vel reachable on way up AND down
+                if (!rowAtIndex(index).getPoint().isIntercept()) return;
+                var maxVel = GraphicalBezier.calcMaxVel(graph.getControlPoints(), index);
+                rowAtIndex(index).getPoint().setTargetVelocity(maxVel);
+                rowAtIndex(index).updateDisplay();
+                graph.updateAndGraph(pointDrag);
+                addSavedState();
                 break;
             default:
         }
@@ -289,6 +297,13 @@ public class UIController {
     @FXML
     private void deleteAllPoints() {
         deletePoints(0, rows.size() - 1);
+    }
+
+    @FXML
+    private void mnuDeleteAll() {
+        cfgPathName.setText("");
+        config.updateConfig();
+        deleteAllPoints();
     }
 
     /**
@@ -363,13 +378,14 @@ public class UIController {
         //drag point if in pointDragMode
         if (pointDrag) { //todo detect if it is clicked
             graph.getRows().stream()
-                    .map(PointRow::getPoint)
-                    .filter(p -> aboutEquals(p.getX().pixels().getValue(), event.getX(), 9))
-                    .filter(p -> aboutEquals(imageHeight().minus(p.getY().pixels()).getValue(), event.getY(), 9))
+                    .filter(pr -> aboutEquals(pr.getPoint().getX().pixels().getValue(), event.getX(), 9))
+                    .filter(pr -> aboutEquals(imageHeight().minus(pr.getPoint().getY().pixels()).getValue(), event.getY(), 9))
                     .findFirst()
-                    .ifPresent(p -> {
-                        p.setX(new Pixels(event.getX()).inches());
-                        p.setY(imageHeight().minus(new Pixels(event.getY())).inches());
+                    .ifPresent(pr -> {
+                        pr.getPoint().setX(new Pixels(event.getX()).inches());
+                        pr.getPoint().setY(imageHeight().minus(new Pixels(event.getY())).inches());
+
+                        pr.updateDisplay();
                     });
             graph.updateAndGraph(true);
         }
@@ -497,7 +513,6 @@ public class UIController {
     @FXML
     private void mnuSavePoints() {
         savePoints(graph.getControlPoints());
-        String url = Config.getStringProperty("points_save_dir") + "\\" + Config.getStringProperty("path_name");
     }
 
     private void savePoints(ArrayList<Point> controlPoints) {
@@ -540,7 +555,8 @@ public class UIController {
             deleteAllPoints();
             var newPoints = pointsFromFile(file);
             if (newPoints != null) {
-                graph.getControlPoints().addAll(newPoints);
+                graph.getRows().clear();
+                newPoints.forEach(pt -> addNewPointRow(pt, false));
                 addSavedState();
                 graph.updateAndGraph(pointDrag);
                 cfgPathName.setText(pathNameFromFile(file));
@@ -571,7 +587,7 @@ public class UIController {
         return null;
     }
 
-    public String pathNameFromFile(File file) {
+    private String pathNameFromFile(File file) {
         return file.getName().substring(0, file.getName().length() - "_save.csv".length());
     }
 
@@ -651,11 +667,17 @@ public class UIController {
         graph.updateAndGraph(pointDrag);
         if (!pointDrag) {
             graph.clearCircles();
+            addSavedState();
         }
     }
 
     @FXML
     private void mnuSaveAll() {
+        if (Config.getStringProperty("path_name").isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Path must be named");
+            return;
+        }
         mnuSavePoints();
         mnuExport();
     }

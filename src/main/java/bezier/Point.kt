@@ -18,11 +18,11 @@ data class Point
     constructor(x: Double,
                 y: Double,
                 isIntercept: Boolean = false,
-                targetVelocity: InchesPerSecond = InchesPerSecond(Inches(
-                        0.0), Seconds(1.0)),
+                targetVelocity: InchesPerSecond = InchesPerSecond(Inches(0.0), Seconds(1.0)),
                 isOverrideMaxVel: Boolean = false,
                 isReverse: Boolean = false
     ) : this(x.inches(), y.inches(), isIntercept, targetVelocity, isOverrideMaxVel, isReverse)
+
     var time = Seconds(0.0)
     var distance = Inches(0.0)
 
