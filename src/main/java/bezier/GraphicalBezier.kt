@@ -18,7 +18,7 @@ object GraphicalBezier {
     @JvmStatic
     private fun trapezoidalTimes(xyCoords: ArrayList<Point>, controlPoints: ArrayList<Point>): ArrayList<Seconds> {
         return try {
-            Bezier.trapezoidalTimes(xyCoords, controlPoints, Config.maxVel().inchesPerSecond(), Config.maxAccel().inchesPerSecondSquared())
+            Bezier.trapezoidalTimes(xyCoords, Config.maxVel().inchesPerSecond(), Config.maxAccel().inchesPerSecondSquared())
         } catch (e: IllegalStateException) {
             val message = e.message!!
             val alert = Alert(Alert.AlertType.ERROR)

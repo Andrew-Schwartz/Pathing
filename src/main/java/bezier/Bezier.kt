@@ -14,7 +14,7 @@ object Bezier {
                        width: Inches
     ): ArrayList<Point> {
         val pathXYCoords = generatePureXY(controlPoints)
-        val times = trapezoidalTimes(pathXYCoords, controlPoints, maxVel, maxAccel)
+        val times = trapezoidalTimes(pathXYCoords, maxVel, maxAccel)
         val path = generateWithVel(controlPoints, times, maxVel, maxAccel, timeStep)
         return motion(path, width)
     }
@@ -47,8 +47,12 @@ object Bezier {
                     if (j != 0) continue // don't add duplicate points, since start and end of consecutive paths are the same
                     currentPoint.isIntercept = true // start and end of each segment is at same point as an intercept
                     currentPoint.distance = 0.inches()
+                    currentPoint.targetVelocity = throughPoints[0].targetVelocity
                 } else {
-                    if (t == 1.0) currentPoint.isIntercept = true
+                    if (t == 1.0) {
+                        currentPoint.isIntercept = true
+                        currentPoint.targetVelocity = throughPoints[j].targetVelocity
+                    }
                     currentPoint.distance = path.last().distance + path.last().distanceTo(currentPoint)
                     path.last().setHeadingTo(currentPoint)
                     path.last().setLeftAndRightPositions()
@@ -75,7 +79,7 @@ object Bezier {
 
     @JvmStatic
     fun trapezoidalTimes(pathXY: ArrayList<Point>,
-                         controlPoints: ArrayList<Point>,
+//                         controlPoints: ArrayList<Point>,
                          maxVel: InchesPerSecond,
                          maxAccel: InchesPerSecondSquared
     ): ArrayList<Seconds> {
@@ -83,15 +87,15 @@ object Bezier {
 
         val times = ArrayList<Seconds>()
         val throughPoints = pathXY.filter { it.isIntercept }
-        val oldThroughPoints = controlPoints.filter { it.isIntercept }
+//        val oldThroughPoints = controlPoints.filter { it.isIntercept }
 
         for (j in 0 until throughPoints.size - 1) {
             var lengthOfCurve = throughPoints[j + 1].distance - throughPoints[j].distance
 
-            val velInitial: InchesPerSecond = oldThroughPoints[j].targetVelocity
-            val velFinal: InchesPerSecond = oldThroughPoints[j + 1].targetVelocity
+            val velInitial: InchesPerSecond = throughPoints[j].targetVelocity
+            val velFinal: InchesPerSecond = throughPoints[j + 1].targetVelocity
             val velMax: InchesPerSecond =
-                    if (oldThroughPoints[j + 1].isOverrideMaxVel) oldThroughPoints[j + 1].targetVelocity
+                    if (throughPoints[j + 1].isOverrideMaxVel) throughPoints[j + 1].targetVelocity
                     else maxVel.inchesPerSecond()
 
             if (velMax.value == 0.0)
