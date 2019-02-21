@@ -33,4 +33,4 @@ abstract class SIUnit<T : SIUnit<T>>(open val value: Double) : Comparable<SIUnit
     operator fun compareTo(other: Number): Int = value.compareTo(other.toDouble())
 }
 
-//operator fun <T: SIUnit<T>> Number.times(unit: T) = unit.createNew(unit.value * this.toDouble()) // TODO figure out why this doesn't work and make it work
+operator fun <T : SIUnit<T>> Number.times(unit: T) = unit.createNew(unit.value * this.toDouble()) // TODO figure out why this doesn't work and make it work

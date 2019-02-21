@@ -39,8 +39,8 @@ object Bezier {
                 val endPoint = controlPoints.indexOf(throughPoints[j + 1])
                 for (i in 0..endPoint - startPoint) {
                     val I = endPoint - startPoint - i
-                    sumX += controlPoints[I + startPoint].x * polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I)
-                    sumY += controlPoints[I + startPoint].y * polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I)
+                    sumX += polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I) * controlPoints[I + startPoint].x
+                    sumY += polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I) * controlPoints[I + startPoint].y
                 }
                 val currentPoint = Point(sumX, sumY)
                 if (t == 0.0) {
@@ -79,7 +79,6 @@ object Bezier {
 
     @JvmStatic
     fun trapezoidalTimes(pathXY: ArrayList<Point>,
-//                         controlPoints: ArrayList<Point>,
                          maxVel: InchesPerSecond,
                          maxAccel: InchesPerSecondSquared
     ): ArrayList<Seconds> {
@@ -87,7 +86,6 @@ object Bezier {
 
         val times = ArrayList<Seconds>()
         val throughPoints = pathXY.filter { it.isIntercept }
-//        val oldThroughPoints = controlPoints.filter { it.isIntercept }
 
         for (j in 0 until throughPoints.size - 1) {
             var lengthOfCurve = throughPoints[j + 1].distance - throughPoints[j].distance
@@ -117,8 +115,8 @@ object Bezier {
             }
 
             //calculate max vel that is reachable physically
-            val timeAccelHalfTriangle: Seconds = quadratic(maxAccel.inchesPerSecondSquared() * 0.5, velInitialAndFinal, -lengthOfCurve / 2)
-            val maxVelReachable: InchesPerSecond = minOf(velMax, velInitialAndFinal + (maxAccel * timeAccelHalfTriangle).inchesPerSecond())
+            val timeAccelHalfTriangle: Seconds = quadratic(maxAccel.inchesPerSecondSquared() / 2, velInitialAndFinal, -lengthOfCurve / 2)
+            val maxVelReachable: InchesPerSecond = minOf(velMax, velInitialAndFinal + maxAccel.inchesPerSecondSquared() * timeAccelHalfTriangle)
 
             val timeAccel = (maxVelReachable - velInitialAndFinal) / maxAccel.inchesPerSecondSquared()
             val timeDeccel = (velInitialAndFinal - maxVelReachable) / -maxAccel.inchesPerSecondSquared()
@@ -138,7 +136,7 @@ object Bezier {
         val initialVel = maxVel.createNew(0.0)
 
         val timeAccelTriangle: Seconds = quadratic(maxAccel / 2, maxVel.createNew(0.0), -length / 2)
-        val maxVelReachable: LinearVelocity<L, Seconds> = minOf(maxVel, initialVel + (maxAccel * timeAccelTriangle))
+        val maxVelReachable: LinearVelocity<L, Seconds> = minOf(maxVel, initialVel + maxAccel * timeAccelTriangle)
 
         val timeAccel: Seconds = (maxVelReachable - initialVel) / maxAccel
         val timeDeccel: Seconds = (initialVel - maxVelReachable) / -maxAccel
@@ -178,16 +176,16 @@ object Bezier {
                 val endPoint = controlPoints.indexOf(throughPoints[j + 1])
                 for (i in 0..endPoint - startPoint) {
                     val I = endPoint - startPoint - i
-                    sumX += controlPoints[I + startPoint].x * polynomialCoeff(endPoint - startPoint, i).toDouble() * Math.pow(T, i.toDouble()) * Math.pow(t, I.toDouble())
-                    sumY += controlPoints[I + startPoint].y * polynomialCoeff(endPoint - startPoint, i).toDouble() * Math.pow(T, i.toDouble()) * Math.pow(t, I.toDouble())
+                    sumX += polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I) * controlPoints[I + startPoint].x
+                    sumY += polynomialCoeff(endPoint - startPoint, i) * T.pow(i) * t.pow(I) * controlPoints[I + startPoint].y
                 }
                 path += Point(sumX, sumY)
 
                 //trapezoidal velocities
-                val up: InchesPerSecond = minOf(curMaxVel, startVel + (maxAccel * (time * t)).inchesPerSecond())
-                val down: InchesPerSecond = minOf(curMaxVel, endVel - (maxAccel * (time * t - time)).inchesPerSecond())
+                val up: InchesPerSecond = minOf(curMaxVel, startVel + maxAccel.inchesPerSecondSquared() * (t * time))
+                val down: InchesPerSecond = minOf(curMaxVel, endVel - maxAccel.inchesPerSecondSquared() * (t * time - time))
                 path.last().targetVelocity = minOf(up, down)
-                path.last().time = time * t + path[prevEnd].time
+                path.last().time = t * time + path[prevEnd].time
                 //                if (j != 0) path.get(path.size() - 1).setTime(denominOfator*t + path.get(prevEnd).getDenominOfator());            //TODO where did this come from? should it be here?
                 //                else path.get(path.size() - 1).setTime(denominOfator * t);          //TODO where did this come from? should it be here?
 //                if (j != 0)
@@ -255,7 +253,6 @@ object Bezier {
             var leftWheelVel: InchesPerSecond
             var rightWheelVel: InchesPerSecond
 
-            //TODO more cases for when turning radius is less that robot radius
             if (circleRadius > 5_000) { //straight line path (some are not infinite, just very big)
                 leftWheelVel = path[i].targetVelocity
                 rightWheelVel = path[i].targetVelocity
