@@ -34,6 +34,7 @@ import javafx.stage.FileChooser;
 import utils.CSVWriter;
 import utils.Config;
 
+import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -86,7 +87,7 @@ public class UIController {
     @FXML
     private ComboBox<String> cfgDrawWheelType;
 
-    private static Image backgroundImage = new Image("images/FieldSmall.JPG");
+    private static Image backgroundImage = new Image("images/Field.JPG");
     private ArrayList<ArrayList<PointRow>> previousStates; //for undo/redo
     private ArrayList<PointRow> rows;
     private int nextIndex,
@@ -108,21 +109,6 @@ public class UIController {
         ));
         config = new Config(cfgDrawWheelType, cfgLength, cfgMaxAccel, cfgMaxVel, cfgJerk,
                 cfgRadius, cfgWidth, cfgTimeStep, cfgPathName, cfgTicksPerInch);
-
-//        backgroundImage = new Image(Config.getStringProperty("img_path", "src\\images\\FRC2018.png"));
-
-//        double width = backgroundImage.getWidth(), height = backgroundImage.getHeight();
-//        final double maxHeight = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode().getHeight() * .5; //Percent of screen to take up, is an estimate
-//        final double proportion = maxHeight / height;
-//        width *= proportion;
-//        height *= proportion;
-
-//        imgField.setFitWidth(width);
-//        imgField.setFitHeight(height);
-
-//        root.applyCss();
-//        root.layout();
-//        root.getHeight();
 
         imgField.setImage(backgroundImage);
 
@@ -153,11 +139,27 @@ public class UIController {
                     if (root.getChildren().stream().anyMatch(Objects::isNull)) continue;
                     ran = true;
 
+                    // Load in most recently opened path
                     File file = new File(Config.getStringProperty("points_save_dir") + "/" + Config.getStringProperty("path_name") + "_save.csv");
-
                     Objects.requireNonNull(pointsFromFile(file)).forEach(p -> addNewPointRow(p, false));
                     graph.updateAndGraph(pointDrag);
                     addSavedState();
+
+                    //size background image
+                    double width = backgroundImage.getWidth(), height = backgroundImage.getHeight();
+                    //java.awt.Toolkit.getDefaultToolkit.getScreenSize() was giving the wrong values for me
+                    final var screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+                    final double percentSize = 0.7; // Estimated percent of screen to fill
+                    final double maxHeight = screen.getHeight() * percentSize;
+                    final double maxWidth = screen.getWidth() * percentSize;
+
+                    final double proportion = Math.min(maxHeight / height, maxWidth / width);
+
+                    width *= proportion;
+                    height *= proportion;
+
+                    imgField.setFitWidth(width);
+                    imgField.setFitHeight(height);
                 }
 
                 return null;
