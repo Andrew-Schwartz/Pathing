@@ -1,8 +1,8 @@
 package units
 
-import bezier.units.feet
-import bezier.units.inches
-import bezier.units.ticks
+import bezier.OLDunits.feet
+import bezier.OLDunits.inches
+import bezier.OLDunits.ticks
 import org.junit.jupiter.api.Test
 
 object LengthTest {

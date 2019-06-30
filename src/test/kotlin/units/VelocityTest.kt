@@ -1,12 +1,12 @@
 package units
 
-import bezier.units.derived.AngularVelocity
-import bezier.units.derived.feetPerSecond
-import bezier.units.derived.feetPerSecondSquared
-import bezier.units.derived.inchesPerSecond
-import bezier.units.feet
-import bezier.units.radians
-import bezier.units.seconds
+import bezier.OLDunits.derived.AngularVelocity
+import bezier.OLDunits.derived.feetPerSecond
+import bezier.OLDunits.derived.feetPerSecondSquared
+import bezier.OLDunits.derived.inchesPerSecond
+import bezier.OLDunits.feet
+import bezier.OLDunits.radians
+import bezier.OLDunits.seconds
 import org.junit.jupiter.api.Test
 
 object VelocityTest {

@@ -1,9 +1,9 @@
 import bezier.Bezier;
+import bezier.OLDunits.Inches;
+import bezier.OLDunits.Seconds;
+import bezier.OLDunits.derived.Acceleration;
+import bezier.OLDunits.derived.LinearVelocity;
 import bezier.Point;
-import bezier.units.Inches;
-import bezier.units.Seconds;
-import bezier.units.derived.Acceleration;
-import bezier.units.derived.LinearVelocity;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

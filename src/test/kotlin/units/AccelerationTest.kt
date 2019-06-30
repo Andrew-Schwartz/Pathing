@@ -1,9 +1,9 @@
 package units
 
-import bezier.units.derived.feetPerSecond
-import bezier.units.derived.feetPerSecondSquared
-import bezier.units.derived.inchesPerSecondSquared
-import bezier.units.seconds
+import bezier.OLDunits.derived.feetPerSecond
+import bezier.OLDunits.derived.feetPerSecondSquared
+import bezier.OLDunits.derived.inchesPerSecondSquared
+import bezier.OLDunits.seconds
 import org.junit.jupiter.api.Test
 
 object AccelerationTest {

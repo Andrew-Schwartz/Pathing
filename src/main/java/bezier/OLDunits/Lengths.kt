@@ -1,6 +1,6 @@
-package bezier.units
+package bezier.OLDunits
 
-import bezier.units.derived.LinearVelocity
+import bezier.OLDunits.derived.LinearVelocity
 import ui.UIController
 import utils.Config
 
@@ -9,7 +9,7 @@ fun Number.inches() = Inches(toDouble())
 fun Number.pixels() = Pixels(this.toDouble())
 fun Number.ticks() = Ticks(toDouble())
 
-sealed class Length<T : Length<T>>(value: Double) : SIUnit<T>(value) {
+sealed class Length<T : Length<T>>(value: Double, ctor: (Double) -> T) : SIUnit<T>(value, ctor) {
     companion object {
         @JvmStatic
         val FIELD_HEIGHT_INCHES = Inches(322.25) //ish
@@ -18,47 +18,37 @@ sealed class Length<T : Length<T>>(value: Double) : SIUnit<T>(value) {
         val kPixelsToInches: Double get() = FIELD_HEIGHT_INCHES.value / UIController.imageHeight().value
     }
 
-    abstract override fun createNew(value: Double): T
-
     abstract fun inches(): Inches
     abstract fun feet(): Feet
     abstract fun pixels(): Pixels
     abstract fun ticks(): Ticks
 
-    operator fun <D : Time<D>> div(time: D): LinearVelocity<T, D> = LinearVelocity(this.createNew(value), time)
+    operator fun <D : Time<D>> div(time: D): LinearVelocity<T, D> = LinearVelocity(ctor(value), time)
     operator fun <D : Time<D>> div(velocity: LinearVelocity<T, D>): D = velocity.createNewTime(value / velocity.value)
 }
 
-data class Feet(override val value: Double) : Length<Feet>(value) {
-    override fun createNew(value: Double): Feet = Feet(value)
-
+data class Feet(override val value: Double) : Length<Feet>(value, ::Feet) {
     override fun inches() = Inches(value * kFeetToInches)
     override fun feet() = this
     override fun pixels() = Pixels(value * kFeetToInches / kPixelsToInches)
     override fun ticks() = Ticks(value * kFeetToInches * kInchesToTicks)
 }
 
-data class Inches(override val value: Double) : Length<Inches>(value) {
-    override fun createNew(value: Double) = Inches(value)
-
+data class Inches(override val value: Double) : Length<Inches>(value, ::Inches) {
     override fun inches() = this
     override fun feet() = Feet(value / kFeetToInches)
     override fun ticks() = Ticks(value * kInchesToTicks)
     override fun pixels() = Pixels(value / kPixelsToInches)
 }
 
-data class Pixels(override val value: Double) : Length<Pixels>(value) {
-    override fun createNew(value: Double) = Pixels(value)
-
+data class Pixels(override val value: Double) : Length<Pixels>(value, ::Pixels) {
     override fun inches() = Inches(value * kPixelsToInches)
     override fun feet() = Feet(value * kPixelsToInches / kFeetToInches)
     override fun pixels() = this
     override fun ticks() = Ticks(value * kPixelsToInches * kInchesToTicks)
 }
 
-data class Ticks(override val value: Double) : Length<Ticks>(value) {
-    override fun createNew(value: Double) = Ticks(value)
-
+data class Ticks(override val value: Double) : Length<Ticks>(value, ::Ticks) {
     override fun inches() = Inches(value / kInchesToTicks)
     override fun feet() = Feet(value / kInchesToTicks / kFeetToInches)
     override fun pixels() = Pixels(value * kFeetToInches / kPixelsToInches)

@@ -1,42 +1,17 @@
 package bezier.units
 
-fun Number.minutes() = Minutes(toDouble())
-fun Number.seconds() = Seconds(toDouble())
-fun Number.hundredMillis() = HundredMillis(toDouble())
-
-sealed class Time<T : Time<T>>(value: Double) : SIUnit<T>(value) {
+class Time(seconds: Double) : SIUnit<Time>(seconds) {
     companion object {
-        const val kMinToSec: Double = 60.0
-        const val kSecToHundredMillis: Double = 10.0
+        const val baseFromHundredMillis = 0.01
+        const val baseFromSeconds = 1
+        const val baseFromMinutes = 60
+
+        fun seconds(seconds: Double): Time = Time(seconds * baseFromSeconds)
+        fun minutes(minutes: Double): Time = Time(minutes * baseFromMinutes)
+        fun hundredMillis(hundredMillis: Double): Time = Time(hundredMillis * baseFromHundredMillis)
     }
 
-    abstract override fun createNew(value: Double): T
-
-    abstract fun minutes(): Minutes
-    abstract fun seconds(): Seconds
-    abstract fun hundredMillis(): HundredMillis
-}
-
-data class Minutes(override val value: Double) : Time<Minutes>(value) {
-    override fun createNew(value: Double) = Minutes(value)
-
-    override fun minutes() = this
-    override fun seconds() = Seconds(value * kMinToSec)
-    override fun hundredMillis() = HundredMillis(value * kMinToSec * kSecToHundredMillis)
-}
-
-data class Seconds(override val value: Double) : Time<Seconds>(value) {
-    override fun createNew(value: Double) = Seconds(value)
-
-    override fun minutes() = Minutes(value / kMinToSec)
-    override fun seconds() = this
-    override fun hundredMillis() = HundredMillis(value * kSecToHundredMillis)
-}
-
-data class HundredMillis(override val value: Double) : Time<HundredMillis>(value) {
-    override fun createNew(value: Double) = HundredMillis(value)
-
-    override fun minutes() = Minutes(value / kSecToHundredMillis / kMinToSec)
-    override fun seconds() = Seconds(value / kSecToHundredMillis)
-    override fun hundredMillis() = this
+    val asSeconds: Double get() = value / baseFromSeconds
+    val asMinutes: Double get() = value / baseFromMinutes
+    val asHundredMillis: Double get() = value / baseFromHundredMillis
 }

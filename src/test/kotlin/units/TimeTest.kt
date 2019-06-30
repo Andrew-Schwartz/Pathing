@@ -1,6 +1,6 @@
 package units
 
-import bezier.units.*
+import bezier.OLDunits.*
 import org.junit.jupiter.api.Test
 
 object TimeTest {

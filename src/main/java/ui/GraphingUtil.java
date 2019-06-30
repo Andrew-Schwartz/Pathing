@@ -1,13 +1,13 @@
 package ui;
 
 import bezier.GraphicalBezier;
+import bezier.OLDunits.Degrees;
+import bezier.OLDunits.Feet;
+import bezier.OLDunits.Inches;
+import bezier.OLDunits.Rotation2d;
+import bezier.OLDunits.Seconds;
+import bezier.OLDunits.derived.LinearVelocity;
 import bezier.Point;
-import bezier.units.Degrees;
-import bezier.units.Feet;
-import bezier.units.Inches;
-import bezier.units.Rotation2d;
-import bezier.units.Seconds;
-import bezier.units.derived.LinearVelocity;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tab;

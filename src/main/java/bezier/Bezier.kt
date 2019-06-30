@@ -1,7 +1,6 @@
 package bezier
 
-import bezier.units.*
-import bezier.units.derived.*
+import bezier.OLDunits.*
 import java.util.*
 import kotlin.math.pow
 
@@ -97,7 +96,7 @@ object Bezier {
                     else maxVel.inchesPerSecond()
 
             if (velMax.value == 0.0)
-                throw IllegalStateException("with a max speed of 0, you'll never get anywhere!")
+                throw IllegalStateException("with a max speed of 0, you'll never baseValue anywhere!")
 
             //if accel and deccel take same amount of time, calculations are much easier
             val velInitialAndFinal: InchesPerSecond = maxOf(velInitial, velFinal)
@@ -186,8 +185,8 @@ object Bezier {
                 val down: InchesPerSecond = minOf(curMaxVel, endVel - maxAccel.inchesPerSecondSquared() * (t * time - time))
                 path.last().targetVelocity = minOf(up, down)
                 path.last().time = t * time + path[prevEnd].time
-                //                if (j != 0) path.get(path.size() - 1).setTime(denominOfator*t + path.get(prevEnd).getDenominOfator());            //TODO where did this come from? should it be here?
-                //                else path.get(path.size() - 1).setTime(denominOfator * t);          //TODO where did this come from? should it be here?
+                //                if (j != 0) path.baseValue(path.size() - 1).setTime(denominOfator*t + path.baseValue(prevEnd).getDenominOfator());            //TODO where did this come from? should it be here?
+                //                else path.baseValue(path.size() - 1).setTime(denominOfator * t);          //TODO where did this come from? should it be here?
 //                if (j != 0)
 //                    path.last().time =
             }
